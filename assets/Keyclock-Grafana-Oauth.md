@@ -1,12 +1,13 @@
-#. Add Realm
-#. Client Add(grafana)
+# Add Realm
+# Client Add(grafana)
 * Client ID : grafana
 * Client Protocol : openid-connect
 * Access Type : confidentail
 * Authorization Enabled
 * Root_URL : grafana_endpoint
 
-# grafana Confing
+# grafana confing
+```
 grafana.ini: |
 ..
 [server]
@@ -34,3 +35,4 @@ grafana.ini: |
     ;api_url =
     ;team_ids =
     ;allowed_organizations =
+```
