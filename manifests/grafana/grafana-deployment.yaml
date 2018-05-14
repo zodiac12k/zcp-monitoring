@@ -1,0 +1,75 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: grafana-deployment
+  namespace: monitoring 
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        component: grafana
+    spec:
+      containers:
+      - image: grafana/grafana:5.0.4
+        name: grafana
+        resources:
+          limits:
+            cpu: 100m
+            memory: 100Mi
+          requests:
+            cpu: 100m
+            memory: 100Mi        
+        env:
+        - name: GF_SECURITY_ADMIN_USER
+          value: admin
+        - name: GF_SECURITY_ADMIN_PASSWORD
+          value: admin
+        - name: GF_INSTALL_PLUGINS
+          value: grafana-clock-panel,grafana-worldmap-panel
+        ports:
+        - containerPort: 3000
+          name: grafana
+          protocol: TCP
+        volumeMounts:
+        - mountPath: /var/lib/grafana
+          name: grafana-storage
+        - mountPath: /etc/grafana
+          name: config-volume
+        - mountPath: /var/lib/grafana/dashboards/system
+          name: dashboard-system-volume
+        - mountPath: /var/lib/grafana/dashboards/cluster
+          name: dashboard-cluster-volume
+        - mountPath: /var/lib/grafana/dashboards/container
+          name: dashboard-container-volume
+        - mountPath: /etc/grafana/dashboards
+          name: config-volume-provisioning
+        - mountPath: /etc/grafana/datasources
+          name: config-volume-provisioning-prometheus 
+      volumes:
+      - name: grafana-storage
+        emptyDir: {}
+      - name: dashboard-system-volume
+        configMap:
+          defaultMode: 420
+          name: monitoring-grafana-dashboard-system 
+      - name: dashboard-cluster-volume
+        configMap:
+          defaultMode: 420
+          name: monitoring-grafana-dashboard-cluster
+      - name: dashboard-container-volume
+        configMap:
+          defaultMode: 420
+          name: monitoring-grafana-dashboard-container
+      - name: config-volume
+        configMap:
+          defaultMode: 420
+          name: monitoring-grafana-config
+      - name: config-volume-provisioning
+        configMap:
+          defaultMode: 420
+          name: monitoring-grafana-config-provisioning
+      - name: config-volume-provisioning-prometheus
+        configMap:
+          defaultMode: 420
+          name: monitoring-grafana-config-provisioning-prometheus
