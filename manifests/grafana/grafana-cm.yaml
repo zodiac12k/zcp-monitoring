@@ -17,11 +17,9 @@ data:
 
     [server]
     protocol = http
-    ;http_addr = 
     http_port = 3000
-    domain = grafana.zcp-dev.jp-tok.containers.mybluemix.net
-    enforce_domain = true
-    root_url = %(protocol)s://%(domain)s/
+    ;domain = localhost 
+    ;enforce_domain = false
     ;root_url = %(protocol)s://%(domain)s:%(http_port)s/
     ;router_logging = false
     ;static_root_path = public
