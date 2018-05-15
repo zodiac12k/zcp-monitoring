@@ -235,21 +235,10 @@ data:
       - job_name: 'etcd'
         static_configs:
         - targets:
-          - 169.56.69.242:23516 
+          - [ETCD_ENDPOINT]:[PORT]
         tls_config:
           ca_file: /etc/config/etcd-ca
           cert_file: /etc/config/etcd-cert
           key_file: /etc/config/etcd-key
           insecure_skip_verify: true
         scheme: https
-
-      - job_name: 'prometheus'
-        static_configs:
-        - targets:
-          - localhost:9090
-
-
-
-
-
-
