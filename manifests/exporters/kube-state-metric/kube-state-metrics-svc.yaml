@@ -3,7 +3,7 @@ kind: Service
 metadata:
   name: kube-state-metrics
   labels:
-    k8s-app: kube-state-metrics
+    component: kube-state-metrics 
   annotations:
     prometheus.io/scrape: 'true'
   namespace: monitoring
@@ -14,4 +14,4 @@ spec:
     targetPort: http-metrics
     protocol: TCP
   selector:
-    k8s-app: kube-state-metrics
+    component: kube-state-metrics 

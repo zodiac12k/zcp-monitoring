@@ -7,11 +7,11 @@ spec:
   replicas: 1
   selector:
     matchLabels:
-      app: blackbox-exporter
+      component: blackbox-exporter
   template:
     metadata:
       labels:
-        app: blackbox-exporter
+        component: blackbox-exporter
     spec:
       containers:
         - image: prom/blackbox-exporter:v0.11.0

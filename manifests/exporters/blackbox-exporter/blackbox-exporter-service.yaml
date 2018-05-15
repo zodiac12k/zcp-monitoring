@@ -3,7 +3,7 @@ kind: Service
 metadata:
   name: blackbox
   labels:
-    name: blackbox
+    component: blackbox-exporter
   annotations:
     prometheus.io/scrape: "true"
 spec:
@@ -14,4 +14,4 @@ spec:
       targetPort: 9115
       protocol: TCP
   selector:
-    app: blackbox-exporter 
+    component: blackbox-exporter 
