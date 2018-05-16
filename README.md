@@ -2,11 +2,6 @@
 
 ## Get ICCS Deploy Env 
 
-* Monitoring Namespace 생성
-```
-$ kubectl create -f namespace.yaml
-```
-
 * ETCD ENDPOINT 정보 확인(IP, Port)
 
 ```
@@ -49,6 +44,11 @@ $ vi manifests/prometheus/prometheus-cm.yaml
 ```
 
 ## Prometheus Deploy
+
+* Monitoring Namespace 생성
+```
+$ kubectl create -f namespace.yaml
+```
 
 * Persistent Volume 설정 및 생성
 
