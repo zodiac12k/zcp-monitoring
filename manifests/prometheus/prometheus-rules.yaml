@@ -5,21 +5,21 @@ data:
     - name: node.rules
       rules:
       - alert: NodeExporterDown
-        expr: absent(up{component="node-exporter",job="kubernetes-monitoring-endpoints"} == 1)
+        expr: up{component="node-exporter",job="kubernetes-monitoring-endpoints"} == 0
         for: 2m
         labels:
-          severity: warning
+          severity: critical
         annotations:
-          description: Prometheus could not scrape a node-exporter for more than 10m,or node-exporters have disappeared from discovery.
           summary: node-exporter cannot be scraped
+          description: Prometheus could not scrape a node-exporter for more than 10m,or node-exporters have disappeared from discovery.
       - alert: NodeCPUUsage
-        expr: (100 - (avg by (instance) (irate(node_cpu{job="node-exporter",mode="idle"}[5m])) * 100)) > 90
+        expr: (100 - (avg by (instance) (irate(node_cpu{component="node-exporter",mode="idle"}[5m])) * 100)) > 75
         for: 2m
         labels:
           severity: warning
         annotations:
           summary: "{{$labels.instance}}: High CPU usage detected"
-          description: "{{$labels.instance}}: CPU usage is above 90% (current value is: {{ $value }})"
+          description: "{{$labels.instance}}: CPU usage is above 75% (current value is: {{ $value }})"
       - alert: NodeLoadAverage5
         expr: ((node_load5 / count without (cpu, mode) (node_cpu{mode="system"})) > 4)
         for: 2m
@@ -29,15 +29,157 @@ data:
           summary: "{{$labels.instance}}: High Load Average detected"
           description: "{{$labels.instance}}: Load Average is high"
       - alert: NodeMemoryUsage
-        expr: (((node_memory_MemTotal-node_memory_MemFree-node_memory_Cached)/(node_memory_MemTotal)*100)) > 90
+        expr: (((node_memory_MemTotal-node_memory_MemFree-node_memory_Cached)/(node_memory_MemTotal)*100)) > 75
         for: 2m
         labels:
           severity: warning
         annotations:
           summary: "{{$labels.instance}}: High memory usage detected"
-          description: "{{$labels.instance}}: Memory usage is above 90% (current value is: {{ $value }})"
+          description: "{{$labels.instance}}: Memory usage is above 75% (current value is: {{ $value }})"
+      - alert: NodeSwapUsage
+        expr: (((node_memory_SwapTotal-node_memory_SwapFree)/node_memory_SwapTotal)*100) > 75
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: "{{$labels.instance}}: Swap usage detected"
+          description: "{{$labels.instance}}: Swap usage usage is above 75% (current value is: {{ $value }})"
+      - alert: NodeLowRootDisk
+        expr: ((node_filesystem_size{mountpoint="/"} - node_filesystem_free{mountpoint="/"} ) / node_filesystem_size{mountpoint="/"} * 100) > 75
+        for: 30m
+        labels:
+          severity: warning
+        annotations:
+          summary: "{{$labels.instance}}: Low Root disk space"
+          description: "{{$labels.instance}}: Root disk usage is above 75% (current value is: {{ $value }})"
+  kube-apiserver.rules: |
+    groups:
+    - name: kube-apiserver.rules
+      rules:
+      - alert: APIServerDown
+        expr: up{job="kubernetes-apiservers"} == 0
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: API server unreachable
+          description: Prometheus failed to scrape API server
+      - alert: APIServerErrorsHigh
+        expr: rate(apiserver_request_count{code=~"^(?:5..)$"}[5m]) / rate(apiserver_request_count[5m]) * 100 > 5
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: APIServerErrorsHigh
+          description: "API server returns errors for {{$value}}% of requests summary: API server request errors"
+  kubelet.rules: |
+    groups:
+    - name: kubelet.rules
+      rules:
+      - alert: K8SNodeNotReady
+        expr: kube_node_status_condition{condition="Ready",status="true"} == 0
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          description: The Kubelet on {{ $labels.node }} has not checked in with the API, or has set itself to NotReady, for more than an hour
+          summary: Node status is NotReady
+      - alert: K8SKubeletDown
+        expr: up{job="kubernetes-nodes"} == 0
+        for: 10m
+        labels:
+          severity: critical
+        annotations:
+          description: Prometheus failed to scrape {{ $labels.instance }} of kubelets.
+          summary: Kubelets cannot be scraped
+      - alert: K8SKubeletTooManyPods
+        expr: kubelet_running_pod_count > 100
+        labels:
+          severity: warning
+        annotations:
+          description: Kubelet {{$labels.instance}} is running {{$value}} pods, close to the limit of 110
+          summary: Kubelet is close to pod limit
+  etcd.rules: |
+    groups:
+    - name: etcd.rules
+      rules:
+      - alert: ETCD_Down
+        expr: up{job="etcd"} == 0
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: ETCD server unreachable
+          description: Prometheus failed to scrape ETCD server
+      - alert: ETCD_NoLeader
+        expr: etcd_server_has_leader{job="etcd"} == 0
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: ETCD Member has no leader
+          description: ETCD Member {{ $labels.instance }} has no leader
+      - alert: ETCD_InsufficientMembers
+        expr: count(up{job="etcd"} == 0) > (count(up{job="etcd"}) / 2 - 1)
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: ETCD server insufficient members
+          description: If one more etcd member goes down the cluster will be unavailable
+      - alert: ETCD_HighNumberOfLeaderChanges
+        expr: increase(etcd_server_leader_changes_seen_total{job="etcd"}[1h]) > 3
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: ETCD a high number of leader changes within the etcd cluster are happening
+          description: ETCD instance {{ $labels.instance }} has seen {{ $value }} leader changes within the last hour
+  kube-state-metrics.rules: |
+    groups:
+    - name: kube-state-metrics.rules
+      rules:
+      - alert: PodFrequentlyRestarting
+        expr: increase(kube_pod_container_status_restarts_total[1h]) > 5
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          summary: Pod is restarting frequently
+          description: Pod {{$labels.namespaces}}/{{$labels.pod}} is was restarted {{$value}} times within the last hour
+  prometheus.rules: |
+    groups:
+    - name: prometheus.rules
+      rules:
+      - alert: PrometheusFailedReload
+        expr: prometheus_config_last_reload_successful == 0
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          summary: Prometheus configuration reload has failed 
+          description: Reloading Prometheus' configuration has failed for {{ $labels.namespace}}/{{ $labels.pod}}.
+      - alert: PrometheusErrorSendingAlerts
+        expr: rate(prometheus_notifications_errors_total[5m]) / rate(prometheus_notifications_sent_total[5m]) > 0.01
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          summary: Errors while sending alerts from Prometheus
+          description: Errors while sending alerts from Prometheus to Alertmanager {{$labels.Alertmanager}}
+  alertmanager.rules: |
+    groups:
+    - name: alertmanager.rules
+      rules:
+      - alert: AlertmanagerFailedReload
+        expr: alertmanager_config_last_reload_successful == 0
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          description: Reloading Alertmanager's configuration has failed
+          summary: Alertmanager configuration reload has failed
 kind: ConfigMap
 metadata:
-  creationTimestamp: null
   name: prometheus-rules
   namespace: monitoring
