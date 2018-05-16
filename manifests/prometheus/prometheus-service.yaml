@@ -6,7 +6,7 @@ metadata:
   annotations:
     prometheus.io/scrape: 'true'
   labels:
-    job: prometheus
+    component: prometheus
 spec:
   selector: 
     component: prometheus 

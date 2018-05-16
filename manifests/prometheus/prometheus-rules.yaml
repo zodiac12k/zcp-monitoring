@@ -179,6 +179,18 @@ data:
         annotations:
           description: Reloading Alertmanager's configuration has failed
           summary: Alertmanager configuration reload has failed
+  component-up-monitoring.rules: |
+    groups:
+    - name: component-up-monitoring.rules
+      rules:
+      - alert: ZCPMonitoringDown
+        expr: up{component=~"alertmanager|blackbox-exporter|grafana|kube-state-metrics|prometheus"} == 0
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: ZCP Monitoring Component Down 
+          description: ZCP Monitoring Component Down has failed for {{ $labels.component }}
 kind: ConfigMap
 metadata:
   name: prometheus-rules
