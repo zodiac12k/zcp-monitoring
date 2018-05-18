@@ -70,8 +70,16 @@ data:
         labels:
           severity: warning
         annotations:
-          summary: APIServerErrorsHigh
+          summary: API server Errors High
           description: "API server returns errors for {{$value}}% of requests summary: API server request errors"
+      - alert: APIServerLatencyHigh
+        expr: avg(apiserver_request_latencies_sum / apiserver_request_latencies_count) / 1000000 > 2000
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: API server Latency High
+          description: "API server latency High above 2s (current value: {{ $value }}ms"
   kubelet.rules: |
     groups:
     - name: kubelet.rules
