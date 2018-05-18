@@ -22,7 +22,7 @@ data:
           - "alertmanager-service:9093"
 
     #rule_files:
-    #  - /etc/prometheus-rules/*.rules
+      - /etc/prometheus-rules/*.rules
 
     scrape_configs:
       - job_name: 'kubernetes-apiservers'

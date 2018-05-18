@@ -11,7 +11,7 @@ ETCD_ENDPOINTS=https://[IP]:[Port]
 
 * ETCD TLS Secret Export 
 ```
-$ kubectl -n kube-system get secret | grep calico-etcd-secrets > etcd-secrets.yaml
+$ kubectl -n kube-system get secret | grep calico-etcd-secrets -o yaml > etcd-secrets.yaml
 ```
 
 * Monitoring 용도 ETCD TLS Secret 생성 (Namespace, ConfigMap Name 변경 필요)
@@ -50,15 +50,16 @@ $ vi manifests/prometheus/prometheus-cm.yaml
 $ kubectl create -f namespace.yaml
 ```
 
-* Persistent Volume 설정 및 생성
+* Persistent Volume 설정 및 생성(File/Block Storage Option)
 
-Storage-Class 설정 및 PV 생성 Option 변경
+Storage-Class 설정 및 PV 생성 Option 변경(Block Storage 기준)
 ```
 $ vi manifests/prometheus/prometheus-pvc.yaml
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: prometheus-data
+  namespace: monitoring
   annotations:
     volume.beta.kubernetes.io/storage-class: "ibmc-block-retain-bronze"
   labels:
@@ -70,6 +71,7 @@ spec:
     requests:
       storage: 20Gi
 ```
+
 
 * Prometheus Deploy
 
