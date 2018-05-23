@@ -11,7 +11,7 @@ ETCD_ENDPOINTS=https://[IP]:[Port]
 
 * ETCD TLS Secret Export 
 ```
-$ kubectl -n kube-system get secret | grep calico-etcd-secrets -o yaml > etcd-secrets.yaml
+$ kubectl -n kube-system get secret calico-etcd-secrets -o yaml > etcd-secrets.yaml
 ```
 
 * Monitoring 용도 ETCD TLS Secret 생성 (Namespace, ConfigMap Name 변경 필요)
