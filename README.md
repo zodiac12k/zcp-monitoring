@@ -1,5 +1,29 @@
 # ZCP Monitoring Repo
 
+## Monitoring Component 
+
+| Component        | Version           | Image  |
+| ------------- |-------------|-----|
+|Grafana| 5.0.4 |grafana/grafana:5.0.4
+|Prometheus|  2.2.1 |prom/prometheus:v2.2.1
+|Alertmanager|  0.14.0  |prom/alertmanager:v0.14.0
+|kube-state-metric| 1.3.0 |k8s.gcr.io/kube-state-metrics:v1.3.0
+|Node-Exporter| 0.15.2  |docker pull prom/node-exporter:v0.15.2
+|Blackbox-Exporter| 0.12.0  |prom/blackbox-exporter:v0.12.0
+
+## Monitoring Dashboard(Grafana)
+
+| Folder| Dashboard        | 
+|------------- |-------------|
+|System Dashboards| System Overview |Worker Node System Metric 지표|
+||System Usage Overview|  
+||System DIsk Space|  
+|Cluster Dashboards |Kubernetes: Cluster Overview |
+||Kubernetes: Resource Requests|
+||Etcd Cluster|
+|Container Dashboards|  POD Overview  |
+
+
 ## Get ICCS Deploy Env 
 
 * ETCD ENDPOINT 정보 확인(IP, Port)
