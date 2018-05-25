@@ -8,7 +8,7 @@
 |Prometheus|  2.2.1 |prom/prometheus:v2.2.1
 |Alertmanager|  0.14.0  |prom/alertmanager:v0.14.0
 |kube-state-metric| 1.3.0 |k8s.gcr.io/kube-state-metrics:v1.3.0
-|Node-Exporter| 0.15.2  |docker pull prom/node-exporter:v0.15.2
+|Node-Exporter| 0.15.2  |node-exporter:v0.15.2
 |Blackbox-Exporter| 0.12.0  |prom/blackbox-exporter:v0.12.0
 
 ## Monitoring Dashboard(Grafana)
