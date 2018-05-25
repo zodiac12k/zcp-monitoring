@@ -86,7 +86,7 @@ data:
       rules:
       - alert: K8SNodeNotReady
         expr: kube_node_status_condition{condition="Ready",status="true"} == 0
-        for: 10m
+        for: 2m
         labels:
           severity: warning
         annotations:
@@ -94,7 +94,7 @@ data:
           summary: Node status is NotReady
       - alert: K8SKubeletDown
         expr: up{job="kubernetes-nodes"} == 0
-        for: 10m
+        for: 2m
         labels:
           severity: critical
         annotations:
@@ -102,6 +102,7 @@ data:
           summary: Kubelets cannot be scraped
       - alert: K8SKubeletTooManyPods
         expr: kubelet_running_pod_count > 100
+        for: 10m
         labels:
           severity: warning
         annotations:
