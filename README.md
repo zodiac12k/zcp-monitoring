@@ -113,8 +113,7 @@ spec:
 
 * Prometheus 환경 정보 설정
 
-Metric 유지 기간 설정 (--storage.tsdb.retention)
-Prometheus external-url 변경(--web.external-url)
+Metric 유지 기간 설정 및 Prometheus external-url(Ingress Domain) 변경 (--storage.tsdb.retention, --web.external-url)
 ```
 $ vi manifests/prometheus/prometheus-deployment.yaml
 ...
