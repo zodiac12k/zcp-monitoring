@@ -67,6 +67,21 @@ $ vi manifests/prometheus/prometheus-cm.yaml
   scheme: https
 ```
 
+* ICCS Cluste Name 설정
+외부에서 식별 가능한 Cluster Name 변경(env 설정)
+```
+$ vi manifests/prometheus/prometheus-cm.yaml
+...
+data:
+  prometheus.yml: |-
+    global:
+      scrape_interval: 15s
+      scrape_timeout: 15s
+      evaluation_interval: 15s
+      external_labels:
+        env: 'SK-CPS-ICCS-K8S-DEV'
+```
+
 ## Prometheus Deploy
 
 * Monitoring Namespace 생성
@@ -96,7 +111,24 @@ spec:
       storage: 20Gi
 ```
 
+* Prometheus 환경 정보 설정
 
+Metric 유지 기간 설정 (--storage.tsdb.retention)
+Prometheus external-url 변경(--web.external-url)
+```
+$ vi manifests/prometheus/prometheus-deployment.yaml
+...
+containers:
+  - name: prometheus
+    image: prom/prometheus:v2.2.1
+    args:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+      - "--storage.tsdb.path=/prometheus/"
+      - "--storage.tsdb.retention=30d"
+      - "--web.enable-lifecycle"
+      - "--web.enable-admin-api"
+      - "--web.external-url=http://prometheus.example.sk.com"
+```
 * Prometheus Deploy
 
 ```
