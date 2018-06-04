@@ -28,9 +28,14 @@ spec:
           mountPath: /etc/alertmanager
         - name: alertmanager
           mountPath: /alertmanager
+        - name: alertmanager-templates-volume
+          mountPath: /etc/alertmanager-templates
       volumes:
       - name: config-volume
         configMap:
           name: alertmanager
+      - name: alertmanager-templates-volume
+        configMap:
+          name: alertmanager-templates
       - name: alertmanager
         emptyDir: {}
