@@ -4,14 +4,14 @@ data:
     groups:
     - name: node.rules
       rules:
-      - alert: NodeExporterDown
+      - alert: NodeDown
         expr: up{component="node-exporter",job="kubernetes-monitoring-endpoints"} == 0
         for: 2m
         labels:
           severity: critical
         annotations:
           summary: node-exporter cannot be scraped
-          description: Prometheus could not scrape a node-exporter for more than 10m,or node-exporters have disappeared from discovery.
+          description: Prometheus failed to scrape Node( {{ $labels.instance}} )) for more than 2m 
       - alert: NodeCPUUsage
         expr: (100 - (avg by (instance) (irate(node_cpu{component="node-exporter",mode="idle"}[5m])) * 100)) > 75
         for: 2m
@@ -27,7 +27,7 @@ data:
           severity: warning
         annotations:
           summary: "{{$labels.instance}}: High Load Average detected"
-          description: "{{$labels.instance}}: Load Average is high"
+          description: "{{$labels.instance}}: Load Average is high (current value is: {{ $value }})"
       - alert: NodeMemoryUsage
         expr: (((node_memory_MemTotal-node_memory_MemFree-node_memory_Cached)/(node_memory_MemTotal)*100)) > 75
         for: 2m
