@@ -20,9 +20,10 @@
 ||System DIsk Space|  
 |Cluster Dashboards |Kubernetes: Cluster Overview |
 ||Kubernetes: Resource Requests|
+||Kubernetes: Performance Overview|
 ||Etcd Cluster|
-|Container Dashboards|  POD Overview  |
-
+|Container Dashboards|Kubernetes: POD Overview  |
+||Kubernetes: Deployment Cluster|
 
 ## Get ICCS Deploy Env 
 
