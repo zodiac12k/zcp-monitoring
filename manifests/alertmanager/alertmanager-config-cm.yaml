@@ -15,6 +15,9 @@ data:
       smtp_from: 'foo@bar.com'
       smtp_auth_username: 'foo@bar.com'
       smtp_auth_password: 'barfoo'
+      slack_api_url: 'https://global.slack_api_url'
+      hipchat_auth_token: '1234556789'
+      hipchat_api_url: 'https://hipchat.foobar.org/'
 
     # # The directory from which notification templates are read.
     templates:
