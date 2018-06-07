@@ -35,6 +35,7 @@ data:
     {{ range .Alerts }}
        *Alert:* `{{ .Labels.alertname }}`
       *Severity:* `{{ .Labels.severity }}`
+      *Environment:* `{{ .Labels.env }}`
       *Description:* {{ .Annotations.description }}  
       {{ end }}
     {{ end }}  
