@@ -2,7 +2,7 @@ kind: ConfigMap
 apiVersion: v1
 metadata:
   name: alertmanager-templates
-  namespace: monitoring
+  namespace: zcp-system
 data:
   default.tmpl: |-
     {{ define "__alertmanager" }}ZCP-AlertManager{{ end }}

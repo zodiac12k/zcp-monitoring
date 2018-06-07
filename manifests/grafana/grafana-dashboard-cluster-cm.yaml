@@ -5666,7 +5666,7 @@ data:
 kind: ConfigMap
 metadata:
   name: monitoring-grafana-dashboard-cluster
-  namespace: monitoring
+  namespace: zcp-system
 
 
 

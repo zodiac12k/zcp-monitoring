@@ -6,7 +6,7 @@ metadata:
     component: kube-state-metrics 
   annotations:
     prometheus.io/scrape: 'true'
-  namespace: monitoring
+  namespace: zcp-system
 spec:
   ports:
   - name: http-metrics

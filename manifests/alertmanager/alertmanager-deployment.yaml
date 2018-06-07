@@ -2,7 +2,7 @@ apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
   name: alertmanager
-  namespace: monitoring
+  namespace: zcp-system
 spec:
   replicas: 1
   selector:

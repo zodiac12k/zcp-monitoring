@@ -2180,7 +2180,7 @@ data:
 kind: ConfigMap
 metadata:
   name: monitoring-grafana-dashboard-container
-  namespace: monitoring
+  namespace: zcp-system
 
 
 

@@ -4,7 +4,7 @@ metadata:
   name: prometheus-config
   labels:
     name: prometheus-config
-  namespace: monitoring
+  namespace: zcp-system
 data:
   prometheus.yml: |-
     global:
@@ -89,7 +89,7 @@ data:
         kubernetes_sd_configs:
         - role: endpoints
           namespaces:
-            names: [monitoring]
+            names: [zcp-system]
 
         relabel_configs:
         - source_labels: [__meta_kubernetes_service_annotation_prometheus_io_scrape]
@@ -97,7 +97,7 @@ data:
           regex: true
         - source_labels: [__meta_kubernetes_namespace]
           action: keep
-          regex: monitoring
+          regex: zcp-system
         - source_labels: [__meta_kubernetes_service_annotation_prometheus_io_scheme]
           action: replace
           target_label: __scheme__
@@ -131,7 +131,7 @@ data:
           regex: true
         - source_labels: [__meta_kubernetes_namespace]
           action: drop
-          regex: monitoring
+          regex: zcp-system
         - source_labels: [__meta_kubernetes_namespace]
           action: drop
           regex: kube-system
@@ -190,7 +190,7 @@ data:
           regex: true
         - source_labels: [__meta_kubernetes_namespace]
           action: drop
-          regex: monitoring
+          regex: zcp-system
         - source_labels: [__meta_kubernetes_namespace]
           action: drop
           regex: kube-system
@@ -278,7 +278,7 @@ data:
             regex: true
           - source_labels: [__meta_kubernetes_namespace]
             action: drop
-            regex: monitoring
+            regex: zcp-system
           - source_labels: [__meta_kubernetes_ingress_scheme,__address__,__meta_kubernetes_ingress_path]
             regex: (.+);(.+);(.+)
             replacement: ${1}://${2}${3}

@@ -44,7 +44,7 @@ $ kubectl -n kube-system get secret calico-etcd-secrets -o yaml > etcd-secrets.y
 $ vi etcd-secret.yaml
 ...
 name: etcd-secrets
-namespace: monitoring
+namespace: zcp-system
 
 $ kubectl create -f etcd-secrets.yaml
 $ kubectl get secret
@@ -99,7 +99,7 @@ apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: prometheus-data
-  namespace: monitoring
+  namespace: zcp-system
   annotations:
     volume.beta.kubernetes.io/storage-class: "ibmc-block-retain-bronze"
   labels:
@@ -168,7 +168,7 @@ apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
   name: monitoring-ingress
-  namespace: monitoring
+  namespace: zcp-system
 spec:
   rules:
   - host: prometheus.example.sk.com

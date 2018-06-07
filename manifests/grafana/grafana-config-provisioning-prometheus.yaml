@@ -4,7 +4,7 @@ metadata:
   labels:
     component: grafana
   name: monitoring-grafana-config-provisioning-prometheus
-  namespace: monitoring 
+  namespace: zcp-system 
 data:
   provisioning-database.yaml: |
     datasources:

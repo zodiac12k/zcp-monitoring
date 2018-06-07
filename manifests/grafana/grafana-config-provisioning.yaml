@@ -4,7 +4,7 @@ metadata:
   labels:
     component: grafana
   name: monitoring-grafana-config-provisioning
-  namespace: monitoring 
+  namespace: zcp-system 
 data:
   system.yaml: |
     apiVersion: 1

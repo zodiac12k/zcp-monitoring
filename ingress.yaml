@@ -2,7 +2,7 @@ apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
   name: monitoring-ingress
-  namespace: monitoring
+  namespace: zcp-system
 spec:
   rules:
   - host: prometheus.example.sk.com

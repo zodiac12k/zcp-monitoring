@@ -5,7 +5,7 @@ metadata:
   annotations:
     prometheus.io/scrape: 'true'
   name: prometheus-node-exporter
-  namespace: monitoring
+  namespace: zcp-system
   labels:
     app: prometheus
     component: node-exporter

@@ -2,7 +2,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: blackbox-exporter-config
-  namespace: monitoring
+  namespace: zcp-system
 data:
   blackbox.yml: |-
     modules:
