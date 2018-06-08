@@ -114,7 +114,7 @@ data:
         labels:
           severity: warning
         annotations:
-          description: The Kubelet on {{ $labels.node }} has not checked in with the API, or has set itself to NotReady, for more than an hour
+          description: The Kubelet on {{ $labels.node }} has not checked in with the API, or has set itself to NotReady, for more than 2m 
           summary: Node status is NotReady
       - alert: K8SKubeletDown
         expr: up{job="kubernetes-nodes"} == 0
