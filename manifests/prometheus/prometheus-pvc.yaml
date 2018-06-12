@@ -4,7 +4,7 @@ metadata:
   name: prometheus-data
   namespace: zcp-system
   annotations:
-    volume.beta.kubernetes.io/storage-class: "ibmc-block-retain-bronze"
+    volume.beta.kubernetes.io/storage-class: "ibmc-block-bronze"
   labels:
     billingType: "hourly"
 spec:

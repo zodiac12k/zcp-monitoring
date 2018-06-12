@@ -33,12 +33,3 @@ data:
        type: file
        options:
          path: /var/lib/grafana/dashboards/container
-  node.yaml: |
-    apiVersion: 1
-    providers:
-     - name: 'default'
-       orgId: 1
-       folder: 'Dashboard'
-       type: file
-       options:
-         path: /var/lib/grafana/dashboards/dev
