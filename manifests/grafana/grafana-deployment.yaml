@@ -48,7 +48,8 @@ spec:
           name: config-volume-provisioning-prometheus 
       volumes:
       - name: grafana-storage
-        emptyDir: {}
+        persistentVolumeClaim:
+          claimName: grafana-data
       - name: dashboard-system-volume
         configMap:
           defaultMode: 420
