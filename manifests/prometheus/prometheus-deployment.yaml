@@ -31,6 +31,8 @@ spec:
               mountPath: /prometheus/
             - name: rules-volume
               mountPath: /etc/prometheus-rules/
+            - name: user-rules-volume
+              mountPath: /etc/prometheus-user-rules/
             - name: etcd-secrets-volume
               mountPath: /etc/config
               readOnly: true
@@ -46,6 +48,10 @@ spec:
           configMap:
             defaultMode: 420
             name: prometheus-rules
+        - name: user-rules-volume
+          configMap:
+            defaultMode: 420
+            name: prometheus-user-rules
         - name: etcd-secrets-volume
           secret:
             secretName: etcd-secrets
