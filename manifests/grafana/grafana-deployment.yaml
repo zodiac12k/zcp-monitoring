@@ -42,9 +42,9 @@ spec:
           name: dashboard-cluster-volume
         - mountPath: /var/lib/grafana/dashboards/container
           name: dashboard-container-volume
-        - mountPath: /etc/grafana/dashboards
+        - mountPath: /etc/provisioning/dashboards
           name: config-volume-provisioning
-        - mountPath: /etc/grafana/datasources
+        - mountPath: /etc/provisioning/datasources
           name: config-volume-provisioning-prometheus 
       volumes:
       - name: grafana-storage
