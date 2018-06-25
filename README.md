@@ -23,8 +23,9 @@
 ||Kubernetes: Performance Overview|
 ||Etcd Cluster|
 |Container Dashboards|Kubernetes: POD Overview  |
-||Kubernetes: Deployment Cluster|
-
+||Kubernetes: Deployment Overview|
+||Kubernetes: DaemonSet Overview|
+||Kubernetes: StatefulSet Overview|
 ## Get ICCS Deploy Env 
 
 * ETCD ENDPOINT 정보 확인(IP, Port)
