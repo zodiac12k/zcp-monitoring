@@ -52,11 +52,11 @@ data:
         ]
       },
       "description": "",
-      "editable": true,
+      "editable": false,
       "gnetId": 3146,
       "graphTooltip": 1,
       "id": null,
-      "iteration": 1528092100324,
+      "iteration": 1529908256463,
       "links": [],
       "panels": [
         {
@@ -899,7 +899,10 @@ data:
       "refresh": "10s",
       "schemaVersion": 16,
       "style": "dark",
-      "tags": [],
+      "tags": [
+        "kubernetes",
+        "pods"
+      ],
       "templating": {
         "list": [
           {
@@ -907,7 +910,7 @@ data:
             "current": {},
             "datasource": "prometheus",
             "hide": 0,
-            "includeAll": true,
+            "includeAll": false,
             "label": "Namespace",
             "multi": false,
             "name": "namespace",
@@ -965,7 +968,7 @@ data:
         ]
       },
       "time": {
-        "from": "now-1h",
+        "from": "now-30m",
         "to": "now"
       },
       "timepicker": {
@@ -996,7 +999,7 @@ data:
       "timezone": "browser",
       "title": "Kubernetes: POD Overview",
       "uid": "GlXkUBGiz",
-      "version": 6
+      "version": 3
     }
   kubernetes-deployment-overview.json: |
     {
@@ -1054,7 +1057,7 @@ data:
       "gnetId": 5303,
       "graphTooltip": 1,
       "id": null,
-      "iteration": 1529054699058,
+      "iteration": 1529908293002,
       "links": [],
       "panels": [
         {
@@ -1122,6 +1125,7 @@ data:
               "expr": "max(kube_deployment_spec_replicas{deployment=\"$deployment_name\",namespace=\"$deployment_namespace\"}) without (instance, pod)",
               "format": "time_series",
               "intervalFactor": 2,
+              "metric": "kube_deployment_spec_replicas",
               "refId": "A",
               "step": 600
             }
@@ -1137,7 +1141,7 @@ data:
               "value": "null"
             }
           ],
-          "valueName": "avg"
+          "valueName": "current"
         },
         {
           "cacheTimeout": null,
@@ -1219,7 +1223,7 @@ data:
               "value": "null"
             }
           ],
-          "valueName": "avg"
+          "valueName": "current"
         },
         {
           "cacheTimeout": null,
@@ -1301,7 +1305,7 @@ data:
               "value": "null"
             }
           ],
-          "valueName": "avg"
+          "valueName": "current"
         },
         {
           "cacheTimeout": null,
@@ -1366,6 +1370,7 @@ data:
           "targets": [
             {
               "expr": "max(kube_deployment_metadata_generation{deployment=\"$deployment_name\",namespace=\"$deployment_namespace\"}) without (instance, pod)",
+              "format": "time_series",
               "intervalFactor": 2,
               "refId": "A",
               "step": 600
@@ -1382,7 +1387,7 @@ data:
               "value": "null"
             }
           ],
-          "valueName": "avg"
+          "valueName": "current"
         },
         {
           "cacheTimeout": null,
@@ -1528,7 +1533,7 @@ data:
           "tableColumn": "",
           "targets": [
             {
-              "expr": "sum(rate(container_cpu_usage_seconds_total{namespace=\"$deployment_namespace\",pod_name=~\"$deployment_name.*\"}[2m])) ",
+              "expr": "sum(rate(container_cpu_usage_seconds_total{namespace=\"$deployment_namespace\",pod_name=~\"$deployment_name.*\"}[5m]))",
               "format": "time_series",
               "intervalFactor": 2,
               "refId": "A",
@@ -1536,7 +1541,7 @@ data:
             }
           ],
           "thresholds": "",
-          "title": "Total CPU",
+          "title": "AVG CPU",
           "type": "singlestat",
           "valueFontSize": "110%",
           "valueMaps": [
@@ -1546,7 +1551,7 @@ data:
               "value": "null"
             }
           ],
-          "valueName": "current"
+          "valueName": "avg"
         },
         {
           "cacheTimeout": null,
@@ -1611,7 +1616,7 @@ data:
           "tableColumn": "",
           "targets": [
             {
-              "expr": "sum(container_memory_working_set_bytes{namespace=\"$deployment_namespace\",pod_name=~\"$deployment_name.*\",container_name!=\"POD\"}) ",
+              "expr": "sum(container_memory_working_set_bytes{namespace=\"$deployment_namespace\",pod_name=~\"$deployment_name.*\"}) ",
               "format": "time_series",
               "intervalFactor": 2,
               "refId": "A",
@@ -1619,7 +1624,7 @@ data:
             }
           ],
           "thresholds": "",
-          "title": "Total Memory",
+          "title": "AVG Memory",
           "type": "singlestat",
           "valueFontSize": "110%",
           "valueMaps": [
@@ -1629,7 +1634,7 @@ data:
               "value": "null"
             }
           ],
-          "valueName": "current"
+          "valueName": "avg"
         },
         {
           "cacheTimeout": null,
@@ -1701,7 +1706,7 @@ data:
             }
           ],
           "thresholds": "",
-          "title": "Total Network",
+          "title": "AVG Network",
           "type": "singlestat",
           "valueFontSize": "80%",
           "valueMaps": [
@@ -1711,7 +1716,7 @@ data:
               "value": "null"
             }
           ],
-          "valueName": "current"
+          "valueName": "avg"
         },
         {
           "aliasColors": {},
@@ -1761,10 +1766,10 @@ data:
           "steppedLine": false,
           "targets": [
             {
-              "expr": "sum by (pod_name)(rate(container_cpu_usage_seconds_total{namespace=\"$deployment_namespace\",pod_name=~\"$deployment_name.*\"}[2m]))",
+              "expr": "sum by (pod_name) (rate(container_cpu_usage_seconds_total{namespace=\"$deployment_namespace\",pod_name=~\"$deployment_name.*\"}[2m]))",
               "format": "time_series",
               "intervalFactor": 2,
-              "legendFormat": "{{ pod_name }}",
+              "legendFormat": "",
               "refId": "A",
               "step": 30
             }
@@ -1833,7 +1838,7 @@ data:
             "max": false,
             "min": false,
             "rightSide": false,
-            "show": true,
+            "show": false,
             "total": false,
             "values": false
           },
@@ -1851,11 +1856,12 @@ data:
           "steppedLine": false,
           "targets": [
             {
-              "expr": "sum by (pod_name) (container_memory_working_set_bytes{namespace=\"$deployment_namespace\",pod_name=~\"$deployment_name.*\",container_name!=\"POD\"})",
+              "expr": "sum by (pod_name) (container_memory_working_set_bytes{namespace=\"$deployment_namespace\",pod_name=~\"$deployment_name.*\"})",
               "format": "time_series",
               "interval": "10s",
               "intervalFactor": 1,
-              "legendFormat": "Current",
+              "legendFormat": "Current : {{ pod_name }} ",
+              "metric": "container_memory_usage_bytes",
               "refId": "A",
               "step": 15
             }
@@ -2177,7 +2183,7 @@ data:
       "timezone": "browser",
       "title": "Kubernetes: Deployment Overview",
       "uid": "ORYiYUzmk",
-      "version": 11
+      "version": 3
     }
   kubernetes-daemonset-overview.json: |
     {
@@ -2235,7 +2241,7 @@ data:
       "gnetId": 5330,
       "graphTooltip": 1,
       "id": null,
-      "iteration": 1529054711360,
+      "iteration": 1529908306289,
       "links": [],
       "panels": [
         {
@@ -2323,7 +2329,7 @@ data:
               "value": "null"
             }
           ],
-          "valueName": "avg"
+          "valueName": "current"
         },
         {
           "cacheTimeout": null,
@@ -2405,7 +2411,7 @@ data:
               "value": "null"
             }
           ],
-          "valueName": "avg"
+          "valueName": "current"
         },
         {
           "cacheTimeout": null,
@@ -2487,7 +2493,7 @@ data:
               "value": "null"
             }
           ],
-          "valueName": "avg"
+          "valueName": "current"
         },
         {
           "cacheTimeout": null,
@@ -3195,7 +3201,7 @@ data:
       "timezone": "browser",
       "title": "Kubernetes: DaemonSet Overview",
       "uid": "gekRLzHiz",
-      "version": 15
+      "version": 3
     }
   kubernetes-statefulset-overview.json: |
     {
@@ -3248,12 +3254,12 @@ data:
           }
         ]
       },
-      "description": "Kubernetes: StatefulSets  Overview",
+      "description": "Kubernetes: StatefulSets Overview",
       "editable": false,
       "gnetId": 5330,
       "graphTooltip": 1,
       "id": null,
-      "iteration": 1529054688951,
+      "iteration": 1529908316070,
       "links": [],
       "panels": [
         {
@@ -3336,7 +3342,7 @@ data:
               "value": "null"
             }
           ],
-          "valueName": "avg"
+          "valueName": "current"
         },
         {
           "cacheTimeout": null,
@@ -3418,7 +3424,7 @@ data:
               "value": "null"
             }
           ],
-          "valueName": "avg"
+          "valueName": "current"
         },
         {
           "cacheTimeout": null,
@@ -3500,7 +3506,7 @@ data:
               "value": "null"
             }
           ],
-          "valueName": "avg"
+          "valueName": "current"
         },
         {
           "cacheTimeout": null,
@@ -3582,7 +3588,7 @@ data:
               "value": "null"
             }
           ],
-          "valueName": "avg"
+          "valueName": "current"
         },
         {
           "cacheTimeout": null,
@@ -3728,7 +3734,7 @@ data:
           "tableColumn": "",
           "targets": [
             {
-              "expr": "sum(rate(container_cpu_usage_seconds_total{namespace=\"$statefulset_namespace\",pod_name=~\"$statefulset_name.*\"}[2m]))",
+              "expr": "sum(rate(container_cpu_usage_seconds_total{namespace=\"$statefulset_namespace\",pod_name=~\"$statefulset_name.*\",pod_name!=\"\"}[2m]))",
               "format": "time_series",
               "intervalFactor": 2,
               "refId": "A",
@@ -3810,7 +3816,7 @@ data:
           "tableColumn": "",
           "targets": [
             {
-              "expr": "sum(container_memory_working_set_bytes{namespace=\"$statefulset_namespace\",pod_name=~\"$statefulset_name.*\", container_name!=\"POD\"})",
+              "expr": "sum(container_memory_working_set_bytes{namespace=\"$statefulset_namespace\",pod_name=~\"$statefulset_name.*\",pod_name!=\"\", container_name!=\"POD\"})",
               "format": "time_series",
               "intervalFactor": 2,
               "refId": "A",
@@ -3892,7 +3898,7 @@ data:
           "tableColumn": "",
           "targets": [
             {
-              "expr": "sum(rate(container_network_transmit_bytes_total{namespace=\"$statefulset_namespace\",pod_name=~\"$statefulset_name.*\"}[3m])) + sum(rate(container_network_receive_bytes_total{namespace=\"$statefulset_namespace\",pod_name=~\"$statefulset_name.*\"}[3m]))",
+              "expr": "sum(rate(container_network_transmit_bytes_total{namespace=\"$statefulset_namespace\",pod_name=~\"$statefulset_name.*\",pod_name!=\"\"}[2m])) + sum(rate(container_network_receive_bytes_total{namespace=\"$statefulset_namespace\",pod_name=~\"$statefulset_name.*\", pod_name!=\"\"}[2m]))",
               "format": "time_series",
               "intervalFactor": 2,
               "refId": "A",
@@ -3960,7 +3966,7 @@ data:
           "steppedLine": false,
           "targets": [
             {
-              "expr": "sum by (pod_name) (rate(container_cpu_usage_seconds_total{namespace=\"$statefulset_namespace\",pod_name=~\"$statefulset_name.*\"}[2m]))",
+              "expr": "sum by (pod_name) (rate(container_cpu_usage_seconds_total{namespace=\"$statefulset_namespace\",pod_name=~\"$statefulset_name.*\", pod_name!=\"\"}[2m]))",
               "format": "time_series",
               "intervalFactor": 2,
               "legendFormat": "{{ pod_name }}",
@@ -4050,7 +4056,7 @@ data:
           "steppedLine": false,
           "targets": [
             {
-              "expr": "sum by (pod_name) (container_memory_working_set_bytes{namespace=\"$statefulset_namespace\",pod_name=~\"$statefulset_name.*\",container_name!=\"POD\"})",
+              "expr": "sum by (pod_name) (container_memory_working_set_bytes{namespace=\"$statefulset_namespace\",pod_name=~\"$statefulset_name.*\",pod_name!=\"\",container_name!=\"POD\"})",
               "format": "time_series",
               "interval": "10s",
               "intervalFactor": 1,
@@ -4271,9 +4277,9 @@ data:
         ]
       },
       "timezone": "browser",
-      "title": "Kubernetes: StatefulSets  Overview",
+      "title": "Kubernetes: StatefulSets Overview",
       "uid": "XYPiY8kik",
-      "version": 11
+      "version": 5
     }
 kind: ConfigMap
 metadata:
