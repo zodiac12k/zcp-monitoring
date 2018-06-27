@@ -8,10 +8,9 @@ metadata:
   annotations:
     prometheus.io/scrape: "true"
 spec:
-  type: NodePort
+  type: ClusterIP
   ports:
-    - nodePort: 31000
-      port: 9115
+    - port: 9115
       targetPort: 9115
       protocol: TCP
   selector:

@@ -62,12 +62,16 @@ data:
       routes:
       # Send severity=slack alerts to slack.
       - match:
+          severity: critical
+        receiver: sk-cps-ops
+        continue: true
+
+      - match:
           severity: slack
         receiver: slack_alert
       - match:
           severity: email
         receiver: slack_alert
-    #   receiver: email_alert
 
     receivers:
     - name: 'default'
@@ -75,6 +79,12 @@ data:
       - channel: '#devops'
         text: '<!channel>{{ template "slack.devops.text" . }}'
         send_resolved: true
+
+    - name: 'sk-cps-ops'
+      slack_configs:
+      - api_url: https://hooks.slack.com/services/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
+        send_resolved: true
+
 
     - name: 'slack_alert'
       slack_configs:
