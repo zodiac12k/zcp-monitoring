@@ -10,6 +10,7 @@
 |kube-state-metric| 1.3.0 |k8s.gcr.io/kube-state-metrics:v1.3.0
 |Node-Exporter| 0.15.2  |node-exporter:v0.15.2
 |Blackbox-Exporter| 0.12.0  |prom/blackbox-exporter:v0.12.0
+|ElasticSearch-Exporter| 1.0.2  |justwatch/elasticsearch_exporter:1.0.2
 
 ## Monitoring Dashboard(Grafana)
 
