@@ -26,6 +26,8 @@
 ||Kubernetes: Deployment Overview|
 ||Kubernetes: DaemonSet Overview|
 ||Kubernetes: StatefulSet Overview|
+|Addon Dashboards|ElastiSearch|
+||ZCP Service Status|
 ## Get ICCS Deploy Env 
 
 * ETCD ENDPOINT 정보 확인(IP, Port)
