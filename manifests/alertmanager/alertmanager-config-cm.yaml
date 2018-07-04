@@ -60,10 +60,20 @@ data:
 
       # The child route trees.
       routes:
-      # Send severity=slack alerts to slack.
-      - match:
-          severity: critical
-        receiver: sk-cps-ops
+      - receiver: sk-cps-ops
+        match_re:
+          channel: sk-cps-ops
+        routes:
+        - receiver: default
+          match:
+            severity: warning
+        - receiver: sk-cps-ops
+          match:
+            severity: critical
+
+      - receiver: zcp-webhook
+        match_re:
+          severity : .*
         continue: true
 
     receivers:
@@ -73,3 +83,9 @@ data:
       slack_configs:
       - api_url: https://hooks.slack.com/services/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
         send_resolved: true
+    
+    - name: zcp-webhook
+      webhook_configs:
+      - url: http://webhook-alertmanager-store-svc:5000/webhook
+        send_resolved: true
+
