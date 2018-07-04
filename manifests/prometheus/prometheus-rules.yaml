@@ -209,7 +209,7 @@ data:
         for: 10m
         labels:
           channel: sk-cps-ops
-          severity: warning
+          severity: critical
         annotations:
           summary: Prometheus configuration reload has failed 
           description: Reloading Prometheus' configuration has failed for {{ $labels.namespace}}/{{ $labels.pod}}.
@@ -218,7 +218,7 @@ data:
         for: 10m
         labels:
           channel: sk-cps-ops
-          severity: warning
+          severity: critical
         annotations:
           summary: Errors while sending alerts from Prometheus
           description: Errors while sending alerts from Prometheus to Alertmanager {{$labels.Alertmanager}}
@@ -231,7 +231,7 @@ data:
         for: 10m
         labels:
           channel: sk-cps-ops
-          severity: warning
+          severity: critical
         annotations:
           description: Reloading Alertmanager's configuration has failed
           summary: Alertmanager configuration reload has failed
