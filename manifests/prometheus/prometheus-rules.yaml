@@ -1,6 +1,6 @@
 apiVersion: v1
 data:
-  node.rules: |
+  node.rules: |-
     groups:
     - name: node.rules
       rules:
@@ -8,6 +8,7 @@ data:
         expr: up{component="node-exporter",job="kubernetes-monitoring-endpoints"} == 0
         for: 2m
         labels:
+          channel: sk-cps-ops
           severity: critical
         annotations:
           summary: node-exporter cannot be scraped
@@ -16,6 +17,7 @@ data:
         expr: (100 - (avg by (instance) (irate(node_cpu{component="node-exporter",mode="idle"}[5m])) * 100)) > 75
         for: 2m
         labels:
+          channel: sk-cps-ops
           severity: warning
         annotations:
           summary: "{{$labels.instance}}: High CPU usage detected"
@@ -24,6 +26,7 @@ data:
         expr: (100 - (avg by (instance) (irate(node_cpu{component="node-exporter",mode="idle"}[5m])) * 100)) > 95
         for: 2m
         labels:
+          channel: sk-cps-ops
           severity: critical
         annotations:
           summary: "{{$labels.instance}}: High CPU usage detected"
@@ -32,22 +35,25 @@ data:
         expr: ((node_load5 / count without (cpu, mode) (node_cpu{mode="system"})) > 4)
         for: 2m
         labels:
+          channel: sk-cps-ops
           severity: warning
         annotations:
           summary: "{{$labels.instance}}: High Load Average detected"
           description: "{{$labels.instance}}: Load Average is high (current value is: {{ $value }})"
       - alert: NodeMemoryUsage
-        expr: (((node_memory_MemTotal-node_memory_MemFree-node_memory_Cached)/(node_memory_MemTotal)*100)) > 75
+        expr: (((node_memory_MemTotal-node_memory_MemFree-node_memory_Buffers-node_memory_Cached)/(node_memory_MemTotal)*100)) > 75
         for: 2m
         labels:
+          channel: sk-cps-ops
           severity: warning
         annotations:
           summary: "{{$labels.instance}}: High memory usage detected"
           description: "{{$labels.instance}}: Memory usage is above 75% (current value is: {{ $value }})"
       - alert: NodeMemoryUsage
-        expr: (((node_memory_MemTotal-node_memory_MemFree-node_memory_Cached)/(node_memory_MemTotal)*100)) > 95
+        expr: (((node_memory_MemTotal-node_memory_MemFree-node_memory_Buffers-node_memory_Cached)/(node_memory_MemTotal)*100)) > 95
         for: 2m
         labels:
+          channel: sk-cps-ops
           severity: critical
         annotations:
           summary: "{{$labels.instance}}: High memory usage detected"
@@ -56,6 +62,7 @@ data:
         expr: (((node_memory_SwapTotal-node_memory_SwapFree)/node_memory_SwapTotal)*100) > 75
         for: 2m
         labels:
+          channel: sk-cps-ops
           severity: warning
         annotations:
           summary: "{{$labels.instance}}: Swap usage detected"
@@ -64,6 +71,7 @@ data:
         expr: ((node_filesystem_size{mountpoint="/"} - node_filesystem_free{mountpoint="/"} ) / node_filesystem_size{mountpoint="/"} * 100) > 75
         for: 30m
         labels:
+          channel: sk-cps-ops
           severity: warning
         annotations:
           summary: "{{$labels.instance}}: Low Root disk space"
@@ -72,11 +80,12 @@ data:
         expr: ((node_filesystem_size{mountpoint="/"} - node_filesystem_free{mountpoint="/"} ) / node_filesystem_size{mountpoint="/"} * 100) > 95
         for: 30m
         labels:
+          channel: sk-cps-ops
           severity: critical
         annotations:
           summary: "{{$labels.instance}}: Low Root disk space"
           description: "{{$labels.instance}}: Root disk usage is above 95% (current value is: {{ $value }})"
-  kube-apiserver.rules: |
+  kube-apiserver.rules: |-
     groups:
     - name: kube-apiserver.rules
       rules:
@@ -84,6 +93,7 @@ data:
         expr: up{job="kubernetes-apiservers"} == 0
         for: 2m
         labels:
+          channel: sk-cps-ops
           severity: critical
         annotations:
           summary: API server unreachable
@@ -92,6 +102,7 @@ data:
         expr: rate(apiserver_request_count{code=~"^(?:5..)$"}[5m]) / rate(apiserver_request_count[5m]) * 100 > 5
         for: 2m
         labels:
+          channel: sk-cps-ops
           severity: warning
         annotations:
           summary: API server Errors High
@@ -100,11 +111,12 @@ data:
         expr: avg(apiserver_request_latencies_sum / apiserver_request_latencies_count) / 1000000 > 2000
         for: 2m
         labels:
+          channel: sk-cps-ops
           severity: warning
         annotations:
           summary: API server Latency High
           description: "API server latency High above 2s (current value: {{ $value }}ms"
-  kubelet.rules: |
+  kubelet.rules: |-
     groups:
     - name: kubelet.rules
       rules:
@@ -112,14 +124,16 @@ data:
         expr: kube_node_status_condition{condition="Ready",status="true"} == 0
         for: 2m
         labels:
+          channel: sk-cps-ops
           severity: warning
         annotations:
-          description: The Kubelet on {{ $labels.node }} has not checked in with the API, or has set itself to NotReady, for more than 2m 
+          description: The Kubelet on {{ $labels.node }} has not checked in with the API, or has set itself to NotReady, for more than 2m
           summary: Node status is NotReady
       - alert: K8SKubeletDown
         expr: up{job="kubernetes-nodes"} == 0
         for: 2m
         labels:
+          channel: sk-cps-ops
           severity: critical
         annotations:
           description: Prometheus failed to scrape {{ $labels.instance }} of kubelets.
@@ -128,11 +142,12 @@ data:
         expr: kubelet_running_pod_count > 100
         for: 10m
         labels:
+          channel: sk-cps-ops
           severity: warning
         annotations:
           description: Kubelet {{$labels.instance}} is running {{$value}} pods, close to the limit of 110
           summary: Kubelet is close to pod limit
-  etcd.rules: |
+  etcd.rules: |-
     groups:
     - name: etcd.rules
       rules:
@@ -140,6 +155,7 @@ data:
         expr: up{job="etcd"} == 0
         for: 2m
         labels:
+          channel: sk-cps-ops
           severity: critical
         annotations:
           summary: ETCD server unreachable
@@ -148,6 +164,7 @@ data:
         expr: etcd_server_has_leader{job="etcd"} == 0
         for: 2m
         labels:
+          channel: sk-cps-ops
           severity: critical
         annotations:
           summary: ETCD Member has no leader
@@ -156,6 +173,7 @@ data:
         expr: count(up{job="etcd"} == 0) > (count(up{job="etcd"}) / 2 - 1)
         for: 2m
         labels:
+          channel: sk-cps-ops
           severity: critical
         annotations:
           summary: ETCD server insufficient members
@@ -164,11 +182,12 @@ data:
         expr: increase(etcd_server_leader_changes_seen_total{job="etcd"}[1h]) > 3
         for: 2m
         labels:
+          channel: sk-cps-ops
           severity: critical
         annotations:
           summary: ETCD a high number of leader changes within the etcd cluster are happening
           description: ETCD instance {{ $labels.instance }} has seen {{ $value }} leader changes within the last hour
-  kube-state-metrics.rules: |
+  kube-state-metrics.rules: |-
     groups:
     - name: kube-state-metrics.rules
       rules:
@@ -176,11 +195,12 @@ data:
         expr: increase(kube_pod_container_status_restarts_total[1h]) > 5
         for: 10m
         labels:
+          channel: sk-cps-ops
           severity: warning
         annotations:
           summary: Pod is restarting frequently
           description: Pod {{$labels.namespaces}}/{{$labels.pod}} is was restarted {{$value}} times within the last hour
-  prometheus.rules: |
+  prometheus.rules: |-
     groups:
     - name: prometheus.rules
       rules:
@@ -188,6 +208,7 @@ data:
         expr: prometheus_config_last_reload_successful == 0
         for: 10m
         labels:
+          channel: sk-cps-ops
           severity: warning
         annotations:
           summary: Prometheus configuration reload has failed 
@@ -196,11 +217,12 @@ data:
         expr: rate(prometheus_notifications_errors_total[5m]) / rate(prometheus_notifications_sent_total[5m]) > 0.01
         for: 10m
         labels:
+          channel: sk-cps-ops
           severity: warning
         annotations:
           summary: Errors while sending alerts from Prometheus
           description: Errors while sending alerts from Prometheus to Alertmanager {{$labels.Alertmanager}}
-  alertmanager.rules: |
+  alertmanager.rules: |-
     groups:
     - name: alertmanager.rules
       rules:
@@ -208,11 +230,12 @@ data:
         expr: alertmanager_config_last_reload_successful == 0
         for: 10m
         labels:
+          channel: sk-cps-ops
           severity: warning
         annotations:
           description: Reloading Alertmanager's configuration has failed
           summary: Alertmanager configuration reload has failed
-  component-up-monitoring.rules: |
+  component-up-monitoring.rules: |-
     groups:
     - name: component-up-monitoring.rules
       rules:
@@ -220,7 +243,8 @@ data:
         expr: up{component=~"alertmanager|blackbox-exporter|grafana|kube-state-metrics|prometheus"} == 0
         for: 2m
         labels:
-          severity: warning
+          channel: sk-cps-ops
+          severity: critical
         annotations:
           summary: ZCP Monitoring Component Down 
           description: ZCP Monitoring Component Down has failed for {{ $labels.component }}

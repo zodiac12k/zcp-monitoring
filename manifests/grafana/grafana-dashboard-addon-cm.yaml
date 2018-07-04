@@ -1,0 +1,10 @@
+apiVersion: v1
+data:
+  zcp-logging-es-overview.json: |
+kind: ConfigMap
+metadata:
+  name: monitoring-grafana-dashboard-cluster
+  namespace: zcp-system
+
+
+
