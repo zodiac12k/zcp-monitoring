@@ -26,7 +26,7 @@
 ||Kubernetes: Deployment Overview|
 ||Kubernetes: DaemonSet Overview|
 ||Kubernetes: StatefulSet Overview|
-|Addon Dashboards|ElastiSearch|
+|Addon Dashboards|ElasticSearch|
 ||ZCP Service Status|
 ## Get ICCS Deploy Env 
 
