@@ -2865,7 +2865,9 @@ data:
       "refresh": "10s",
       "schemaVersion": 16,
       "style": "dark",
-      "tags": [],
+      "tags": [
+        "kubernetes"
+      ],
       "templating": {
         "list": [
           {
@@ -4943,6 +4945,7 @@ data:
       "schemaVersion": 16,
       "style": "dark",
       "tags": [
+        "kubernetes",
         "etcd"
       ],
       "templating": {
@@ -5625,7 +5628,9 @@ data:
       "refresh": "1m",
       "schemaVersion": 16,
       "style": "dark",
-      "tags": [],
+      "tags": [
+        "kubernetes"
+      ],
       "templating": {
         "list": []
       },
