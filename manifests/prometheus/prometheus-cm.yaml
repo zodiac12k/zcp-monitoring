@@ -297,6 +297,27 @@ data:
           - source_labels: [__meta_kubernetes_ingress_name]
             target_label: kubernetes_name
 
+      - job_name: 'monitoring-zcp-system'
+        metrics_path: /probe
+        params:
+          module: [http_2xx]
+        static_configs:
+          - targets:
+            - http://grafana-service:3000/api/health
+            - http://prometheus-service:9090/-/healthy
+            - http://alertmanager-service:9093/-/healthy
+            labels:
+              namespace: 'zcp-system'
+
+        relabel_configs:
+          - source_labels: [__address__]
+            target_label: __param_target
+          - source_labels: [__param_target]
+            target_label: instance
+          - target_label: __address__
+            replacement: blackbox:9115
+
+
       - job_name: 'etcd'
         static_configs:
         - targets:
