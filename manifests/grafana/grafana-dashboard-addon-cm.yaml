@@ -72,9 +72,9 @@ data:
           "colorBackground": true,
           "colorValue": false,
           "colors": [
-            "#299c46",
+            "#d44a3a",
             "rgba(237, 129, 40, 0.89)",
-            "#d44a3a"
+            "#299c46"
           ],
           "datasource": "prometheus",
           "format": "none",
