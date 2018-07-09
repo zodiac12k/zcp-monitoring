@@ -2,6 +2,7 @@ apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
   name: kube-state-metrics
+  namespace: zcp-system
   labels:
     component: kube-state-metrics 
 spec:
