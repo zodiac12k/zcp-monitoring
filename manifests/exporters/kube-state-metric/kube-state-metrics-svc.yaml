@@ -6,12 +6,11 @@ metadata:
     component: kube-state-metrics 
   annotations:
     prometheus.io/scrape: 'true'
-  namespace: zcp-system
 spec:
   ports:
-  - name: http-metrics
+  - name: metrics
     port: 8080
-    targetPort: http-metrics
+    targetPort: metrics
     protocol: TCP
   selector:
-    component: kube-state-metrics 
+    component: kube-state-metrics
