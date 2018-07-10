@@ -42,6 +42,8 @@ spec:
           name: dashboard-cluster-volume
         - mountPath: /var/lib/grafana/dashboards/container
           name: dashboard-container-volume
+        - mountPath: /var/lib/grafana/dashboards/addon
+          name: dashboard-addon-volume
         - mountPath: /etc/provisioning/dashboards
           name: config-volume-provisioning
         - mountPath: /etc/provisioning/datasources
@@ -62,6 +64,10 @@ spec:
         configMap:
           defaultMode: 420
           name: monitoring-grafana-dashboard-container
+      - name: dashboard-addon-volume
+        configMap:
+          defaultMode: 420
+          name: monitoring-grafana-dashboard-addon
       - name: config-volume
         configMap:
           defaultMode: 420

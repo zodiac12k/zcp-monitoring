@@ -33,3 +33,12 @@ data:
        type: file
        options:
          path: /var/lib/grafana/dashboards/container
+  addon.yaml: |
+    apiVersion: 1
+    providers:
+     - name: 'Addon'
+       orgId: 1
+       folder: 'Addon Dashboards'
+       type: file
+       options:
+         path: /var/lib/grafana/dashboards/addon
