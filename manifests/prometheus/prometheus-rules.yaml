@@ -199,7 +199,7 @@ data:
           severity: warning
         annotations:
           summary: Pod is restarting frequently
-          description: Pod {{$labels.namespaces}}/{{$labels.pod}} is was restarted {{$value}} times within the last hour
+          description: Pod {{$labels.namespace}}/{{$labels.pod}} is was restarted {{$value}} times within the last hour
   prometheus.rules: |-
     groups:
     - name: prometheus.rules
