@@ -30,6 +30,8 @@ spec:
           mountPath: /alertmanager
         - name: alertmanager-templates-volume
           mountPath: /etc/alertmanager-templates
+        - name: tz-config
+          mountPath: /etc/localtime
       volumes:
       - name: config-volume
         configMap:
@@ -39,3 +41,7 @@ spec:
           name: alertmanager-templates
       - name: alertmanager
         emptyDir: {}
+      - name: tz-config
+        hostPath:
+          path: /usr/share/zoneinfo/Asia/Seoul
+
