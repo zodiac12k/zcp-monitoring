@@ -14,6 +14,13 @@ spec:
       containers:
         - name: prometheus
           image: prom/prometheus:v2.2.1
+          resources:
+            limits:
+              cpu: 4000m
+              memory: 4Gi
+            requests:
+              cpu: 3000m
+              memory: 3Gi
           args:
             - "--config.file=/etc/prometheus/prometheus.yml"
             - "--storage.tsdb.path=/prometheus/"
@@ -43,13 +50,6 @@ spec:
             periodSeconds: 10
             successThreshold: 1
             timeoutSeconds: 30
-          resources:
-            limits:
-              cpu: 4000m
-              memory: 4Gi
-            requests:
-              cpu: 3000m
-              memory: 3Gi 
           securityContext:
             runAsUser: 0
           volumeMounts:

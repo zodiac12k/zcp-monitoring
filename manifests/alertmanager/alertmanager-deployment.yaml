@@ -17,6 +17,13 @@ spec:
       containers:
       - name: alertmanager
         image: prom/alertmanager:latest
+        resources:
+          limits:
+            cpu: 100m
+            memory: 100Mi
+          requests:
+            cpu: 100m
+            memory: 100Mi
         args:
           - '--config.file=/etc/alertmanager/config.yml'
           - '--storage.path=/alertmanager'
@@ -44,13 +51,6 @@ spec:
           periodSeconds: 10
           successThreshold: 1
           timeoutSeconds: 30
-        resources:
-          limits:
-            cpu: 100m
-            memory: 100Mi
-          requests:
-            cpu: 100m
-            memory: 100Mi
         volumeMounts:
         - name: config-volume
           mountPath: /etc/alertmanager
