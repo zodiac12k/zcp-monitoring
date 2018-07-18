@@ -19,4 +19,4 @@ spec:
           image: k8s.gcr.io/kube-state-metrics:v1.3.0
           ports:
           - containerPort: 8080
-            name: metric
+            name: metrics
