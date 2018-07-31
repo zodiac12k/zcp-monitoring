@@ -12,7 +12,7 @@ data:
           severity: critical
         annotations:
           summary: node-exporter cannot be scraped
-          description: Prometheus failed to scrape Node( {{ $labels.instance}} )) for more than 2m 
+          description: Prometheus failed to scrape Node(( {{ $labels.instance}} )) for more than 2m 
       - alert: NodeCPUUsage
         expr: (100 - (avg by (instance) (irate(node_cpu{component="node-exporter",mode="idle"}[5m])) * 100)) > 75
         for: 2m
