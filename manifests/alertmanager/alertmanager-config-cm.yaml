@@ -89,6 +89,6 @@ data:
     
     - name: zcp-webhook
       webhook_configs:
-      - url: http://alertmanager-store-svc:5000/webhook
+      - url: http://zcp-alertmanager-store-svc:5000/webhook
         send_resolved: true
 
