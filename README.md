@@ -143,25 +143,25 @@ $ kubectl create -f manifests/prometheus/
 ## Exporter Deploy
 * kube-state-metric
 ```
-$ kubectl create -f repos/manifests/exporters/kube-state-metric
+$ kubectl create -f manifests/exporters/kube-state-metric
 ```
 * node-exporter
 ```
-$ kubectl create -f repos/manifests/exporters/node-exporter
+$ kubectl create -f manifests/exporters/node-exporter
 ```
 * blackbox-exporter
 ```
-$ kubectl create -f repos/manifests/exporters/blackbox-exporter
+$ kubectl create -f manifests/exporters/blackbox-exporter
 ```
 
 ## Grafana Deploy
 ```
-$ kubectl create -f repos/manifests/grafana
+$ kubectl create -f manifests/grafana
 ```
 
 ## Alertmanager Deploy
 ```
-$ kubectl create -f repos/manifests/alertmanager
+$ kubectl create -f manifests/alertmanager
 ```
 
 ## Ingress 생성 및 Monitoring 서비스 접속 확인
@@ -204,5 +204,5 @@ spec:
           serviceName: blackbox
           servicePort: 9115
 
-$ kubectl create -f repos/ingress.yaml
+$ kubectl create -f ingress.yaml
 ```
