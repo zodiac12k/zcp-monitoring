@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: prometheus-data
+  namespace: zcp-system
+  annotations:
+    volume.beta.kubernetes.io/storage-class: "ibmc-block-retain-silver"
+  labels:
+    billingType: "hourly"
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 30Gi

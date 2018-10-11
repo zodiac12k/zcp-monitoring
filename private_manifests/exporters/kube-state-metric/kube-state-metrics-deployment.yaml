@@ -1,0 +1,41 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: kube-state-metrics
+  namespace: zcp-system
+  labels:
+    component: kube-state-metrics 
+spec:
+  replicas: 1
+  template:
+    metadata:
+      name: kube-state-metrics
+      labels:
+        component: kube-state-metrics
+    spec:
+      tolerations:
+      - key: "management"
+        operator: "Equal"
+        value: "true"
+        effect: "NoSchedule"
+      restartPolicy: Always
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: beta.kubernetes.io/arch
+                operator: In
+                values:
+                - "amd64"
+              - key: role
+                operator: In
+                values:
+                - "management"
+      serviceAccountName: zcp-system-admin
+      containers:
+        - name: kube-state-metrics
+          image: registry.au-syd.bluemix.net/cloudzcp/kube-state-metrics:v1.3.0
+          ports:
+          - containerPort: 8080
+            name: metrics
