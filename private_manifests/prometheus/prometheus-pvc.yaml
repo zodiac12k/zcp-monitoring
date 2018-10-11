@@ -6,7 +6,7 @@ metadata:
   annotations:
     volume.beta.kubernetes.io/storage-class: "ibmc-block-retain-silver"
   labels:
-    billingType: "hourly"
+    billingType: "monthly"
 spec:
   accessModes:
     - ReadWriteOnce

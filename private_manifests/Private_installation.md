@@ -48,7 +48,8 @@ $ kubectl -n kube-system get secret calico-etcd-secrets -o yaml > etcd-secrets.y
 $ vi etcd-secret.yaml
 ...
 name: etcd-secrets
-namespace: zcp-system
+prometheus-pvc.yaml
+anamespace: zcp-system
 
 $ kubectl create -f etcd-secrets.yaml
 $ kubectl get secret
@@ -107,7 +108,7 @@ metadata:
   annotations:
     volume.beta.kubernetes.io/storage-class: "ibmc-block-retain-bronze"
   labels:
-    billingType: "hourly"
+    billingType: "monthly"
 spec:
   accessModes:
     - ReadWriteOnce
@@ -128,7 +129,7 @@ containers:
     args:
       - "--config.file=/etc/prometheus/prometheus.yml"
       - "--storage.tsdb.path=/prometheus/"
-      - "--storage.tsdb.retention=30d"
+      - "--storage.tsdb.retention=20d"
       - "--web.enable-lifecycle"
       - "--web.enable-admin-api"
       - "--web.external-url=http://prometheus.example.sk.com"
