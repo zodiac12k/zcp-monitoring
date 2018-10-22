@@ -125,7 +125,7 @@ data:
         for: 2m
         labels:
           channel: sk-cps-ops
-          severity: warning
+          severity: critical 
         annotations:
           description: The Kubelet on {{ $labels.node }} has not checked in with the API, or has set itself to NotReady, for more than 2m
           summary: Node status is NotReady
