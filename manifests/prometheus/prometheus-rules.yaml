@@ -11,8 +11,8 @@ data:
           channel: sk-cps-ops
           severity: critical
         annotations:
-          summary: node-exporter cannot be scraped
-          description: Prometheus failed to scrape Node(( {{ $labels.instance}} )) for more than 2m 
+          summary: "{{$labels.instance}}: node-exporter cannot be scraped" 
+          description: "{{$labels.instance}}: Prometheus failed to scrape node for more than 2m" 
       - alert: NodeCPUUsage
         expr: (100 - (avg by (instance) (irate(node_cpu{component="node-exporter",mode="idle"}[5m])) * 100)) > 75
         for: 2m
