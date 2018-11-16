@@ -1,0 +1,27 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: monitoring-ingress
+  namespace: zcp-system
+  annotations:
+    ingress.bluemix.net/redirect-to-https: "True"
+spec:
+  rules:
+  - host: monitoring.hklaw.co.kr
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: grafana-service
+          servicePort: 3000
+#  - host: prometheus.cloudzcp-lawai.seo01.containers.appdomain.cloud
+#    http:
+#      paths:
+#      - path: /
+#        backend:
+#          serviceName: prometheus-service
+#          servicePort: 9090
+  tls:
+    - secretName: hklaw-co-kr-cert
+      hosts:
+        - monitoring.hklaw.co.kr

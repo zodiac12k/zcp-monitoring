@@ -1,0 +1,21 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: monitoring-ingress
+  namespace: zcp-system
+  annotations:
+    ingress.bluemix.net/redirect-to-https: "True"
+    ingress.bluemix.net/ALB-ID: private-cr165ff8f55e3d461db93c9d4264e26dfc-alb2
+spec:
+  rules:
+  - host: skip-monitoring.cloudzcp.io
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: grafana-service
+          servicePort: 3000
+  tls:
+    - secretName: cloudzcp-io-cert
+      hosts:
+        - skip-monitoring.cloudzcp.io

@@ -1,0 +1,28 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: monitoring-ingress
+  namespace: zcp-system
+  annotations:
+    ingress.bluemix.net/redirect-to-https: "True"
+    ingress.bluemix.net/ALB-ID: private-crd141bb7f5a0047f180fe05ed4b5404a5-alb1
+spec:
+  rules:
+  - host: gdi-monitoring.cloudzcp.io
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: grafana-service
+          servicePort: 3000
+#  - host: prometheus.cloudzcp-lawai.seo01.containers.appdomain.cloud
+#    http:
+#      paths:
+#      - path: /
+#        backend:
+#          serviceName: prometheus-service
+#          servicePort: 9090
+  tls:
+    - secretName: cloudzcp-io-cert
+      hosts:
+        - gdi-monitoring.cloudzcp.io
