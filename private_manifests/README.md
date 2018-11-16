@@ -90,11 +90,6 @@ data:
 
 ## Prometheus Deploy
 
-* Monitoring Namespace 생성
-```
-$ kubectl create -f namespace.yaml
-```
-
 * Persistent Volume 설정 및 생성(File/Block Storage Option)
 
 Storage-Class 설정 및 PV 생성 Option 변경(Block Storage 기준)
