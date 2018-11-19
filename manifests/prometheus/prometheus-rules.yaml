@@ -84,7 +84,7 @@ data:
           severity: critical
         annotations:
           summary: "{{$labels.instance}}: Low Root disk space"
-          description: "{{$labels.instance}}: Root disk usage is above 95% (current value is: {{ $value }})"
+          description: "{{$labels.instance}}: Root disk usage is above 95% (current value is: {{ $value }})"  
   kube-apiserver.rules: |-
     groups:
     - name: kube-apiserver.rules
@@ -120,15 +120,6 @@ data:
     groups:
     - name: kubelet.rules
       rules:
-      - alert: K8SNodeNotReady
-        expr: kube_node_status_condition{condition="Ready",status="true"} == 0
-        for: 2m
-        labels:
-          channel: sk-cps-ops
-          severity: critical
-        annotations:
-          description: The Kubelet on {{ $labels.node }} has not checked in with the API, or has set itself to NotReady, for more than 2m
-          summary: Node status is NotReady
       - alert: K8SKubeletDown
         expr: up{job="kubernetes-nodes"} == 0
         for: 2m
@@ -191,6 +182,51 @@ data:
     groups:
     - name: kube-state-metrics.rules
       rules:
+      - alert: K8SNodeNotReady
+        expr: kube_node_status_condition{condition="Ready",status="true"} == 0
+        for: 2m
+        labels:
+          channel: sk-cps-ops
+          severity: critical
+        annotations:
+          description: The Kubelet on {{ $labels.node }} has not checked in with the API, or has set itself to NotReady, for more than 2m
+          summary: Node status is NotReady
+      - alert: K8SNodeOutOfDisk
+        expr: kube_node_status_condition{condition="OutOfDisk",status="true"} == 1
+        for: 2m
+        labels:
+          channel: sk-cps-ops
+          severity: warning
+        annotations:
+          description: "{{ $labels.node }} is insufficient free space on the node for adding new pods"
+          summary: Node ran out of disk space.
+      - alert: K8SNodeMemoryPressure
+        expr: kube_node_status_condition{condition="MemoryPressure",status="true"} == 1
+        for: 2m
+        labels:
+          channel: sk-cps-ops
+          severity: warning
+        annotations:
+          description: "{{ $labels.node }} memory is low"
+          summary: Node is under memory pressure.
+      - alert: K8SNodePIDPressure
+        expr: kube_node_status_condition{condition="PIDPressure",status="true"} == 1
+        for: 2m
+        labels:
+          channel: sk-cps-ops
+          severity: warning
+        annotations:
+          description: "{{ $labels.node }} is too many processes on the node"
+          summary: Node is under PID pressure.
+      - alert: K8SNodeDiskPressure
+        expr: kube_node_status_condition{condition="DiskPressure",status="true"} == 1
+        for: 2m
+        labels:
+          channel: sk-cps-ops
+          severity: warning
+        annotations:
+          description: "{{ $labels.node }} disk capacity is low"
+          summary: Node is under disk pressure.
       - alert: PodFrequentlyRestarting
         expr: increase(kube_pod_container_status_restarts_total[1h]) > 5
         for: 10m
