@@ -39,3 +39,10 @@ spec:
           ports:
           - containerPort: 8080
             name: metrics
+          volumeMounts:
+            - name: timezone
+              mountPath: /etc/localtime
+      volumes:
+        - name: timezone
+          hostPath:
+            path: /usr/share/zoneinfo/Asia/Seoul

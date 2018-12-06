@@ -87,6 +87,8 @@ spec:
           name: config-volume-provisioning
         - mountPath: /etc/provisioning/datasources
           name: config-volume-provisioning-prometheus 
+        - name: timezone
+          mountPath: /etc/localtime
       volumes:
       - name: grafana-storage
         persistentVolumeClaim:
@@ -119,3 +121,6 @@ spec:
         configMap:
           defaultMode: 420
           name: monitoring-grafana-config-provisioning-prometheus
+      - name: timezone
+        hostPath:
+          path: /usr/share/zoneinfo/Asia/Seoul

@@ -43,8 +43,13 @@ spec:
           volumeMounts:
             - name: blackbox-config-volume
               mountPath: /etc/config/
+            - name: timezone
+              mountPath: /etc/localtime
       volumes:
         - name: blackbox-config-volume
           configMap:
             defaultMode: 420
             name: blackbox-exporter-config
+        - name: timezone
+          hostPath:
+            path: /usr/share/zoneinfo/Asia/Seoul

@@ -83,6 +83,8 @@ spec:
             - name: etcd-secrets-volume
               mountPath: /etc/config
               readOnly: true
+            - name: timezone
+              mountPath: /etc/localtime
       volumes:
         - name: prometheus-config-volume
           configMap:
@@ -102,4 +104,6 @@ spec:
         - name: etcd-secrets-volume
           secret:
             secretName: etcd-secrets
-
+        - name: timezone
+          hostPath:
+            path: /usr/share/zoneinfo/Asia/Seoul
