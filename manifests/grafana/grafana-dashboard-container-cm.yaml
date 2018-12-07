@@ -52,7 +52,7 @@ data:
         ]
       },
       "description": "",
-      "editable": true,
+      "editable": false,
       "gnetId": 6781,
       "graphTooltip": 1,
       "id": null,
@@ -82,7 +82,7 @@ data:
             "rgba(237, 129, 40, 0.89)",
             "rgba(50, 172, 45, 0.97)"
           ],
-          "datasource": "${DS_PROMETHEUS}",
+          "datasource": "prometheus",
           "format": "none",
           "gauge": {
             "maxValue": 100,
@@ -159,7 +159,7 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_PROMETHEUS}",
+          "datasource": "prometheus",
           "decimals": 0,
           "fill": 1,
           "gridPos": {
@@ -245,7 +245,7 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_PROMETHEUS}",
+          "datasource": "prometheus",
           "decimals": 0,
           "fill": 1,
           "gridPos": {
@@ -350,7 +350,7 @@ data:
             "rgba(237, 129, 40, 0.89)",
             "rgba(50, 172, 45, 0.97)"
           ],
-          "datasource": "${DS_PROMETHEUS}",
+          "datasource": "prometheus",
           "decimals": 3,
           "format": "none",
           "gauge": {
@@ -428,7 +428,7 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_PROMETHEUS}",
+          "datasource": "prometheus",
           "editable": true,
           "error": false,
           "fill": 1,
@@ -535,7 +535,7 @@ data:
             "rgba(237, 129, 40, 0.89)",
             "rgba(50, 172, 45, 0.97)"
           ],
-          "datasource": "${DS_PROMETHEUS}",
+          "datasource": "prometheus",
           "format": "bytes",
           "gauge": {
             "maxValue": 100,
@@ -613,7 +613,7 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_PROMETHEUS}",
+          "datasource": "prometheus",
           "editable": false,
           "error": false,
           "fill": 1,
@@ -726,7 +726,7 @@ data:
             "rgba(237, 129, 40, 0.89)",
             "rgba(50, 172, 45, 0.97)"
           ],
-          "datasource": "${DS_PROMETHEUS}",
+          "datasource": "prometheus",
           "decimals": 2,
           "format": "Bps",
           "gauge": {
@@ -804,7 +804,7 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_PROMETHEUS}",
+          "datasource": "prometheus",
           "editable": true,
           "error": false,
           "fill": 1,
@@ -908,7 +908,7 @@ data:
           {
             "allValue": "",
             "current": {},
-            "datasource": "${DS_PROMETHEUS}",
+            "datasource": "prometheus",
             "hide": 0,
             "includeAll": false,
             "label": "Namespace",
@@ -928,7 +928,7 @@ data:
           {
             "allValue": null,
             "current": {},
-            "datasource": "${DS_PROMETHEUS}",
+            "datasource": "prometheus",
             "hide": 0,
             "includeAll": false,
             "label": "Pod",
@@ -948,7 +948,7 @@ data:
           {
             "allValue": ".*",
             "current": {},
-            "datasource": "${DS_PROMETHEUS}",
+            "datasource": "prometheus",
             "hide": 0,
             "includeAll": true,
             "label": "Container",
@@ -999,7 +999,7 @@ data:
       "timezone": "browser",
       "title": "Kubernetes: POD Overview",
       "uid": "GlXkUBGiz",
-      "version": 4
+      "version": 3
     }    
   kubernetes-deployment-overview.json: |
     {
