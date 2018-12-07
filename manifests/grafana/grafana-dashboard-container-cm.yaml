@@ -52,11 +52,11 @@ data:
         ]
       },
       "description": "",
-      "editable": false,
-      "gnetId": 3146,
+      "editable": true,
+      "gnetId": 6781,
       "graphTooltip": 1,
       "id": null,
-      "iteration": 1529908256463,
+      "iteration": 1544171065532,
       "links": [],
       "panels": [
         {
@@ -82,7 +82,7 @@ data:
             "rgba(237, 129, 40, 0.89)",
             "rgba(50, 172, 45, 0.97)"
           ],
-          "datasource": "prometheus",
+          "datasource": "${DS_PROMETHEUS}",
           "format": "none",
           "gauge": {
             "maxValue": 100,
@@ -159,7 +159,7 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "prometheus",
+          "datasource": "${DS_PROMETHEUS}",
           "decimals": 0,
           "fill": 1,
           "gridPos": {
@@ -245,7 +245,7 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "prometheus",
+          "datasource": "${DS_PROMETHEUS}",
           "decimals": 0,
           "fill": 1,
           "gridPos": {
@@ -350,7 +350,7 @@ data:
             "rgba(237, 129, 40, 0.89)",
             "rgba(50, 172, 45, 0.97)"
           ],
-          "datasource": "prometheus",
+          "datasource": "${DS_PROMETHEUS}",
           "decimals": 3,
           "format": "none",
           "gauge": {
@@ -428,7 +428,7 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "prometheus",
+          "datasource": "${DS_PROMETHEUS}",
           "editable": true,
           "error": false,
           "fill": 1,
@@ -535,7 +535,7 @@ data:
             "rgba(237, 129, 40, 0.89)",
             "rgba(50, 172, 45, 0.97)"
           ],
-          "datasource": "prometheus",
+          "datasource": "${DS_PROMETHEUS}",
           "format": "bytes",
           "gauge": {
             "maxValue": 100,
@@ -613,7 +613,7 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "prometheus",
+          "datasource": "${DS_PROMETHEUS}",
           "editable": false,
           "error": false,
           "fill": 1,
@@ -650,7 +650,7 @@ data:
           "steppedLine": false,
           "targets": [
             {
-              "expr": "avg by(container_name) (container_memory_working_set_bytes{pod_name=~\"$pod\", container_name=~\"$container\", container_name!=\"POD\"})",
+              "expr": "avg by(container_name) (container_memory_working_set_bytes{pod_name=~\"$pod\", container_name=~\"$container\", container_name!=\"POD\",container_name!=\"\"})",
               "format": "time_series",
               "interval": "10s",
               "intervalFactor": 1,
@@ -726,7 +726,7 @@ data:
             "rgba(237, 129, 40, 0.89)",
             "rgba(50, 172, 45, 0.97)"
           ],
-          "datasource": "prometheus",
+          "datasource": "${DS_PROMETHEUS}",
           "decimals": 2,
           "format": "Bps",
           "gauge": {
@@ -804,7 +804,7 @@ data:
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "prometheus",
+          "datasource": "${DS_PROMETHEUS}",
           "editable": true,
           "error": false,
           "fill": 1,
@@ -841,7 +841,7 @@ data:
           "steppedLine": false,
           "targets": [
             {
-              "expr": "rate (container_network_transmit_bytes_total{pod_name=~\"$pod\",interface=\"eth0\"}[5m])",
+              "expr": "rate (container_network_transmit_bytes_total{pod_name=~\"$pod\",interface=~\"eth0|ens.*\"}[5m])",
               "format": "time_series",
               "intervalFactor": 2,
               "legendFormat": "TX : {{ pod_name }}",
@@ -849,7 +849,7 @@ data:
               "step": 2
             },
             {
-              "expr": "rate (container_network_receive_bytes_total{pod_name=~\"$pod\",interface=\"eth0\"}[5m])",
+              "expr": "rate (container_network_receive_bytes_total{pod_name=~\"$pod\",interface=~\"eth0|ens.*\"}[5m])",
               "format": "time_series",
               "intervalFactor": 2,
               "legendFormat": "RX : {{ pod_name }}",
@@ -908,7 +908,7 @@ data:
           {
             "allValue": "",
             "current": {},
-            "datasource": "prometheus",
+            "datasource": "${DS_PROMETHEUS}",
             "hide": 0,
             "includeAll": false,
             "label": "Namespace",
@@ -928,7 +928,7 @@ data:
           {
             "allValue": null,
             "current": {},
-            "datasource": "prometheus",
+            "datasource": "${DS_PROMETHEUS}",
             "hide": 0,
             "includeAll": false,
             "label": "Pod",
@@ -948,7 +948,7 @@ data:
           {
             "allValue": ".*",
             "current": {},
-            "datasource": "prometheus",
+            "datasource": "${DS_PROMETHEUS}",
             "hide": 0,
             "includeAll": true,
             "label": "Container",
@@ -999,8 +999,8 @@ data:
       "timezone": "browser",
       "title": "Kubernetes: POD Overview",
       "uid": "GlXkUBGiz",
-      "version": 3
-    }
+      "version": 4
+    }    
   kubernetes-deployment-overview.json: |
     {
       "__inputs": [
