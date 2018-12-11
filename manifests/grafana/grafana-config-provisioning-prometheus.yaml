@@ -7,6 +7,7 @@ metadata:
   namespace: zcp-system 
 data:
   provisioning-database.yaml: |
+    apiVersion: 1
     datasources:
     - name: 'prometheus'
       type: 'prometheus'

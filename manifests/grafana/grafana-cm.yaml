@@ -13,7 +13,7 @@ data:
     data = /var/lib/grafana/data
     logs = /var/log/grafana
     plugins = /var/lib/grafana/plugins
-    provisioning = /etc/provisioning
+    provisioning = /etc/grafana/provisioning 
 
     [server]
     protocol = http
