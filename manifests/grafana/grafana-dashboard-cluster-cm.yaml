@@ -2,6 +2,42 @@ apiVersion: v1
 data:
   kubernetes-cluster-overview.json: |
     {
+      "__inputs": [
+        {
+          "name": "DS_PROMETHEUS",
+          "label": "prometheus",
+          "description": "",
+          "type": "datasource",
+          "pluginId": "prometheus",
+          "pluginName": "Prometheus"
+        }
+      ],
+      "__requires": [
+        {
+          "type": "grafana",
+          "id": "grafana",
+          "name": "Grafana",
+          "version": "5.2.0"
+        },
+        {
+          "type": "panel",
+          "id": "graph",
+          "name": "Graph",
+          "version": "5.0.0"
+        },
+        {
+          "type": "datasource",
+          "id": "prometheus",
+          "name": "Prometheus",
+          "version": "5.0.0"
+        },
+        {
+          "type": "panel",
+          "id": "singlestat",
+          "name": "Singlestat",
+          "version": "5.0.0"
+        }
+      ],
       "annotations": {
         "list": [
           {
@@ -18,7 +54,8 @@ data:
       "editable": true,
       "gnetId": null,
       "graphTooltip": 0,
-      "iteration": 1546226413043,
+      "id": null,
+      "iteration": 1546229881280,
       "links": [],
       "panels": [
         {
@@ -666,13 +703,6 @@ data:
           ],
           "repeat": "node",
           "repeatDirection": "v",
-          "scopedVars": {
-            "node": {
-              "selected": false,
-              "text": "gke-standard-cluster-2-default-pool-825fa6c2-q73z",
-              "value": "gke-standard-cluster-2-default-pool-825fa6c2-q73z"
-            }
-          },
           "sparkline": {
             "fillColor": "rgba(31, 118, 189, 0.18)",
             "full": true,
@@ -760,205 +790,6 @@ data:
           ],
           "repeat": "node",
           "repeatDirection": "v",
-          "scopedVars": {
-            "node": {
-              "selected": false,
-              "text": "gke-standard-cluster-2-default-pool-825fa6c2-q73z",
-              "value": "gke-standard-cluster-2-default-pool-825fa6c2-q73z"
-            }
-          },
-          "sparkline": {
-            "fillColor": "rgba(31, 118, 189, 0.18)",
-            "full": true,
-            "lineColor": "rgb(31, 120, 193)",
-            "show": false
-          },
-          "tableColumn": "",
-          "targets": [
-            {
-              "expr": "kubelet_running_container_count{instance=~\"$node\"}",
-              "format": "time_series",
-              "intervalFactor": 2,
-              "refId": "A",
-              "step": 60
-            }
-          ],
-          "thresholds": "30.80",
-          "title": "Node: $node",
-          "transparent": false,
-          "type": "singlestat",
-          "valueFontSize": "80%",
-          "valueMaps": [
-            {
-              "op": "=",
-              "text": "N/A",
-              "value": "null"
-            }
-          ],
-          "valueName": "current"
-        },
-        {
-          "cacheTimeout": null,
-          "colorBackground": false,
-          "colorValue": true,
-          "colors": [
-            "rgba(50, 230, 43, 0.97)",
-            "rgba(237, 129, 40, 0.89)",
-            "rgba(245, 54, 54, 0.9)"
-          ],
-          "datasource": "prometheus",
-          "format": "none",
-          "gauge": {
-            "maxValue": 100,
-            "minValue": 0,
-            "show": false,
-            "thresholdLabels": false,
-            "thresholdMarkers": true
-          },
-          "gridPos": {
-            "h": 2,
-            "w": 12,
-            "x": 0,
-            "y": 8
-          },
-          "height": "2",
-          "hideTimeOverride": false,
-          "id": 63,
-          "interval": null,
-          "links": [],
-          "mappingType": 1,
-          "mappingTypes": [
-            {
-              "name": "value to text",
-              "value": 1
-            },
-            {
-              "name": "range to text",
-              "value": 2
-            }
-          ],
-          "maxDataPoints": 100,
-          "minSpan": null,
-          "nullPointMode": "connected",
-          "nullText": null,
-          "postfix": "",
-          "postfixFontSize": "50%",
-          "prefix": "",
-          "prefixFontSize": "50%",
-          "rangeMaps": [
-            {
-              "from": "null",
-              "text": "N/A",
-              "to": "null"
-            }
-          ],
-          "repeat": null,
-          "repeatDirection": "v",
-          "repeatIteration": 1546226413043,
-          "repeatPanelId": 37,
-          "scopedVars": {
-            "node": {
-              "selected": false,
-              "text": "gke-standard-cluster-2-default-pool-825fa6c2-szhq",
-              "value": "gke-standard-cluster-2-default-pool-825fa6c2-szhq"
-            }
-          },
-          "sparkline": {
-            "fillColor": "rgba(31, 118, 189, 0.18)",
-            "full": true,
-            "lineColor": "rgb(31, 120, 193)",
-            "show": false
-          },
-          "tableColumn": "",
-          "targets": [
-            {
-              "expr": "kubelet_running_pod_count{instance=~\"$node\"}",
-              "format": "time_series",
-              "intervalFactor": 2,
-              "legendFormat": "",
-              "refId": "A",
-              "step": 60
-            }
-          ],
-          "thresholds": "50,80",
-          "title": "Node: $node",
-          "transparent": false,
-          "type": "singlestat",
-          "valueFontSize": "80%",
-          "valueMaps": [
-            {
-              "op": "=",
-              "text": "N/A",
-              "value": "null"
-            }
-          ],
-          "valueName": "current"
-        },
-        {
-          "cacheTimeout": null,
-          "colorBackground": false,
-          "colorValue": true,
-          "colors": [
-            "rgba(50, 230, 43, 0.97)",
-            "rgba(237, 129, 40, 0.89)",
-            "rgba(245, 54, 54, 0.9)"
-          ],
-          "datasource": "prometheus",
-          "format": "none",
-          "gauge": {
-            "maxValue": 100,
-            "minValue": 0,
-            "show": false,
-            "thresholdLabels": false,
-            "thresholdMarkers": true
-          },
-          "gridPos": {
-            "h": 2,
-            "w": 12,
-            "x": 12,
-            "y": 8
-          },
-          "height": "2",
-          "id": 64,
-          "interval": null,
-          "links": [],
-          "mappingType": 1,
-          "mappingTypes": [
-            {
-              "name": "value to text",
-              "value": 1
-            },
-            {
-              "name": "range to text",
-              "value": 2
-            }
-          ],
-          "maxDataPoints": 100,
-          "minSpan": null,
-          "nullPointMode": "connected",
-          "nullText": null,
-          "postfix": "",
-          "postfixFontSize": "50%",
-          "prefix": "",
-          "prefixFontSize": "50%",
-          "rangeMaps": [
-            {
-              "from": "null",
-              "text": "N/A",
-              "to": "null"
-            }
-          ],
-          "repeat": null,
-          "repeatDirection": "v",
-          "repeatIteration": 1546226413043,
-          "repeatPanelId": 45,
-          "scopedVars": {
-            "node": {
-              "selected": false,
-              "text": "gke-standard-cluster-2-default-pool-825fa6c2-szhq",
-              "value": "gke-standard-cluster-2-default-pool-825fa6c2-szhq"
-            }
-          },
           "sparkline": {
             "fillColor": "rgba(31, 118, 189, 0.18)",
             "full": true,
@@ -995,7 +826,7 @@ data:
             "h": 1,
             "w": 24,
             "x": 0,
-            "y": 10
+            "y": 8
           },
           "id": 61,
           "panels": [],
@@ -1026,7 +857,7 @@ data:
             "h": 3,
             "w": 4,
             "x": 0,
-            "y": 11
+            "y": 9
           },
           "height": "2",
           "id": 11,
@@ -1111,7 +942,7 @@ data:
             "h": 3,
             "w": 4,
             "x": 4,
-            "y": 11
+            "y": 9
           },
           "height": "2",
           "id": 12,
@@ -1197,7 +1028,7 @@ data:
             "h": 3,
             "w": 4,
             "x": 8,
-            "y": 11
+            "y": 9
           },
           "height": "2",
           "id": 14,
@@ -1283,7 +1114,7 @@ data:
             "h": 3,
             "w": 4,
             "x": 12,
-            "y": 11
+            "y": 9
           },
           "height": "2",
           "id": 19,
@@ -1369,7 +1200,7 @@ data:
             "h": 3,
             "w": 4,
             "x": 16,
-            "y": 11
+            "y": 9
           },
           "height": "2",
           "id": 22,
@@ -1455,7 +1286,7 @@ data:
             "h": 3,
             "w": 4,
             "x": 20,
-            "y": 11
+            "y": 9
           },
           "height": "2",
           "id": 20,
@@ -1540,7 +1371,7 @@ data:
             "h": 7,
             "w": 8,
             "x": 0,
-            "y": 14
+            "y": 12
           },
           "height": "",
           "id": 16,
@@ -1625,7 +1456,7 @@ data:
             "h": 7,
             "w": 8,
             "x": 8,
-            "y": 14
+            "y": 12
           },
           "height": "",
           "id": 17,
@@ -1719,7 +1550,7 @@ data:
             "h": 7,
             "w": 8,
             "x": 16,
-            "y": 14
+            "y": 12
           },
           "height": "",
           "id": 21,
@@ -1792,7 +1623,7 @@ data:
             "h": 7,
             "w": 6,
             "x": 0,
-            "y": 21
+            "y": 19
           },
           "id": 1,
           "legend": {
@@ -1876,7 +1707,7 @@ data:
             "h": 7,
             "w": 6,
             "x": 6,
-            "y": 21
+            "y": 19
           },
           "id": 2,
           "legend": {
@@ -1960,7 +1791,7 @@ data:
             "h": 7,
             "w": 6,
             "x": 12,
-            "y": 21
+            "y": 19
           },
           "id": 3,
           "legend": {
@@ -2047,7 +1878,7 @@ data:
             "h": 7,
             "w": 6,
             "x": 18,
-            "y": 21
+            "y": 19
           },
           "id": 5,
           "legend": {
@@ -2137,7 +1968,7 @@ data:
             "h": 1,
             "w": 24,
             "x": 0,
-            "y": 28
+            "y": 26
           },
           "id": 62,
           "panels": [
@@ -3070,10 +2901,7 @@ data:
         "list": [
           {
             "allValue": null,
-            "current": {
-              "text": "gke-standard-cluster-2-default-pool-825fa6c2-q73z",
-              "value": "gke-standard-cluster-2-default-pool-825fa6c2-q73z"
-            },
+            "current": {},
             "datasource": "prometheus",
             "hide": 0,
             "includeAll": false,
