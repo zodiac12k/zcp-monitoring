@@ -10,8 +10,11 @@ spec:
       labels:
         component: grafana
     spec:
+      securityContext:
+        runAsUser: 472
+        fsGroup: 472
       containers:
-      - image: grafana/grafana:5.0.4
+      - image: grafana/grafana:5.2.0
         name: grafana
         resources:
           limits:
