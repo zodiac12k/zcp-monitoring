@@ -14,7 +14,7 @@ data:
           summary: "{{$labels.instance}}: node-exporter cannot be scraped" 
           description: "{{$labels.instance}}: Prometheus failed to scrape node for more than 2m" 
       - alert: NodeCPUUsage75
-        expr: (100 - (avg by (instance) (irate(node_cpu{job="kubernetes-nodes-exporters",mode="idle"}[5m])) * 100)) > 75
+        expr: (100 - (avg by (instance) (irate(node_cpu_seconds_total{job="kubernetes-nodes-exporters",mode="idle"}[5m])) * 100)) > 75
         for: 2m
         labels:
           channel: sk-cps-ops
@@ -23,7 +23,7 @@ data:
           summary: "{{$labels.instance}}: High CPU usage detected"
           description: "{{$labels.instance}}: CPU usage is above 75% (current value is: {{ $value }})"
       - alert: NodeCPUUsage95
-        expr: (100 - (avg by (instance) (irate(node_cpu{job="kubernetes-nodes-exporters",mode="idle"}[5m])) * 100)) > 95
+        expr: (100 - (avg by (instance) (irate(node_cpu_seconds_total{job="kubernetes-nodes-exporters",mode="idle"}[5m])) * 100)) > 95
         for: 2m
         labels:
           channel: sk-cps-ops
