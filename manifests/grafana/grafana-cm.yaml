@@ -8,15 +8,19 @@ metadata:
 data:
   grafana.ini: |
     app_mode = production
+
     instance_name = ${HOSTNAME}
+
     [paths]
     data = /var/lib/grafana/data
+    temp_data_lifetime = 24h
     logs = /var/log/grafana
     plugins = /var/lib/grafana/plugins
     provisioning = /etc/grafana/provisioning 
 
     [server]
     protocol = http
+    ;http_addr =
     http_port = 3000
     ;domain = localhost 
     ;enforce_domain = false
@@ -26,6 +30,7 @@ data:
     ;enable_gzip = false
     ;cert_file =
     ;cert_key =
+    ;socket = /tmp/grafana.sock
 
     [database]
     ;type = sqlite3
@@ -62,19 +67,29 @@ data:
     ;external_enabled = true
     ;external_snapshot_url = https://snapshots-origin.raintank.io
     ;external_snapshot_name = Publish to snapshot.raintank.io
+    ;snapshot_remove_expired = true
+
+    [dashboards]
+    versions_to_keep = 20
 
     [users]
     ;allow_sign_up = true
     ;allow_org_create = true
     ;auto_assign_org = true
     ;auto_assign_org_role = Viewer
+    verify_email_enabled = false
     ;login_hint = email or username
     default_theme = light
 
+    [auth]
+    disable_login_form = false
+    disable_signout_menu = false
+    ;signout_redirect_url =
+
     [auth.anonymous]
-    ;enabled = true
+    enabled = true
     ;org_name = Main Org.
-    ;org_role = Admin
+    ;org_role = Viewer
 
     [auth.github]
     ;enabled = false
@@ -154,6 +169,13 @@ data:
     [dashboards.json]
     enabled = true
     path = /etc/dashboards
+
+    [alerting]
+    enabled = true
+    execute_alerts = true
+
+    [explore]
+    enabled = true
 
     [metrics]
     enabled           = true
