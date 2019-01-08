@@ -3142,7 +3142,7 @@ data:
       },
       "timezone": "browser",
       "title": "System Usage Overview",
-      "uid": "f9ZGdAEmz",
+      "uid": "system_usage_overview",
       "version": 1
     }
   kubernetes-system-disk-space.json: |
@@ -24559,7 +24559,7 @@ data:
       },
       "timezone": "browser",
       "title": "System: Node Exporter Fulls",
-      "uid": "10Gp0APmz",
+      "uid": "system_node_exporter_fulls"
       "version": 2
     }
 kind: ConfigMap
