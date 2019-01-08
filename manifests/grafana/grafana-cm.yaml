@@ -87,7 +87,7 @@ data:
     ;signout_redirect_url =
 
     [auth.anonymous]
-    enabled = true
+    enabled = false
     ;org_name = Main Org.
     ;org_role = Viewer
 
