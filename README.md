@@ -4,12 +4,12 @@
 
 | Component        | Version           | Image  |
 | ------------- |-------------|-----|
-|Grafana| 5.0.4 |grafana/grafana:5.0.4
-|Prometheus|  2.2.1 |prom/prometheus:v2.2.1
-|Alertmanager|  0.14.0  |prom/alertmanager:v0.14.0
-|kube-state-metric| 1.3.0 |k8s.gcr.io/kube-state-metrics:v1.3.0
-|Node-Exporter| 0.15.2  |node-exporter:v0.15.2
-|Blackbox-Exporter| 0.12.0  |prom/blackbox-exporter:v0.12.0
+|Grafana| 5.2.0 |grafana/grafana:5.2.0
+|Prometheus|  2.6.0 |prom/prometheus:v2.6.0
+|Alertmanager|  0.15.3  |prom/alertmanager:v0.15.3
+|kube-state-metric| 1.4.0 |k8s.gcr.io/kube-state-metrics:v1.4.0
+|Node-Exporter| 0.17.0  |node-exporter:v0.17.0
+|Blackbox-Exporter| 0.13.0  |prom/blackbox-exporter:v0.13.0
 |ElasticSearch-Exporter| 1.0.2  |justwatch/elasticsearch_exporter:1.0.2
 
 ## Monitoring Dashboard(Grafana)
@@ -18,7 +18,7 @@
 |------------- |-------------|
 |System Dashboards| System Overview |Worker Node System Metric 지표|
 ||System Usage Overview|  
-||System DIsk Space|  
+||System Disk Space|  
 |Cluster Dashboards |Kubernetes: Cluster Overview |
 ||Kubernetes: Resource Requests|
 ||Kubernetes: Performance Overview|

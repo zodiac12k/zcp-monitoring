@@ -12,7 +12,7 @@ spec:
       name: node-exporter
     spec:
       containers:
-      - image: prom/node-exporter:v0.15.2
+      - image: prom/node-exporter:v0.17.0
         name: node-exporter
         args:
           - --path.procfs=/host/proc

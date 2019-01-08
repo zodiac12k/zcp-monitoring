@@ -13,7 +13,7 @@ spec:
       serviceAccountName: prometheus
       containers:
         - name: prometheus
-          image: prom/prometheus:v2.2.1
+          image: prom/prometheus:v2.6.0
           resources:
             limits:
               cpu: 4000m
@@ -83,4 +83,3 @@ spec:
         - name: etcd-secrets-volume
           secret:
             secretName: etcd-secrets
-

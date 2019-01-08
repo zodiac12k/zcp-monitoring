@@ -14,7 +14,7 @@ spec:
         component: blackbox-exporter
     spec:
       containers:
-        - image: prom/blackbox-exporter:v0.11.0
+        - image: prom/blackbox-exporter:v0.13.0
           args:
             - "--config.file=/etc/config/blackbox.yml"
           name: blackbox-exporter
