@@ -48,8 +48,7 @@ $ kubectl -n kube-system get secret calico-etcd-secrets -o yaml > etcd-secrets.y
 $ vi etcd-secret.yaml
 ...
 name: etcd-secrets
-prometheus-pvc.yaml
-anamespace: zcp-system
+namespace: zcp-system
 
 $ kubectl create -f etcd-secrets.yaml
 $ kubectl get secret
@@ -132,27 +131,27 @@ containers:
 * Prometheus Deploy
 
 ```
-$ kubectl create -f manifests/prometheus/
+$ kubectl create -f prometheus
 ```
 
 
 ## Exporter Deploy
 * kube-state-metric
 ```
-$ kubectl create -f private_manifests/exporters/kube-state-metric
+$ kubectl create -f exporters/kube-state-metric
 ```
 * node-exporter
 ```
-$ kubectl create -f private_manifests/exporters/node-exporter
+$ kubectl create -f exporters/node-exporter
 ```
 * blackbox-exporter
 ```
-$ kubectl create -f private_manifests/exporters/blackbox-exporter
+$ kubectl create -f exporters/blackbox-exporter
 ```
 
 ## Grafana Deploy
 ```
-$ kubectl create -f private_manifests/grafana
+$ kubectl create -f grafana
 ```
 
 ## Alertmanager Deploy
@@ -169,7 +168,7 @@ $ vi private_manifests/alertmanager/alertmanager-config-cm.yaml
 
 * Alertmanager Deploy
 ```
-$ kubectl create -f private_manifests/alertmanager
+$ kubectl create -f alertmanager
 ```
 
 ## Ingress 생성 및 Monitoring 서비스 접속 확인
