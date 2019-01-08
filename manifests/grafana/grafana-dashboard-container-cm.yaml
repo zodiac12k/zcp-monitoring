@@ -17,7 +17,7 @@ data:
           "type": "grafana",
           "id": "grafana",
           "name": "Grafana",
-          "version": "5.0.4"
+          "version": "5.2.0"
         },
         {
           "type": "panel",
@@ -52,11 +52,11 @@ data:
         ]
       },
       "description": "",
-      "editable": false,
+      "editable": true,
       "gnetId": 6781,
       "graphTooltip": 1,
       "id": null,
-      "iteration": 1544171065532,
+      "iteration": 1546944083932,
       "links": [],
       "panels": [
         {
@@ -238,7 +238,11 @@ data:
               "min": null,
               "show": true
             }
-          ]
+          ],
+          "yaxis": {
+            "align": false,
+            "alignLevel": null
+          }
         },
         {
           "aliasColors": {},
@@ -282,11 +286,11 @@ data:
           "steppedLine": false,
           "targets": [
             {
-              "expr": "kube_pod_container_status_restarts{namespace=~\"$namespace\", pod=~\"$pod\"} or kube_pod_container_status_restarts_total{namespace=~\"$namespace\", pod=~\"$pod\"}",
+              "expr": "kube_pod_container_status_restarts_total{namespace=~\"$namespace\", pod=~\"$pod\", container=~\"$container\"}",
               "format": "time_series",
               "hide": false,
               "intervalFactor": 2,
-              "legendFormat": "{{ pod }}",
+              "legendFormat": "{{ container }}",
               "refId": "A",
               "step": 2
             }
@@ -325,7 +329,11 @@ data:
               "min": null,
               "show": true
             }
-          ]
+          ],
+          "yaxis": {
+            "align": false,
+            "alignLevel": null
+          }
         },
         {
           "collapsed": false,
@@ -465,7 +473,7 @@ data:
           "steppedLine": false,
           "targets": [
             {
-              "expr": "sum by (container_name)( rate(container_cpu_usage_seconds_total{image!=\"\",container_name=~\"$container\",container_name!=\"POD\",pod_name=~\"$pod\"}[2m] ) )",
+              "expr": "sum by (container_name)( rate(container_cpu_usage_seconds_total{pod_name=~\"$pod\", container_name=~\"$container\", image!=\"\", container_name!=\"POD\"}[2m] ) )",
               "format": "time_series",
               "intervalFactor": 2,
               "legendFormat": "Current: {{ container_name }}",
@@ -473,7 +481,7 @@ data:
               "step": 2
             },
             {
-              "expr": "kube_pod_container_resource_requests_cpu_cores{pod=~\"$pod\", container!=\"POD\"}",
+              "expr": "kube_pod_container_resource_requests_cpu_cores{pod=~\"$pod\", container=~\"$container\", container!=\"POD\"}",
               "format": "time_series",
               "intervalFactor": 2,
               "legendFormat": "Requested: {{ container }}",
@@ -481,7 +489,7 @@ data:
               "step": 2
             },
             {
-              "expr": "kube_pod_container_resource_limits_cpu_cores{pod=~\"$pod\", container!=\"POD\"}",
+              "expr": "kube_pod_container_resource_limits_cpu_cores{pod=~\"$pod\", container=~\"$container\", container!=\"POD\"}",
               "format": "time_series",
               "intervalFactor": 2,
               "legendFormat": "Limit: {{ container }}",
@@ -524,7 +532,11 @@ data:
               "min": null,
               "show": true
             }
-          ]
+          ],
+          "yaxis": {
+            "align": false,
+            "alignLevel": null
+          }
         },
         {
           "cacheTimeout": null,
@@ -715,7 +727,11 @@ data:
               "min": null,
               "show": true
             }
-          ]
+          ],
+          "yaxis": {
+            "align": false,
+            "alignLevel": null
+          }
         },
         {
           "cacheTimeout": null,
@@ -893,7 +909,11 @@ data:
               "min": null,
               "show": true
             }
-          ]
+          ],
+          "yaxis": {
+            "align": false,
+            "alignLevel": null
+          }
         }
       ],
       "refresh": "10s",
@@ -999,8 +1019,8 @@ data:
       "timezone": "browser",
       "title": "Kubernetes: POD Overview",
       "uid": "GlXkUBGiz",
-      "version": 3
-    }    
+      "version": 1
+    }   
   kubernetes-deployment-overview.json: |
     {
       "__inputs": [
