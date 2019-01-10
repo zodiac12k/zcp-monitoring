@@ -31,8 +31,6 @@ spec:
         - name: sys
           mountPath: /host/sys
           readOnly: true
-        - name: timezone
-          mountPath: /etc/localtime
       volumes:
         - name: proc
           hostPath:
@@ -40,8 +38,5 @@ spec:
         - name: sys
           hostPath:
             path: /sys
-        - name: timezone
-          hostPath:
-            path: /usr/share/zoneinfo/Asia/Seoul
       hostNetwork: true
       hostPID: true
