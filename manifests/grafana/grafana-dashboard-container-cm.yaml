@@ -599,7 +599,7 @@ data:
           "tableColumn": "",
           "targets": [
             {
-              "expr": "sum(container_memory_working_set_bytes{namespace=~\"$namespace\", pod_name=~\"$pod\",container_name=~\"$container\", container_name!=\"POD\"})",
+              "expr": "sum(container_memory_working_set_bytes{namespace=~\"$namespace\", pod_name=~\"$pod\",container_name=~\"$container\", container_name!=\"POD\", container_name!=\"\"})",
               "format": "time_series",
               "hide": false,
               "intervalFactor": 2,
