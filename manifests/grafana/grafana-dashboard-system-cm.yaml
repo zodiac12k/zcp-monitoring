@@ -24559,7 +24559,7 @@ data:
       },
       "timezone": "browser",
       "title": "System: Node Exporter Fulls",
-      "uid": "system_node_exporter_fulls"
+      "uid": "system_node_exporter_fulls",
       "version": 2
     }
 kind: ConfigMap
