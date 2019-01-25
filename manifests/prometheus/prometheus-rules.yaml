@@ -99,7 +99,7 @@ data:
           summary: API server unreachable
           description: Prometheus failed to scrape API server
       - alert: APIServerErrorsHigh
-        expr: rate(apiserver_request_count{code=~"^(?:5..)$"}[5m]) / rate(apiserver_request_count[5m]) * 100 > 5
+        expr: irate(apiserver_request_count{code=~"^(?:5..)$"}[5m]) / irate(apiserver_request_count[5m]) * 100 > 5
         for: 2m
         labels:
           channel: sk-cps-ops
@@ -108,7 +108,7 @@ data:
           summary: API server Errors High
           description: "API server returns errors for {{$value}}% of requests summary: API server request errors"
       - alert: APIServerLatencyHigh
-        expr: avg(apiserver_request_latencies_sum / apiserver_request_latencies_count) / 1000000 > 2000
+        expr: ((irate(apiserver_request_latencies_sum[5m]) / irate(apiserver_request_latencies_count[5m])) / 1e+06) > 2000
         for: 2m
         labels:
           channel: sk-cps-ops
@@ -258,6 +258,15 @@ data:
         annotations:
           summary: Errors while sending alerts from Prometheus
           description: Errors while sending alerts from Prometheus to Alertmanager {{$labels.Alertmanager}}
+      - alert: PrometheusNotConnectedtoAlertmanagers
+        expr: prometheus_notifications_alertmanagers_discovered < 1
+        for: 10m
+        labels:
+          channel: sk-cps-ops
+          severity: critical
+        annotations:
+          summary: Prometheus is not connected to any Alertmanagers
+          description: Prometheus is not connected to any Alertmanagers
   alertmanager.rules: |-
     groups:
     - name: alertmanager.rules
