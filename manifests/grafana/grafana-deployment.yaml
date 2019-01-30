@@ -14,7 +14,7 @@ spec:
         runAsUser: 472
         fsGroup: 472
       containers:
-      - image: grafana/grafana:5.2.0
+      - image: grafana/grafana:5.4.3
         name: grafana
         resources:
           limits:
