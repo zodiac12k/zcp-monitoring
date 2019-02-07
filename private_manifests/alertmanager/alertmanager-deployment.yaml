@@ -29,10 +29,8 @@ spec:
                 operator: In
                 values:
                 - "amd64"
-              - key: role
-                operator: In
-                values:
-                - "management"
+              - key: node-role.kubernetes.io/management
+                operator: Exists
       containers:
       - name: alertmanager
         image: registry.au-syd.bluemix.net/cloudzcp/alertmanager:v0.14.0

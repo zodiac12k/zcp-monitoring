@@ -29,50 +29,18 @@
 ||Kubernetes: StatefulSet Overview|
 |Addon Dashboards|ElasticSearch|
 ||ZCP Service Status|
-## Get ICCS Deploy Env 
 
-* ETCD ENDPOINT 정보 확인(IP, Port)
+## Get IKS Deploy Env 
 
+* Monitoring 용도 ETCD TLS Secret 생성
 ```
-$ kubectl -n kube-system exec -it calico-kube-controllers-86dc74b64-2lv9l env | grep ETCD_ENDPOINTS
-ETCD_ENDPOINTS=https://[IP]:[Port]
-```
-
-* ETCD TLS Secret Export 
-```
-$ kubectl -n kube-system get secret calico-etcd-secrets -o yaml > etcd-secrets.yaml
-```
-
-* Monitoring 용도 ETCD TLS Secret 생성 (Namespace, ConfigMap Name 변경 필요)
-```
-$ vi etcd-secret.yaml
-...
-name: etcd-secrets
-namespace: zcp-system
-
-$ kubectl create -f etcd-secrets.yaml
+$ kubectl patch secret calico-etcd-secrets -n kube-system -p='{"metadata": {"name": "etcd-secrets", "namespace": "zcp-system"}}' --dry-run -o yaml | kubectl create -f -
 $ kubectl get secret
-NAME                             TYPE                                  DATA      AGE
-etcd-secrets                     Opaque                                3         21d
+NAME           TYPE     DATA   AGE
+etcd-secrets   Opaque   3      56s
 ```
 
-* ETCD Metric 수집 설정
-```
-$ vi private_manifests/prometheus/prometheus-cm.yaml
-...
-- job_name: 'etcd'
-  static_configs:
-  - targets:
-    - [ETCD_IP]:[ETCD_PORT]
-  tls_config:
-    ca_file: /etc/config/etcd-ca
-    cert_file: /etc/config/etcd-cert
-    key_file: /etc/config/etcd-key
-    insecure_skip_verify: true
-  scheme: https
-```
-
-* ICCS Cluste Name 설정
+* IKS Cluster Name 설정
 외부에서 식별 가능한 Cluster Name 변경(env 설정)
 ```
 $ vi private_manifests/prometheus/prometheus-cm.yaml
@@ -84,7 +52,28 @@ data:
       scrape_timeout: 15s
       evaluation_interval: 15s
       external_labels:
-        env: 'SK-CPS-ICCS-K8S-DEV'
+        env: 'CLOUDZCP-POU-DEV'
+```
+
+* Grafana 설정 변경
+```
+$ vi private_manifests/grafana/grafana.ini
+...
+    [server]
+    protocol = http
+    http_port = 3000
+    domain = example-monitoring.cloudzcp.io
+...
+    [auth.generic_oauth]
+    name = OAuth
+    enabled = true
+    allow_sign_up = true
+    client_id = monitoring
+    client_secret = 4138cbf9-4091-4029-a1d6-d64450994f55
+    scopes = openid email name
+    auth_url = https://example-iam.cloudzcp.io/auth/realms/zcp/protocol/openid-connect/auth
+    token_url = https://example-iam.cloudzcp.io/auth/realms/zcp/protocol/openid-connect/token
+...
 ```
 
 ## Prometheus Deploy
@@ -134,7 +123,6 @@ containers:
 $ kubectl create -f prometheus
 ```
 
-
 ## Exporter Deploy
 * kube-state-metric
 ```
@@ -148,6 +136,8 @@ $ kubectl create -f exporters/node-exporter
 ```
 $ kubectl create -f exporters/blackbox-exporter
 ```
+* elasticsearch-exporter
+  * assets/ElasticSearch-Exporter-Deploy.md
 
 ## Grafana Deploy
 ```
@@ -155,16 +145,6 @@ $ kubectl create -f grafana
 ```
 
 ## Alertmanager Deploy
-* Alertmanager 환경 정보 설정
-Alert을 전송받을 Slack api uri 입력
-```
-$ vi private_manifests/alertmanager/alertmanager-config-cm.yaml
-```
-    - name: ‘sk-cps-ops’
-      slack_configs:
-      - api_url: #slack api uri
-        send_resolved: true
-```
 
 * Alertmanager Deploy
 ```
@@ -182,7 +162,7 @@ metadata:
   namespace: zcp-system
 spec:
   rules:
-  - host: cbt-monitoring.cloudzcp.io
+  - host: example-monitoring.cloudzcp.io
     http:
       paths:
       - path: /
@@ -192,7 +172,7 @@ spec:
   tls:
     - secretName: cloudzcp-io-cert
       hosts:
-        - cbt-monitoring.cloudzcp.io
+        - example-monitoring.cloudzcp.io
 
 $ kubectl create -f ingress.yaml
 ```

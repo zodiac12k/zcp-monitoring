@@ -5,10 +5,10 @@ metadata:
   namespace: zcp-system
   annotations:
     ingress.bluemix.net/redirect-to-https: "True"
-    ingress.bluemix.net/ALB-ID: private-cr9b51e2d31cef4589984913b350fa8ed8-alb1
+#    ingress.bluemix.net/ALB-ID: private-cr6221beebe0454d3eaa259838844f46d6-alb1
 spec:
   rules:
-  - host: oms-dev-monitoring.cloudzcp.io
+  - host: example-monitoring.cloudzcp.io
     http:
       paths:
       - path: /
@@ -18,4 +18,4 @@ spec:
   tls:
     - secretName: cloudzcp-io-cert
       hosts:
-        - oms-dev-monitoring.cloudzcp.io
+        - example-monitoring.cloudzcp.io

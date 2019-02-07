@@ -1,8 +1,8 @@
 apiVersion: v1
 data:
-  users-rules.rules: |
+  prometheus-zdb.rules: |
     groups:
 kind: ConfigMap
 metadata:
-  name: prometheus-user-rules
+  name: prometheus-zdb-rules
   namespace: zcp-system

@@ -12,7 +12,7 @@ data:
       scrape_timeout: 15s
       evaluation_interval: 15s
       external_labels:
-        env: 'SK-CPS-ICCS-K8S-DEMO'
+        env: 'CLOUDZCP-POU-DEV'
 
     alerting:
       alertmanagers:
@@ -23,6 +23,7 @@ data:
 
     rule_files:
       - /etc/prometheus-rules/*.rules
+      - /etc/prometheus-zdb-rules/*.rules
       - /etc/prometheus-user-rules/*.rules
 
     scrape_configs:
@@ -63,6 +64,27 @@ data:
           target_label: __metrics_path__
           replacement: /api/v1/nodes/${1}/proxy/metrics
 
+      - job_name: 'kubernetes-nodes-exporter'
+
+        scheme: https
+
+        tls_config:
+          ca_file: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+        bearer_token_file: /var/run/secrets/kubernetes.io/serviceaccount/token
+
+        kubernetes_sd_configs:
+        - role: node
+
+        relabel_configs:
+        - action: labelmap
+          regex: __meta_kubernetes_node_label_(.+)
+        - target_label: __address__
+          replacement: kubernetes.default.svc:443
+        - source_labels: [__meta_kubernetes_node_name]
+          regex: (.+)
+          target_label: __metrics_path__
+          replacement: /api/v1/nodes/${1}:9100/proxy/metrics
+
       - job_name: 'kubernetes-cadvisor'
 
         scheme: https
@@ -83,7 +105,7 @@ data:
           regex: (.+)
           target_label: __metrics_path__
           replacement: /api/v1/nodes/${1}/proxy/metrics/cadvisor
-      
+
       - job_name: 'kubernetes-monitoring-endpoints'
 
         kubernetes_sd_configs:
@@ -270,57 +292,57 @@ data:
           module: [http_2xx]
 
         kubernetes_sd_configs:
-          - role: ingress
+        - role: ingress
 
         relabel_configs:
-          - source_labels: [__meta_kubernetes_ingress_annotation_prometheus_io_probe]
-            action: keep
-            regex: true
-          - source_labels: [__meta_kubernetes_namespace]
-            action: drop
-            regex: zcp-system
-          - source_labels: [__meta_kubernetes_ingress_scheme,__address__,__meta_kubernetes_ingress_path]
-            regex: (.+);(.+);(.+)
-            replacement: ${1}://${2}${3}
-            target_label: __param_target
-          - target_label: __address__
-            replacement: blackbox:9115
-          - source_labels: [__param_target]
-            target_label: instance
-          - action: labelmap
-            regex: __meta_kubernetes_ingress_(.+)
-          - source_labels: [__meta_kubernetes_namespace]
-            target_label: namespace
-          - source_labels: [__meta_kubernetes_ingress_path]
-            target_label: pod
-          - source_labels: [__meta_kubernetes_ingress_name]
-            target_label: kubernetes_name
+        - source_labels: [__meta_kubernetes_ingress_annotation_prometheus_io_probe]
+          action: keep
+          regex: true
+        - source_labels: [__meta_kubernetes_namespace]
+          action: drop
+          regex: zcp-system
+        - source_labels: [__meta_kubernetes_ingress_scheme,__address__,__meta_kubernetes_ingress_path]
+          regex: (.+);(.+);(.+)
+          replacement: ${1}://${2}${3}
+          target_label: __param_target
+        - target_label: __address__
+          replacement: blackbox:9115
+        - source_labels: [__param_target]
+          target_label: instance
+        - action: labelmap
+          regex: __meta_kubernetes_ingress_(.+)
+        - source_labels: [__meta_kubernetes_namespace]
+          target_label: namespace
+        - source_labels: [__meta_kubernetes_ingress_path]
+          target_label: pod
+        - source_labels: [__meta_kubernetes_ingress_name]
+          target_label: kubernetes_name
 
       - job_name: 'monitoring-zcp-system'
         metrics_path: /probe
         params:
           module: [http_2xx]
         static_configs:
-          - targets:
-            - http://grafana-service:3000/api/health
-            - http://prometheus-service:9090/-/healthy
-            - http://alertmanager-service:9093/-/healthy
-            labels:
-              namespace: 'zcp-system'
+        - targets:
+          - http://grafana-service:3000/api/health
+          - http://prometheus-service:9090/-/healthy
+          - http://alertmanager-service:9093/-/healthy
+          labels:
+            namespace: 'zcp-system'
 
         relabel_configs:
-          - source_labels: [__address__]
-            target_label: __param_target
-          - source_labels: [__param_target]
-            target_label: instance
-          - target_label: __address__
-            replacement: blackbox:9115
+        - source_labels: [__address__]
+          target_label: __param_target
+        - source_labels: [__param_target]
+          target_label: instance
+        - target_label: __address__
+          replacement: blackbox:9115
 
 
       - job_name: 'etcd'
         static_configs:
         - targets:
-          - "169.56.69.242:32401"
+          - "172.20.0.1:2041"
         tls_config:
           ca_file: /etc/config/etcd-ca
           cert_file: /etc/config/etcd-cert

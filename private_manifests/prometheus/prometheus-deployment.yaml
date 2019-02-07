@@ -26,10 +26,8 @@ spec:
                 operator: In
                 values:
                 - "amd64"
-              - key: role
-                operator: In
-                values:
-                - "management"
+              - key: node-role.kubernetes.io/management
+                operator: Exists
       containers:
         - name: prometheus
           image: registry.au-syd.bluemix.net/cloudzcp/prometheus:v2.2.1
@@ -78,6 +76,8 @@ spec:
               mountPath: /prometheus/
             - name: rules-volume
               mountPath: /etc/prometheus-rules/
+            - name: zdb-rules-volume
+              mountPath: /etc/prometheus-zdb-rules/
             - name: user-rules-volume
               mountPath: /etc/prometheus-user-rules/
             - name: etcd-secrets-volume
@@ -95,6 +95,10 @@ spec:
           configMap:
             defaultMode: 420
             name: prometheus-rules
+        - name: zdb-rules-volume
+          configMap:
+            defaultMode: 420
+            name: prometheus-zdb-rules
         - name: user-rules-volume
           configMap:
             defaultMode: 420

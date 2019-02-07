@@ -25,10 +25,8 @@ spec:
                 operator: In
                 values:
                 - "amd64"
-              - key: role
-                operator: In
-                values:
-                - "management"
+              - key: node-role.kubernetes.io/management
+                operator: Exists
       containers:
       - image: registry.au-syd.bluemix.net/cloudzcp/grafana:5.0.4
         name: grafana

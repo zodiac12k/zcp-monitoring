@@ -18,7 +18,7 @@ data:
     [server]
     protocol = http
     http_port = 3000
-    domain = oms-dev-monitoring.cloudzcp.io
+    domain = example-monitoring.cloudzcp.io
     enforce_domain = true
     root_url = %(protocol)s://%(domain)s/
     ;router_logging = false
@@ -112,8 +112,8 @@ data:
     client_id = monitoring
     client_secret = 4138cbf9-4091-4029-a1d6-d64450994f55
     scopes = openid email name
-    auth_url = https://oms-dev-iam.cloudzcp.io/auth/realms/zcp/protocol/openid-connect/auth
-    token_url = https://oms-dev-iam.cloudzcp.io/auth/realms/zcp/protocol/openid-connect/token
+    auth_url = https://example-iam.cloudzcp.io/auth/realms/zcp/protocol/openid-connect/auth
+    token_url = https://example-iam.cloudzcp.io/auth/realms/zcp/protocol/openid-connect/token
     ;api_url =
     ;team_ids =
     ;allowed_organizations =

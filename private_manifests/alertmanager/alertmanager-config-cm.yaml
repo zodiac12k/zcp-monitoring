@@ -33,7 +33,7 @@ data:
       # multiple alerts coming in for cluster=A and alertname=LatencyHigh would
       # be batched into a single group.
 
-      group_by: ['alertname', 'severity', 'receiver']
+      group_by: ['alertname', 'severity', 'receiver', 'priority', 'env', 'product']
 
       # When a new group of alerts is created by an incoming alert, wait at
       # least 'group_wait' to send the initial notification.
@@ -51,7 +51,7 @@ data:
       # If an alert has successfully been sent, wait 'repeat_interval' to
       # resend them.
 
-      repeat_interval: 1h
+      repeat_interval: 60m
 
       # A default receiver
 
@@ -63,31 +63,15 @@ data:
 
       # The child route trees.
       routes:
-      - receiver: sk-cps-ops
+      - receiver: alert-webhook
         match_re:
-          channel: sk-cps-ops
-        routes:
-        - receiver: default
-          match:
-            severity: warning
-        - receiver: sk-cps-ops
-          match:
-            severity: critical
-
-      - receiver: zcp-webhook
-        match_re:
-          severity : .*
-        continue: true
+          severity: .*
+        continue: false
 
     receivers:
     - name: 'default'
 
-    - name: 'sk-cps-ops'
-      slack_configs:
-      - api_url: #slack api uri
-        send_resolved: true
- 
-    - name: zcp-webhook
+    - name: 'alert-webhook'
       webhook_configs:
-      - url: http://zcp-alertmanager-store-svc:5000/webhook
+      - url: https://alert.cloudzcp.io/webhook/alertmanager
         send_resolved: true
