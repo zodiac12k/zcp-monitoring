@@ -4,8 +4,8 @@
 
 | Component        | Version           | Image  |
 | ------------- |-------------|-----|
-|Grafana| 5.2.0 |grafana/grafana:5.2.0
-|Prometheus|  2.6.0 |prom/prometheus:v2.6.0
+|Grafana| 5.4.3 |grafana/grafana:5.4.3
+|Prometheus|  2.7.0 |prom/prometheus:v2.7.0
 |Alertmanager|  0.15.3  |prom/alertmanager:v0.15.3
 |kube-state-metric| 1.4.0 |k8s.gcr.io/kube-state-metrics:v1.4.0
 |Node-Exporter| 0.17.0  |node-exporter:v0.17.0
@@ -29,6 +29,7 @@
 ||Kubernetes: StatefulSet Overview|
 |Addon Dashboards|ElasticSearch|
 ||ZCP Service Status|
+||spring-boot-micrometer|
 ## Get ICCS Deploy Env 
 
 * ETCD ENDPOINT 정보 확인(IP, Port)

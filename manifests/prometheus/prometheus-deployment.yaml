@@ -13,7 +13,8 @@ spec:
       serviceAccountName: prometheus
       containers:
         - name: prometheus
-          image: prom/prometheus:v2.6.0
+          image: prom/prometheus:v2.7.0
+          imagePullPolicy: IfNotPresent
           resources:
             limits:
               cpu: 4000m
@@ -23,7 +24,7 @@ spec:
               memory: 3Gi
           args:
             - "--config.file=/etc/prometheus/prometheus.yml"
-            - "--storage.tsdb.path=/prometheus/"
+            - "--storage.tsdb.path=/data"
             - "--storage.tsdb.retention=30d"
             - "--web.enable-lifecycle"
             - "--web.enable-admin-api"
@@ -56,7 +57,7 @@ spec:
             - name: prometheus-config-volume
               mountPath: /etc/prometheus/
             - name: prometheus-storage-volume
-              mountPath: /prometheus/
+              mountPath: /data
             - name: rules-volume
               mountPath: /etc/prometheus-rules/
             - name: user-rules-volume
