@@ -63,15 +63,9 @@ data:
 
       # The child route trees.
       routes:
-      - receiver: alert-webhook
-        match_re:
-          severity: .*
-        continue: false
 
     receivers:
     - name: 'default'
-
-    - name: 'alert-webhook'
       webhook_configs:
       - url: https://alert.cloudzcp.io/webhook/alertmanager
         send_resolved: true

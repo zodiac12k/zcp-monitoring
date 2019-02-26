@@ -15,7 +15,23 @@ spec:
         backend:
           serviceName: grafana-service
           servicePort: 3000
+  - host: example-prometheus.cloudzcp.io
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: prometheus-service
+          servicePort: 9090
+  - host: example-alertmanager.cloudzcp.io
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: alertmanager-service
+          servicePort: 9093
   tls:
-    - secretName: cloudzcp-io-cert
-      hosts:
-        - example-monitoring.cloudzcp.io
+  - secretName: cloudzcp-io-cert
+    hosts:
+    - example-monitoring.cloudzcp.io
+    - example-prometheus.cloudzcp.io
+    - example-alertmanager.cloudzcp.io

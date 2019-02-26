@@ -89,15 +89,15 @@ metadata:
   name: prometheus-data
   namespace: zcp-system
   annotations:
-    volume.beta.kubernetes.io/storage-class: "ibmc-block-retain-bronze"
+    volume.beta.kubernetes.io/storage-class: "ibmc-block-retain-silver"
   labels:
-    billingType: "monthly"
+    billingType: "hourly"
 spec:
   accessModes:
     - ReadWriteOnce
   resources:
     requests:
-      storage: 20Gi
+      storage: 50Gi
 ```
 
 * Prometheus 환경 정보 설정
@@ -154,24 +154,25 @@ $ kubectl create -f alertmanager
 ## Ingress 생성 및 Monitoring 서비스 접속 확인
 Ingress host 정보 내 Domain 정보 수정 필요(example.sk.com)
 ```
+$ cat ingress.yaml | sed 's/example/${host_prefix}/' | sed 's/\(ingress\.bluemix\.net\/ALB-ID\):.*$/\1: ${alb_id}/' | kubectl create -f -
 $ cat ingress.yaml 
-apiVersion: extensions/v1beta1
-kind: Ingress
-metadata:
-  name: monitoring-ingress
-  namespace: zcp-system
-spec:
-  rules:
-  - host: example-monitoring.cloudzcp.io
-    http:
-      paths:
-      - path: /
-        backend:
-          serviceName: grafana-service
-          servicePort: 3000
-  tls:
-    - secretName: cloudzcp-io-cert
-      hosts:
+            apiVersion: extensions/v1beta1
+            kind: Ingress
+            metadata:
+              name: monitoring-ingress
+              namespace: zcp-system
+            spec:
+              rules:
+              - host: example-monitoring.cloudzcp.io
+                http:
+                  paths:
+                  - path: /
+                    backend:
+                      serviceName: grafana-service
+                      servicePort: 3000
+              tls:
+                - secretName: cloudzcp-io-cert
+                  hosts:
         - example-monitoring.cloudzcp.io
 
 $ kubectl create -f ingress.yaml
