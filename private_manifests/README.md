@@ -57,7 +57,7 @@ data:
 
 * Grafana 설정 변경
 ```
-$ vi private_manifests/grafana/grafana.ini
+$ vi private_manifests/grafana/grafana-cm.yaml
 ...
     [server]
     protocol = http
