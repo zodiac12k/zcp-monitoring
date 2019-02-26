@@ -46,7 +46,7 @@ $ kubectl -n kube-system get secret calico-etcd-secrets -o yaml > etcd-secrets.y
 
 * Monitoring 용도 ETCD TLS Secret 생성 (Namespace, ConfigMap Name 변경 필요)
 ```
-$ vi etcd-secret.yaml
+$ vi etcd-secrets.yaml
 ...
 name: etcd-secrets
 namespace: zcp-system
