@@ -30,11 +30,19 @@
 |Addon Dashboards|ElasticSearch|
 ||ZCP Service Status|
 
+## Clone this git repository
+```
+$ git clone https://github.com/cnpst/zcp-registry.git
+```
+
 ## Get IKS Deploy Env 
 
 * Monitoring 용도 ETCD TLS Secret 생성
 ```
+# kubectl clent version 1.11 or higher, run the following command
 $ kubectl patch secret calico-etcd-secrets -n kube-system -p='{"metadata": {"name": "etcd-secrets", "namespace": "zcp-system"}}' --dry-run -o yaml | kubectl create -f -
+# kubectl clent version 1.10 or lower, run the following command
+$ kubectl get secret calico-etcd-secrets -n kube-system -o yaml | sed 's/\(name\):.*$/\1: etcd-secrets/' | sed 's/\(namespace\):.*$/\1: zcp-system/' | kubectl create -f -
 $ kubectl get secret
 NAME           TYPE     DATA   AGE
 etcd-secrets   Opaque   3      56s
@@ -154,26 +162,8 @@ $ kubectl create -f alertmanager
 ## Ingress 생성 및 Monitoring 서비스 접속 확인
 Ingress host 정보 내 Domain 정보 수정 필요(example.sk.com)
 ```
+$ environment=$(kubectl config current-context | cut -d'-' -f3)
+$ host_prefix=$(kubectl config current-context | if [ environment = "dev" ];then cut -d'-' -f2,3;else cut -d'-' -f2;fi)
+$ alb_id=$(kubectl get deployment -n kube-system --no-headers=true -o=custom-columns=NAME:.metadata.name | grep "private-.*-alb")
 $ cat ingress.yaml | sed 's/example/${host_prefix}/' | sed 's/\(ingress\.bluemix\.net\/ALB-ID\):.*$/\1: ${alb_id}/' | kubectl create -f -
-$ cat ingress.yaml 
-            apiVersion: extensions/v1beta1
-            kind: Ingress
-            metadata:
-              name: monitoring-ingress
-              namespace: zcp-system
-            spec:
-              rules:
-              - host: example-monitoring.cloudzcp.io
-                http:
-                  paths:
-                  - path: /
-                    backend:
-                      serviceName: grafana-service
-                      servicePort: 3000
-              tls:
-                - secretName: cloudzcp-io-cert
-                  hosts:
-        - example-monitoring.cloudzcp.io
-
-$ kubectl create -f ingress.yaml
 ```
