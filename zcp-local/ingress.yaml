@@ -1,0 +1,35 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: monitoring-ingress
+  namespace: zcp-system
+spec:
+  rules:
+  - host: prometheus.example.sk.com
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: prometheus-service
+          servicePort: 9090
+  - host: grafana.example.sk.com
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: grafana-service
+          servicePort: 3000
+  - host: alertmanager.example.sk.com
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: alertmanager-service
+          servicePort: 9093
+  - host: blackbox.example.sk.com
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: blackbox
+          servicePort: 9115

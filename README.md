@@ -4,12 +4,12 @@
 
 | Component        | Version           | Image  |
 | ------------- |-------------|-----|
-|Grafana| 5.4.3 |grafana/grafana:5.4.3
-|Prometheus|  2.7.0 |prom/prometheus:v2.7.0
-|Alertmanager|  0.15.3  |prom/alertmanager:v0.15.3
-|kube-state-metric| 1.4.0 |k8s.gcr.io/kube-state-metrics:v1.4.0
-|Node-Exporter| 0.17.0  |node-exporter:v0.17.0
-|Blackbox-Exporter| 0.13.0  |prom/blackbox-exporter:v0.13.0
+|Grafana| 5.0.4 |grafana/grafana:5.0.4
+|Prometheus|  2.2.1 |prom/prometheus:v2.2.1
+|Alertmanager|  0.14.0  |prom/alertmanager:v0.14.0
+|kube-state-metric| 1.3.0 |k8s.gcr.io/kube-state-metrics:v1.3.0
+|Node-Exporter| 0.15.2  |node-exporter:v0.15.2
+|Blackbox-Exporter| 0.12.0  |prom/blackbox-exporter:v0.12.0
 |ElasticSearch-Exporter| 1.0.2  |justwatch/elasticsearch_exporter:1.0.2
 
 ## Monitoring Dashboard(Grafana)
@@ -18,7 +18,7 @@
 |------------- |-------------|
 |System Dashboards| System Overview |Worker Node System Metric 지표|
 ||System Usage Overview|  
-||System Disk Space|  
+||System DIsk Space|  
 |Cluster Dashboards |Kubernetes: Cluster Overview |
 ||Kubernetes: Resource Requests|
 ||Kubernetes: Performance Overview|
@@ -29,54 +29,29 @@
 ||Kubernetes: StatefulSet Overview|
 |Addon Dashboards|ElasticSearch|
 ||ZCP Service Status|
-||spring-boot-micrometer|
-## Get ICCS Deploy Env 
 
-* ETCD ENDPOINT 정보 확인(IP, Port)
-
+## Clone this git repository
 ```
-$ kubectl -n kube-system exec -it calico-kube-controllers-86dc74b64-2lv9l env | grep ETCD_ENDPOINTS
-ETCD_ENDPOINTS=https://[IP]:[Port]
+$ git clone https://github.com/cnpst/zcp-registry.git
 ```
 
-* ETCD TLS Secret Export 
-```
-$ kubectl -n kube-system get secret calico-etcd-secrets -o yaml > etcd-secrets.yaml
-```
+## Get IKS Deploy Env 
 
-* Monitoring 용도 ETCD TLS Secret 생성 (Namespace, ConfigMap Name 변경 필요)
+* Monitoring 용도 ETCD TLS Secret 생성
 ```
-$ vi etcd-secrets.yaml
-...
-name: etcd-secrets
-namespace: zcp-system
-
-$ kubectl create -f etcd-secrets.yaml
+# kubectl clent version 1.11 or higher, run the following command
+$ kubectl patch secret calico-etcd-secrets -n kube-system -p='{"metadata": {"name": "etcd-secrets", "namespace": "zcp-system"}}' --dry-run -o yaml | kubectl create -f -
+# kubectl clent version 1.10 or lower, run the following command
+$ kubectl get secret calico-etcd-secrets -n kube-system -o yaml | sed 's/\(name\):.*$/\1: etcd-secrets/' | sed 's/\(namespace\):.*$/\1: zcp-system/' | kubectl create -f -
 $ kubectl get secret
-NAME                             TYPE                                  DATA      AGE
-etcd-secrets                     Opaque                                3         21d
+NAME           TYPE     DATA   AGE
+etcd-secrets   Opaque   3      56s
 ```
 
-* ETCD Metric 수집 설정
-```
-$ vi manifests/prometheus/prometheus-cm.yaml
-...
-- job_name: 'etcd'
-  static_configs:
-  - targets:
-    - [ETCD_IP]:[ETCD_PORT]
-  tls_config:
-    ca_file: /etc/config/etcd-ca
-    cert_file: /etc/config/etcd-cert
-    key_file: /etc/config/etcd-key
-    insecure_skip_verify: true
-  scheme: https
-```
-
-* ICCS Cluste Name 설정
+* IKS Cluster Name 설정
 외부에서 식별 가능한 Cluster Name 변경(env 설정)
 ```
-$ vi manifests/prometheus/prometheus-cm.yaml
+$ vi private_manifests/prometheus/prometheus-cm.yaml
 ...
 data:
   prometheus.yml: |-
@@ -85,28 +60,44 @@ data:
       scrape_timeout: 15s
       evaluation_interval: 15s
       external_labels:
-        env: 'SK-CPS-ICCS-K8S-DEV'
+        env: 'CLOUDZCP-POU-DEV'
+```
+
+* Grafana 설정 변경
+```
+$ vi private_manifests/grafana/grafana-cm.yaml
+...
+    [server]
+    protocol = http
+    http_port = 3000
+    domain = example-monitoring.cloudzcp.io
+...
+    [auth.generic_oauth]
+    name = OAuth
+    enabled = true
+    allow_sign_up = true
+    client_id = monitoring
+    client_secret = 4138cbf9-4091-4029-a1d6-d64450994f55
+    scopes = openid email name
+    auth_url = https://example-iam.cloudzcp.io/auth/realms/zcp/protocol/openid-connect/auth
+    token_url = https://example-iam.cloudzcp.io/auth/realms/zcp/protocol/openid-connect/token
+...
 ```
 
 ## Prometheus Deploy
-
-* Monitoring Namespace 생성
-```
-$ kubectl create -f namespace.yaml
-```
 
 * Persistent Volume 설정 및 생성(File/Block Storage Option)
 
 Storage-Class 설정 및 PV 생성 Option 변경(Block Storage 기준)
 ```
-$ vi manifests/prometheus/prometheus-pvc.yaml
+$ vi private_manifests/prometheus/prometheus-pvc.yaml
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: prometheus-data
   namespace: zcp-system
   annotations:
-    volume.beta.kubernetes.io/storage-class: "ibmc-block-retain-bronze"
+    volume.beta.kubernetes.io/storage-class: "ibmc-block-retain-silver"
   labels:
     billingType: "hourly"
 spec:
@@ -114,14 +105,14 @@ spec:
     - ReadWriteOnce
   resources:
     requests:
-      storage: 20Gi
+      storage: 50Gi
 ```
 
 * Prometheus 환경 정보 설정
 
 Metric 유지 기간 설정 및 Prometheus external-url(Ingress Domain) 변경 (--storage.tsdb.retention, --web.external-url)
 ```
-$ vi manifests/prometheus/prometheus-deployment.yaml
+$ vi private_manifests/prometheus/prometheus-deployment.yaml
 ...
 containers:
   - name: prometheus
@@ -129,7 +120,7 @@ containers:
     args:
       - "--config.file=/etc/prometheus/prometheus.yml"
       - "--storage.tsdb.path=/prometheus/"
-      - "--storage.tsdb.retention=30d"
+      - "--storage.tsdb.retention=20d"
       - "--web.enable-lifecycle"
       - "--web.enable-admin-api"
       - "--web.external-url=http://prometheus.example.sk.com"
@@ -137,73 +128,42 @@ containers:
 * Prometheus Deploy
 
 ```
-$ kubectl create -f manifests/prometheus/
+$ kubectl create -f prometheus
 ```
-
 
 ## Exporter Deploy
 * kube-state-metric
 ```
-$ kubectl create -f manifests/exporters/kube-state-metric
+$ kubectl create -f exporters/kube-state-metric
 ```
 * node-exporter
 ```
-$ kubectl create -f manifests/exporters/node-exporter
+$ kubectl create -f exporters/node-exporter
 ```
 * blackbox-exporter
 ```
-$ kubectl create -f manifests/exporters/blackbox-exporter
+$ kubectl create -f exporters/blackbox-exporter
 ```
+* elasticsearch-exporter
+  * assets/ElasticSearch-Exporter-Deploy.md
 
 ## Grafana Deploy
 ```
-$ kubectl create -f manifests/grafana
+$ kubectl create -f grafana
 ```
 
 ## Alertmanager Deploy
+
+* Alertmanager Deploy
 ```
-$ kubectl create -f manifests/alertmanager
+$ kubectl create -f alertmanager
 ```
 
 ## Ingress 생성 및 Monitoring 서비스 접속 확인
 Ingress host 정보 내 Domain 정보 수정 필요(example.sk.com)
 ```
-$ cat ingress.yaml 
-apiVersion: extensions/v1beta1
-kind: Ingress
-metadata:
-  name: monitoring-ingress
-  namespace: zcp-system
-spec:
-  rules:
-  - host: prometheus.example.sk.com
-    http:
-      paths:
-      - path: /
-        backend:
-          serviceName: prometheus-service
-          servicePort: 9090
-  - host: grafana.example.sk.com
-    http:
-      paths:
-      - path: /
-        backend:
-          serviceName: grafana-service
-          servicePort: 3000
-  - host: alertmanager.example.sk.com
-    http:
-      paths:
-      - path: /
-        backend:
-          serviceName: alertmanager-service
-          servicePort: 9093
-  - host: blackbox.example.sk.com
-    http:
-      paths:
-      - path: /
-        backend:
-          serviceName: blackbox
-          servicePort: 9115
-
-$ kubectl create -f ingress.yaml
+$ environment=$(kubectl config current-context | cut -d'-' -f3)
+$ host_prefix=$(kubectl config current-context | if [ environment = "dev" ];then cut -d'-' -f2,3;else cut -d'-' -f2;fi)
+$ alb_id=$(kubectl get deployment -n kube-system --no-headers=true -o=custom-columns=NAME:.metadata.name | grep "private-.*-alb")
+$ cat ingress.yaml | sed 's/example/${host_prefix}/' | sed 's/\(ingress\.bluemix\.net\/ALB-ID\):.*$/\1: ${alb_id}/' | kubectl create -f -
 ```

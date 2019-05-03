@@ -16,7 +16,7 @@ zcp/elasticsearch-exporter      0.1.1           1.0.2       Elasticsearch stats 
 Specify each parameter using the `--set key=value[,key=value]` argument to `helm install`. For example,
  
 ```
-$ helm install --name zcp-logging zcp/elasticsearch-exporter --set es.uri=http://elasticsearch.zcp-system:9200,service.scrape=true,image.repository=registry.au-syd.bluemix.net/cloudzcp/elasticsearch_exporter,image.tag=1.0.2,tolerations.enabled=true
+$ helm install --name zcp-logging zcp/elasticsearch-exporter --set es.uri=http://elasticsearch.zcp-system:9200,service.scrape=true
 ```
 
 # Configuration
