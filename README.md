@@ -145,7 +145,7 @@ $ kubectl create -f exporters/node-exporter
 $ kubectl create -f exporters/blackbox-exporter
 ```
 * elasticsearch-exporter
-  * assets/ElasticSearch-Exporter-Deploy.md
+  * [Follow link](exporters/elasticsearch-exporter/README.md)
 
 ## Grafana Deploy
 ```
