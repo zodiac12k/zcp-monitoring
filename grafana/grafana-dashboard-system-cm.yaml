@@ -55,7 +55,7 @@ data:
       "gnetId": null,
       "graphTooltip": 0,
       "id": null,
-      "iteration": 1556511598912,
+      "iteration": 1557282079360,
       "links": [
         {
           "asDropdown": true,
@@ -141,6 +141,7 @@ data:
               "errors": {},
               "expr": "node_time{instance=\"$host\"} - node_boot_time{instance=\"$host\"}",
               "format": "time_series",
+              "instant": true,
               "interval": "5m",
               "intervalFactor": 1,
               "legendFormat": "",
@@ -223,6 +224,7 @@ data:
             {
               "expr": "count(node_cpu{mode=\"user\", instance=\"$host\"})",
               "format": "time_series",
+              "instant": true,
               "interval": "5m",
               "intervalFactor": 1,
               "refId": "A",
@@ -310,6 +312,7 @@ data:
             {
               "expr": "node_memory_MemTotal{instance=\"$host\"}",
               "format": "time_series",
+              "instant": true,
               "interval": "5m",
               "intervalFactor": 1,
               "refId": "A",

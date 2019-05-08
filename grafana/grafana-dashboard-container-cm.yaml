@@ -787,7 +787,7 @@ data:
             }
           ],
           "thresholds": "",
-          "title": "Filesystem",
+          "title": "Filesystem Read/Write",
           "type": "singlestat",
           "valueFontSize": "80%",
           "valueMaps": [
@@ -860,7 +860,7 @@ data:
           "thresholds": [],
           "timeFrom": null,
           "timeShift": null,
-          "title": "Filesystem Usage",
+          "title": "Filesystem Read/Write",
           "tooltip": {
             "msResolution": true,
             "shared": true,
@@ -965,7 +965,7 @@ data:
             }
           ],
           "thresholds": "",
-          "title": "Network RX/TX Total (bytes/sec)",
+          "title": "Network RX/TX",
           "type": "singlestat",
           "valueFontSize": "80%",
           "valueMaps": [
@@ -1038,7 +1038,7 @@ data:
           "thresholds": [],
           "timeFrom": null,
           "timeShift": null,
-          "title": "Network Usage",
+          "title": "Network TX/RX",
           "tooltip": {
             "msResolution": true,
             "shared": true,
@@ -1235,7 +1235,7 @@ data:
       "gnetId": 5303,
       "graphTooltip": 1,
       "id": null,
-      "iteration": 1556245053152,
+      "iteration": 1557209476915,
       "links": [],
       "panels": [
         {
@@ -1302,6 +1302,7 @@ data:
             {
               "expr": "kube_deployment_spec_replicas{namespace=\"$deployment_namespace\",deployment=\"$deployment_name\"}",
               "format": "time_series",
+              "instant": true,
               "intervalFactor": 2,
               "metric": "kube_deployment_spec_replicas",
               "refId": "A",
@@ -1385,6 +1386,7 @@ data:
             {
               "expr": "kube_deployment_status_replicas_available{namespace=\"$deployment_namespace\",deployment=\"$deployment_name\"}",
               "format": "time_series",
+              "instant": true,
               "intervalFactor": 2,
               "refId": "A",
               "step": 600
@@ -1465,8 +1467,9 @@ data:
           "tableColumn": "",
           "targets": [
             {
-              "expr": "max(kube_deployment_status_observed_generation{deployment=\"$deployment_name\",namespace=\"$deployment_namespace\"}) without (instance, pod)",
+              "expr": "kube_deployment_status_observed_generation{deployment=\"$deployment_name\",namespace=\"$deployment_namespace\"}",
               "format": "time_series",
+              "instant": true,
               "intervalFactor": 2,
               "refId": "A",
               "step": 600
@@ -1544,11 +1547,12 @@ data:
             "lineColor": "rgb(31, 120, 193)",
             "show": false
           },
-          "tableColumn": "",
+          "tableColumn": "__name__",
           "targets": [
             {
-              "expr": "max(kube_deployment_metadata_generation{deployment=\"$deployment_name\",namespace=\"$deployment_namespace\"}) without (instance, pod)",
+              "expr": "kube_deployment_metadata_generation{deployment=\"$deployment_name\",namespace=\"$deployment_namespace\"}",
               "format": "time_series",
+              "instant": true,
               "intervalFactor": 2,
               "refId": "A",
               "step": 600
@@ -1629,8 +1633,9 @@ data:
           "tableColumn": "",
           "targets": [
             {
-              "expr": "time() - max(kube_deployment_created{deployment=\"$deployment_name\"})",
+              "expr": "time() - kube_deployment_created{deployment=\"$deployment_name\"}",
               "format": "time_series",
+              "instant": true,
               "intervalFactor": 1,
               "refId": "A"
             }
@@ -2143,7 +2148,7 @@ data:
           "thresholds": [],
           "timeFrom": null,
           "timeShift": null,
-          "title": "Filesystem Usage",
+          "title": "Filesystem Read/Write",
           "tooltip": {
             "msResolution": true,
             "shared": true,
@@ -2242,7 +2247,7 @@ data:
           "thresholds": [],
           "timeFrom": null,
           "timeShift": null,
-          "title": "Network Usage",
+          "title": "Network TX/RX",
           "tooltip": {
             "msResolution": true,
             "shared": true,
@@ -2634,7 +2639,7 @@ data:
       "gnetId": 5330,
       "graphTooltip": 1,
       "id": null,
-      "iteration": 1556244225220,
+      "iteration": 1557207298006,
       "links": [],
       "panels": [
         {
@@ -2700,9 +2705,9 @@ data:
           "tableColumn": "",
           "targets": [
             {
-              "expr": "max(kube_daemonset_status_desired_number_scheduled{daemonset=\"$daemonset_name\",namespace=\"$daemonset_namespace\"}) without (instance, pod)",
+              "expr": "kube_daemonset_status_desired_number_scheduled{daemonset=\"$daemonset_name\",namespace=\"$daemonset_namespace\"}",
               "format": "time_series",
-              "instant": false,
+              "instant": true,
               "interval": "",
               "intervalFactor": 2,
               "legendFormat": "",
@@ -2787,9 +2792,9 @@ data:
           "tableColumn": "",
           "targets": [
             {
-              "expr": "max(kube_daemonset_status_current_number_scheduled{daemonset=\"$daemonset_name\",namespace=\"$daemonset_namespace\"}) without (instance, pod)",
+              "expr": "kube_daemonset_status_current_number_scheduled{daemonset=\"$daemonset_name\",namespace=\"$daemonset_namespace\"}",
               "format": "time_series",
-              "instant": false,
+              "instant": true,
               "interval": "",
               "intervalFactor": 2,
               "legendFormat": "",
@@ -2874,9 +2879,9 @@ data:
           "tableColumn": "",
           "targets": [
             {
-              "expr": "max(kube_daemonset_status_number_ready{daemonset=\"$daemonset_name\",namespace=\"$daemonset_namespace\"}) without (instance, pod)",
+              "expr": "kube_daemonset_status_number_ready{daemonset=\"$daemonset_name\",namespace=\"$daemonset_namespace\"}",
               "format": "time_series",
-              "instant": false,
+              "instant": true,
               "interval": "",
               "intervalFactor": 2,
               "legendFormat": "",
@@ -2960,8 +2965,9 @@ data:
           "tableColumn": "",
           "targets": [
             {
-              "expr": "min(kube_daemonset_status_number_available{daemonset=\"$daemonset_name\",namespace=\"$daemonset_namespace\"}) without (instance, pod)",
+              "expr": "kube_daemonset_status_number_available{daemonset=\"$daemonset_name\",namespace=\"$daemonset_namespace\"}",
               "format": "time_series",
+              "instant": true,
               "intervalFactor": 2,
               "refId": "A",
               "step": 600
@@ -3042,8 +3048,9 @@ data:
           "tableColumn": "",
           "targets": [
             {
-              "expr": "max(kube_daemonset_metadata_generation{daemonset=\"$daemonset_name\",namespace=\"$daemonset_namespace\"}) without (instance, pod)",
+              "expr": "kube_daemonset_metadata_generation{daemonset=\"$daemonset_name\",namespace=\"$daemonset_namespace\"}",
               "format": "time_series",
+              "instant": true,
               "intervalFactor": 2,
               "refId": "A",
               "step": 600
@@ -3124,8 +3131,9 @@ data:
           "tableColumn": "",
           "targets": [
             {
-              "expr": "time() - max(kube_daemonset_created{daemonset=~\"$daemonset_name\"})",
+              "expr": "time() - kube_daemonset_created{daemonset=~\"$daemonset_name\"}",
               "format": "time_series",
+              "instant": true,
               "intervalFactor": 1,
               "refId": "A"
             }
@@ -3636,7 +3644,7 @@ data:
           "thresholds": [],
           "timeFrom": null,
           "timeShift": null,
-          "title": "Filesystem Usage",
+          "title": "Filesystem Read/Write",
           "tooltip": {
             "msResolution": true,
             "shared": true,
@@ -3733,7 +3741,7 @@ data:
           "thresholds": [],
           "timeFrom": null,
           "timeShift": null,
-          "title": "Network Usage",
+          "title": "Network TX/RX",
           "tooltip": {
             "msResolution": true,
             "shared": true,
@@ -4040,7 +4048,7 @@ data:
       "gnetId": 5330,
       "graphTooltip": 1,
       "id": null,
-      "iteration": 1556244782005,
+      "iteration": 1557209595322,
       "links": [],
       "panels": [
         {
@@ -4105,8 +4113,9 @@ data:
           "tableColumn": "",
           "targets": [
             {
-              "expr": "max(kube_statefulset_replicas{namespace=\"$statefulset_namespace\",statefulset=\"$statefulset_name\"}) without (instance, pod)",
+              "expr": "kube_statefulset_replicas{namespace=\"$statefulset_namespace\",statefulset=\"$statefulset_name\"}",
               "format": "time_series",
+              "instant": true,
               "intervalFactor": 2,
               "refId": "A",
               "step": 600
@@ -4187,8 +4196,9 @@ data:
           "tableColumn": "",
           "targets": [
             {
-              "expr": "min(kube_statefulset_status_replicas{namespace=\"$statefulset_namespace\",statefulset=\"$statefulset_name\"}) without (instance, pod)",
+              "expr": "kube_statefulset_status_replicas{namespace=\"$statefulset_namespace\",statefulset=\"$statefulset_name\"}",
               "format": "time_series",
+              "instant": true,
               "intervalFactor": 2,
               "refId": "A",
               "step": 600
@@ -4269,8 +4279,9 @@ data:
           "tableColumn": "",
           "targets": [
             {
-              "expr": "max(kube_statefulset_status_observed_generation{namespace=\"$statefulset_namespace\",statefulset=\"$statefulset_name\"}) without (instance, pod)",
+              "expr": "kube_statefulset_status_observed_generation{namespace=\"$statefulset_namespace\",statefulset=\"$statefulset_name\"}",
               "format": "time_series",
+              "instant": true,
               "intervalFactor": 2,
               "refId": "A",
               "step": 600
@@ -4351,8 +4362,9 @@ data:
           "tableColumn": "",
           "targets": [
             {
-              "expr": "max(kube_statefulset_metadata_generation{namespace=\"$statefulset_namespace\",statefulset=\"$statefulset_name\"}) without (instance, pod)",
+              "expr": "kube_statefulset_metadata_generation{namespace=\"$statefulset_namespace\",statefulset=\"$statefulset_name\"}",
               "format": "time_series",
+              "instant": true,
               "intervalFactor": 2,
               "refId": "A",
               "step": 600
@@ -4433,8 +4445,9 @@ data:
           "tableColumn": "",
           "targets": [
             {
-              "expr": "time() - max(kube_statefulset_created{statefulset=\"$statefulset_name\"})",
+              "expr": "time() - kube_statefulset_created{statefulset=\"$statefulset_name\"}",
               "format": "time_series",
+              "instant": true,
               "intervalFactor": 1,
               "refId": "A"
             }
@@ -4946,7 +4959,7 @@ data:
           "thresholds": [],
           "timeFrom": null,
           "timeShift": null,
-          "title": "Filesystem Usage",
+          "title": "Filesystem Read/Write",
           "tooltip": {
             "msResolution": true,
             "shared": true,
@@ -5043,7 +5056,7 @@ data:
           "thresholds": [],
           "timeFrom": null,
           "timeShift": null,
-          "title": "Network Usage",
+          "title": "Network TX/RX",
           "tooltip": {
             "msResolution": true,
             "shared": true,
