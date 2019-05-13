@@ -33,7 +33,7 @@ spec:
       serviceAccountName: zcp-system-admin
       containers:
         - name: kube-state-metrics
-          image: registry.au-syd.bluemix.net/cloudzcp/kube-state-metrics:v1.3.0
+          image: registry.au-syd.bluemix.net/cloudzcp/kube-state-metrics:v1.6.0
           ports:
           - containerPort: 8080
             name: metrics
