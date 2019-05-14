@@ -20,7 +20,7 @@ data:
     http_port = 3000
     domain = example-monitoring.cloudzcp.io
     enforce_domain = true
-    root_url = %(protocol)s://%(domain)s/
+    root_url = https://%(domain)s/
     ;router_logging = false
     ;static_root_path = public
     ;enable_gzip = false
