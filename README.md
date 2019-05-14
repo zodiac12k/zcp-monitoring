@@ -7,7 +7,7 @@
 |Grafana| 5.0.4 |grafana/grafana:5.0.4
 |Prometheus|  2.2.1 |prom/prometheus:v2.2.1
 |Alertmanager|  0.14.0  |prom/alertmanager:v0.14.0
-|kube-state-metric| 1.3.0 |k8s.gcr.io/kube-state-metrics:v1.3.0
+|kube-state-metrics| 1.6.0 |k8s.gcr.io/kube-state-metrics:v1.6.0
 |Node-Exporter| 0.15.2  |node-exporter:v0.15.2
 |Blackbox-Exporter| 0.12.0  |prom/blackbox-exporter:v0.12.0
 |ElasticSearch-Exporter| 1.0.2  |justwatch/elasticsearch_exporter:1.0.2
@@ -16,28 +16,28 @@
 
 | Folder| Dashboard        | 
 |------------- |-------------|
-|System Dashboards| System Overview |Worker Node System Metric 지표|
-||System Usage Overview|  
-||System DIsk Space|  
-|Cluster Dashboards |Kubernetes: Cluster Overview |
-||Kubernetes: Resource Requests|
-||Kubernetes: Performance Overview|
-||Etcd Cluster|
-|Container Dashboards|Kubernetes: POD Overview  |
-||Kubernetes: Deployment Overview|
-||Kubernetes: DaemonSet Overview|
-||Kubernetes: StatefulSet Overview|
+|System Dashboards|System Overview |Worker Node System Metric|
+|                 |System Usage Overview|  
+|                 |System DIsk Space|  
+|Cluster Dashboards|Kubernetes: Cluster Overview |
+|                  |Kubernetes: Resource Requests|
+|                  |Kubernetes: Performance Overview|
+|                  |Etcd Cluster|
+|Container Dashboards|Kubernetes: POD Overview|
+|                    |Kubernetes: Deployment Overview|
+|                    |Kubernetes: DaemonSet Overview|
+|                    |Kubernetes: StatefulSet Overview|
 |Addon Dashboards|ElasticSearch|
-||ZCP Service Status|
+|                |ZCP Service Status|
 
 ## Clone this git repository
 ```
-$ git clone https://github.com/cnpst/zcp-registry.git
+$ git clone https://github.com/cnpst/zcp-monitoring.git
 ```
 
 ## Get IKS Deploy Env 
 
-* Monitoring 용도 ETCD TLS Secret 생성
+Monitoring 용도 ETCD TLS Secret 생성
 ```
 # kubectl clent version 1.11 or higher, run the following command
 $ kubectl patch secret calico-etcd-secrets -n kube-system -p='{"metadata": {"name": "etcd-secrets", "namespace": "zcp-system"}}' --dry-run -o yaml | kubectl create -f -
@@ -48,10 +48,16 @@ NAME           TYPE     DATA   AGE
 etcd-secrets   Opaque   3      56s
 ```
 
-* IKS Cluster Name 설정
+## Prometheus
+
+### prometheus configmap 설정
+
 외부에서 식별 가능한 Cluster Name 변경(env 설정)
+
 ```
-$ vi private_manifests/prometheus/prometheus-cm.yaml
+$ kubectl config current-context | tr '[:lower:]' '[:upper:]'
+CLOUDZCP-EXAMPLE-DEV
+$ vi prometheus/prometheus-cm.yaml
 ...
 data:
   prometheus.yml: |-
@@ -60,12 +66,76 @@ data:
       scrape_timeout: 15s
       evaluation_interval: 15s
       external_labels:
-        env: 'CLOUDZCP-POU-DEV'
+        env: 'CLOUDZCP-EXAMPLE-DEV'
 ```
 
-* Grafana 설정 변경
+### Persistent Volume 설정 및 생성
+
+Storage-Class 설정 및 PV 생성 Option 변경(Block Storage 기준)
 ```
-$ vi private_manifests/grafana/grafana-cm.yaml
+$ vi prometheus/prometheus-pvc.yaml
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: prometheus-data
+  namespace: zcp-system
+  annotations:
+    volume.beta.kubernetes.io/storage-class: "ibmc-block-retain-silver"
+  labels:
+    billingType: "hourly"
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 100Gi
+```
+
+### Prometheus 환경 정보 설정
+
+Metric 유지 기간 설정 변경 (--storage.tsdb.retention)
+```
+$ vi prometheus/prometheus-deployment.yaml
+...
+containers:
+  - name: prometheus
+    image: prom/prometheus:v2.2.1
+    args:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+      - "--storage.tsdb.path=/prometheus/"
+      - "--storage.tsdb.retention=20d"
+      - "--web.enable-lifecycle"
+      - "--web.enable-admin-api"
+```
+### Deploy prometheus resources
+
+```
+$ kubectl create -f prometheus
+```
+
+## Prometheus exporters
+* kube-state-metric
+```
+$ kubectl create -f exporters/kube-state-metric
+```
+* node-exporter
+```
+$ kubectl create -f exporters/node-exporter
+```
+* blackbox-exporter
+```
+$ kubectl create -f exporters/blackbox-exporter
+```
+* elasticsearch-exporter
+  * [Move to installation guide](exporters/elasticsearch-exporter/README.md)
+
+## Grafana
+
+### grafana 설정
+
+monitoring domain name 과 keycloak iam 인증을 위한 url 변경
+```
+$ vi grafana/grafana-cm.yaml
 ...
     [server]
     protocol = http
@@ -84,83 +154,22 @@ $ vi private_manifests/grafana/grafana-cm.yaml
 ...
 ```
 
-## Prometheus Deploy
+### Deploy grafana resources
 
-* Persistent Volume 설정 및 생성(File/Block Storage Option)
-
-Storage-Class 설정 및 PV 생성 Option 변경(Block Storage 기준)
-```
-$ vi private_manifests/prometheus/prometheus-pvc.yaml
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: prometheus-data
-  namespace: zcp-system
-  annotations:
-    volume.beta.kubernetes.io/storage-class: "ibmc-block-retain-silver"
-  labels:
-    billingType: "hourly"
-spec:
-  accessModes:
-    - ReadWriteOnce
-  resources:
-    requests:
-      storage: 50Gi
-```
-
-* Prometheus 환경 정보 설정
-
-Metric 유지 기간 설정 및 Prometheus external-url(Ingress Domain) 변경 (--storage.tsdb.retention, --web.external-url)
-```
-$ vi private_manifests/prometheus/prometheus-deployment.yaml
-...
-containers:
-  - name: prometheus
-    image: prom/prometheus:v2.2.1
-    args:
-      - "--config.file=/etc/prometheus/prometheus.yml"
-      - "--storage.tsdb.path=/prometheus/"
-      - "--storage.tsdb.retention=20d"
-      - "--web.enable-lifecycle"
-      - "--web.enable-admin-api"
-      - "--web.external-url=http://prometheus.example.sk.com"
-```
-* Prometheus Deploy
-
-```
-$ kubectl create -f prometheus
-```
-
-## Exporter Deploy
-* kube-state-metric
-```
-$ kubectl create -f exporters/kube-state-metric
-```
-* node-exporter
-```
-$ kubectl create -f exporters/node-exporter
-```
-* blackbox-exporter
-```
-$ kubectl create -f exporters/blackbox-exporter
-```
-* elasticsearch-exporter
-  * [Follow link](exporters/elasticsearch-exporter/README.md)
-
-## Grafana Deploy
 ```
 $ kubectl create -f grafana
 ```
 
-## Alertmanager Deploy
+## Alertmanager
 
-* Alertmanager Deploy
+### Deploy alertmanager resources
 ```
 $ kubectl create -f alertmanager
 ```
 
 ## Ingress 생성 및 Monitoring 서비스 접속 확인
-Ingress host 정보 내 Domain 정보 수정 필요(example.sk.com)
+
+Ingress host 정보 내 Domain 정보 변경 및 생성
 ```
 $ environment=$(kubectl config current-context | cut -d'-' -f3)
 $ host_prefix=$(kubectl config current-context | if [ environment = "dev" ];then cut -d'-' -f2,3;else cut -d'-' -f2;fi)
