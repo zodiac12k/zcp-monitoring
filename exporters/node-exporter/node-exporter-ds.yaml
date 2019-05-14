@@ -4,6 +4,10 @@ metadata:
   name: node-exporter
   namespace: zcp-system
 spec:
+  updateStrategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
   template:
     metadata:
       labels:

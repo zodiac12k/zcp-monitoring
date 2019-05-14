@@ -3,33 +3,35 @@ kind: Ingress
 metadata:
   name: monitoring-ingress
   namespace: zcp-system
+  annotations:
+    ingress.bluemix.net/redirect-to-https: "True"
+#    ingress.bluemix.net/ALB-ID: private-cr6221beebe0454d3eaa259838844f46d6-alb1
 spec:
   rules:
-  - host: prometheus.example.sk.com
-    http:
-      paths:
-      - path: /
-        backend:
-          serviceName: prometheus-service
-          servicePort: 9090
-  - host: grafana.example.sk.com
+  - host: example-monitoring.cloudzcp.io
     http:
       paths:
       - path: /
         backend:
           serviceName: grafana-service
           servicePort: 3000
-  - host: alertmanager.example.sk.com
+  - host: example-prometheus.cloudzcp.io
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: prometheus-service
+          servicePort: 9090
+  - host: example-alertmanager.cloudzcp.io
     http:
       paths:
       - path: /
         backend:
           serviceName: alertmanager-service
           servicePort: 9093
-  - host: blackbox.example.sk.com
-    http:
-      paths:
-      - path: /
-        backend:
-          serviceName: blackbox
-          servicePort: 9115
+  tls:
+  - secretName: cloudzcp-io-cert
+    hosts:
+    - example-monitoring.cloudzcp.io
+    - example-prometheus.cloudzcp.io
+    - example-alertmanager.cloudzcp.io

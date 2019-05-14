@@ -45,11 +45,11 @@ data:
           }
         ]
       },
-      "editable": true,
+      "editable": false,
       "gnetId": null,
       "graphTooltip": 0,
       "id": null,
-      "iteration": 1525342513198,
+      "iteration": 1557281559346,
       "links": [],
       "panels": [
         {
@@ -129,6 +129,7 @@ data:
             {
               "expr": "sum(ALERTS{alertstate=\"firing\",alertname!=\"DeadMansSwitch\"})",
               "format": "time_series",
+              "instant": true,
               "intervalFactor": 2,
               "legendFormat": "",
               "refId": "A",
@@ -211,6 +212,7 @@ data:
             {
               "expr": "sum(kube_node_status_condition{condition=\"Ready\",status!=\"true\"})",
               "format": "time_series",
+              "instant": true,
               "intervalFactor": 2,
               "legendFormat": "",
               "refId": "A",
@@ -293,6 +295,7 @@ data:
             {
               "expr": "sum(kube_node_spec_unschedulable)",
               "format": "time_series",
+              "instant": true,
               "intervalFactor": 2,
               "legendFormat": "",
               "refId": "A",
@@ -375,6 +378,7 @@ data:
             {
               "expr": "sum(kube_node_status_condition{condition=\"MemoryPressure\",status=\"true\"})",
               "format": "time_series",
+              "instant": true,
               "intervalFactor": 2,
               "legendFormat": "",
               "refId": "A",
@@ -457,6 +461,7 @@ data:
             {
               "expr": "sum(kube_node_status_condition{condition=\"DiskPressure\",status=\"true\"})",
               "format": "time_series",
+              "instant": true,
               "intervalFactor": 2,
               "legendFormat": "",
               "refId": "A",
@@ -539,6 +544,7 @@ data:
             {
               "expr": "sum(kubelet_running_pod_count)",
               "format": "time_series",
+              "instant": true,
               "intervalFactor": 2,
               "legendFormat": "",
               "refId": "A",
@@ -621,6 +627,7 @@ data:
             {
               "expr": "sum(kubelet_running_container_count)",
               "format": "time_series",
+              "instant": true,
               "intervalFactor": 2,
               "legendFormat": "",
               "refId": "A",
@@ -708,6 +715,7 @@ data:
             {
               "expr": "kubelet_running_pod_count{instance=~\"$node\"}",
               "format": "time_series",
+              "instant": true,
               "intervalFactor": 2,
               "legendFormat": "",
               "refId": "A",
@@ -795,6 +803,7 @@ data:
             {
               "expr": "kubelet_running_container_count{instance=~\"$node\"}",
               "format": "time_series",
+              "instant": true,
               "intervalFactor": 2,
               "refId": "A",
               "step": 60
@@ -847,7 +856,7 @@ data:
                 "h": 3,
                 "w": 4,
                 "x": 0,
-                "y": 13
+                "y": 35
               },
               "height": "2",
               "id": 11,
@@ -887,8 +896,9 @@ data:
               "tableColumn": "",
               "targets": [
                 {
-                  "expr": "count(node_uname_info)",
+                  "expr": "count(node_uname_info{job=\"kubernetes-nodes-exporter\"})",
                   "format": "time_series",
+                  "instant": true,
                   "intervalFactor": 2,
                   "refId": "A",
                   "step": 60
@@ -932,7 +942,7 @@ data:
                 "h": 3,
                 "w": 4,
                 "x": 4,
-                "y": 13
+                "y": 35
               },
               "height": "2",
               "id": 12,
@@ -972,8 +982,9 @@ data:
               "tableColumn": "",
               "targets": [
                 {
-                  "expr": "count(node_cpu{mode=\"user\"})",
+                  "expr": "count(node_cpu{mode=\"user\",component=\"node-exporter\"})",
                   "format": "time_series",
+                  "instant": true,
                   "intervalFactor": 2,
                   "legendFormat": "",
                   "refId": "A",
@@ -1018,7 +1029,7 @@ data:
                 "h": 3,
                 "w": 4,
                 "x": 8,
-                "y": 13
+                "y": 35
               },
               "height": "2",
               "id": 14,
@@ -1058,8 +1069,9 @@ data:
               "tableColumn": "",
               "targets": [
                 {
-                  "expr": "sum(node_memory_MemTotal - node_memory_MemFree - node_memory_Buffers - node_memory_Cached)",
+                  "expr": "sum(node_memory_MemTotal{job=\"kubernetes-nodes-exporter\"} - node_memory_MemFree - node_memory_Buffers - node_memory_Cached)",
                   "format": "time_series",
+                  "instant": true,
                   "intervalFactor": 2,
                   "legendFormat": "",
                   "refId": "A",
@@ -1104,7 +1116,7 @@ data:
                 "h": 3,
                 "w": 4,
                 "x": 12,
-                "y": 13
+                "y": 35
               },
               "height": "2",
               "id": 19,
@@ -1144,8 +1156,9 @@ data:
               "tableColumn": "",
               "targets": [
                 {
-                  "expr": "sum(node_memory_MemTotal)",
+                  "expr": "sum(node_memory_MemTotal{job=\"kubernetes-nodes-exporter\"})",
                   "format": "time_series",
+                  "instant": true,
                   "intervalFactor": 2,
                   "legendFormat": "",
                   "refId": "A",
@@ -1190,7 +1203,7 @@ data:
                 "h": 3,
                 "w": 4,
                 "x": 16,
-                "y": 13
+                "y": 35
               },
               "height": "2",
               "id": 22,
@@ -1230,8 +1243,9 @@ data:
               "tableColumn": "",
               "targets": [
                 {
-                  "expr": "sum(node_filesystem_size{mountpoint=\"/\"}) - sum(node_filesystem_free{mountpoint=\"/\"})",
+                  "expr": "sum(node_filesystem_size{job=\"kubernetes-nodes-exporter\",mountpoint=\"/\"}) - sum(node_filesystem_avail{job=\"kubernetes-nodes-exporter\",mountpoint=\"/\"})",
                   "format": "time_series",
+                  "instant": true,
                   "intervalFactor": 2,
                   "legendFormat": "",
                   "refId": "A",
@@ -1276,7 +1290,7 @@ data:
                 "h": 3,
                 "w": 4,
                 "x": 20,
-                "y": 13
+                "y": 35
               },
               "height": "2",
               "id": 20,
@@ -1316,8 +1330,9 @@ data:
               "tableColumn": "",
               "targets": [
                 {
-                  "expr": "sum(node_filesystem_size{mountpoint=\"/\"})",
+                  "expr": "sum(node_filesystem_size{job=\"kubernetes-nodes-exporter\",mountpoint=\"/\"})",
                   "format": "time_series",
+                  "instant": true,
                   "intervalFactor": 2,
                   "legendFormat": "",
                   "refId": "A",
@@ -1361,7 +1376,7 @@ data:
                 "h": 7,
                 "w": 8,
                 "x": 0,
-                "y": 16
+                "y": 38
               },
               "height": "",
               "id": 16,
@@ -1402,7 +1417,7 @@ data:
               "tableColumn": "",
               "targets": [
                 {
-                  "expr": "avg(100 - (avg by (cpu) (rate(node_cpu{mode=\"idle\"}[5m])) * 100))",
+                  "expr": "avg(100 - (avg by (cpu) (rate(node_cpu{job=\"kubernetes-nodes-exporter\",mode=\"idle\"}[5m])) * 100))",
                   "format": "time_series",
                   "intervalFactor": 2,
                   "refId": "A",
@@ -1446,7 +1461,7 @@ data:
                 "h": 7,
                 "w": 8,
                 "x": 8,
-                "y": 16
+                "y": 38
               },
               "height": "",
               "id": 17,
@@ -1487,7 +1502,7 @@ data:
               "tableColumn": "",
               "targets": [
                 {
-                  "expr": "sum(node_memory_MemTotal - node_memory_MemFree - node_memory_Buffers - node_memory_Cached ) / sum(node_memory_MemTotal) * 100",
+                  "expr": "sum(node_memory_MemTotal{job=\"kubernetes-nodes-exporter\"} - node_memory_MemFree - node_memory_Buffers - node_memory_Cached ) / sum(node_memory_MemTotal{job=\"kubernetes-nodes-exporter\"}) * 100",
                   "format": "time_series",
                   "hide": false,
                   "intervalFactor": 2,
@@ -1495,7 +1510,7 @@ data:
                   "step": 60
                 },
                 {
-                  "expr": "sum(node_memory_MemTotal - node_memory_MemAvailable ) / sum(node_memory_MemTotal) * 100",
+                  "expr": "sum(node_memory_MemTotal{job=\"kubernetes-nodes-exporter\"} - node_memory_MemAvailable ) / sum(node_memory_MemTotal{job=\"kubernetes-nodes-exporter\"}) * 100",
                   "format": "time_series",
                   "hide": true,
                   "intervalFactor": 2,
@@ -1540,7 +1555,7 @@ data:
                 "h": 7,
                 "w": 8,
                 "x": 16,
-                "y": 16
+                "y": 38
               },
               "height": "",
               "id": 21,
@@ -1581,7 +1596,7 @@ data:
               "tableColumn": "",
               "targets": [
                 {
-                  "expr": "((sum(node_filesystem_size{mountpoint=\"/\"}) - sum(node_filesystem_free{mountpoint=\"/\"})) / sum(node_filesystem_size{mountpoint=\"/\"})) * 100",
+                  "expr": "((sum(node_filesystem_size{job=\"kubernetes-nodes-exporter\",mountpoint=\"/\"}) - sum(node_filesystem_avail{job=\"kubernetes-nodes-exporter\",mountpoint=\"/\"})) / sum(node_filesystem_size{job=\"kubernetes-nodes-exporter\",mountpoint=\"/\"})) * 100",
                   "format": "time_series",
                   "intervalFactor": 2,
                   "refId": "A",
@@ -1613,7 +1628,7 @@ data:
                 "h": 7,
                 "w": 6,
                 "x": 0,
-                "y": 23
+                "y": 45
               },
               "id": 1,
               "legend": {
@@ -1639,9 +1654,10 @@ data:
               "steppedLine": false,
               "targets": [
                 {
-                  "expr": "100 - (avg by (instance) (rate(node_cpu{mode=\"idle\"}[5m])) * 100)",
+                  "expr": "100 - (avg by (instance) (rate(node_cpu{job=\"kubernetes-nodes-exporter\",mode=\"idle\"}[5m])) * 100)",
                   "format": "time_series",
                   "intervalFactor": 2,
+                  "legendFormat": "{{ instance }}",
                   "refId": "A",
                   "step": 20
                 }
@@ -1693,7 +1709,7 @@ data:
                 "h": 7,
                 "w": 6,
                 "x": 6,
-                "y": 23
+                "y": 45
               },
               "id": 2,
               "legend": {
@@ -1719,9 +1735,10 @@ data:
               "steppedLine": false,
               "targets": [
                 {
-                  "expr": "((node_memory_MemTotal - node_memory_MemFree - node_memory_Buffers - node_memory_Cached) / node_memory_MemTotal) * 100",
+                  "expr": "((node_memory_MemTotal{job=\"kubernetes-nodes-exporter\"} - node_memory_MemFree - node_memory_Buffers - node_memory_Cached) / node_memory_MemTotal{job=\"kubernetes-nodes-exporter\"}) * 100",
                   "format": "time_series",
                   "intervalFactor": 2,
+                  "legendFormat": "{{ instance }}",
                   "refId": "A",
                   "step": 20
                 }
@@ -1773,7 +1790,7 @@ data:
                 "h": 7,
                 "w": 6,
                 "x": 12,
-                "y": 23
+                "y": 45
               },
               "id": 3,
               "legend": {
@@ -1799,7 +1816,7 @@ data:
               "steppedLine": false,
               "targets": [
                 {
-                  "expr": "((node_filesystem_size{mountpoint=\"/\"} - node_filesystem_free{mountpoint=\"/\"}) / node_filesystem_size{mountpoint=\"/\"}) * 100",
+                  "expr": "((node_filesystem_size{job=\"kubernetes-nodes-exporter\",mountpoint=\"/\"} - node_filesystem_avail{job=\"kubernetes-nodes-exporter\",mountpoint=\"/\"}) / node_filesystem_size{job=\"kubernetes-nodes-exporter\",mountpoint=\"/\"}) * 100",
                   "format": "time_series",
                   "hide": false,
                   "instant": false,
@@ -1856,7 +1873,7 @@ data:
                 "h": 7,
                 "w": 6,
                 "x": 18,
-                "y": 23
+                "y": 45
               },
               "id": 5,
               "legend": {
@@ -1882,7 +1899,7 @@ data:
               "steppedLine": false,
               "targets": [
                 {
-                  "expr": "(sum by (instance) (rate(node_network_receive_bytes{device=~\"eth0|eth1\"}[5m])))",
+                  "expr": "(sum by (instance) (rate(node_network_receive_bytes{job=\"kubernetes-nodes-exporter\",device=~\"eth0|eth1\"}[5m])))",
                   "format": "time_series",
                   "hide": false,
                   "intervalFactor": 2,
@@ -1891,7 +1908,7 @@ data:
                   "step": 20
                 },
                 {
-                  "expr": "(sum by (instance) (rate(node_network_transmit_bytes{device=~\"eth0|eth1\"}[5m])))",
+                  "expr": "(sum by (instance) (rate(node_network_transmit_bytes{job=\"kubernetes-nodes-exporter\",device=~\"eth0|eth1\"}[5m])))",
                   "format": "time_series",
                   "hide": false,
                   "intervalFactor": 2,
@@ -1974,7 +1991,7 @@ data:
                 "h": 6,
                 "w": 8,
                 "x": 0,
-                "y": 14
+                "y": 53
               },
               "id": 24,
               "interval": null,
@@ -2013,7 +2030,7 @@ data:
               "tableColumn": "",
               "targets": [
                 {
-                  "expr": "sum (rate (container_cpu_usage_seconds_total{image!=\"\",name=~\"^k8s_.*\"}[5m])) / sum (machine_cpu_cores) * 100",
+                  "expr": "sum(rate(container_cpu_usage_seconds_total{id=\"/\"}[5m])) / sum(kube_node_status_capacity_cpu_cores) * 100",
                   "format": "time_series",
                   "hide": false,
                   "intervalFactor": 2,
@@ -2057,7 +2074,7 @@ data:
                 "h": 6,
                 "w": 8,
                 "x": 8,
-                "y": 14
+                "y": 53
               },
               "id": 23,
               "interval": null,
@@ -2096,7 +2113,7 @@ data:
               "tableColumn": "",
               "targets": [
                 {
-                  "expr": "sum(container_memory_working_set_bytes{image!=\"\",name=~\"^k8s_.*\"}) / sum (machine_memory_bytes) * 100",
+                  "expr": "sum(container_memory_working_set_bytes{id=\"/\"}) / sum(kube_node_status_capacity_memory_bytes) * 100",
                   "format": "time_series",
                   "intervalFactor": 2,
                   "refId": "A",
@@ -2139,7 +2156,7 @@ data:
                 "h": 6,
                 "w": 8,
                 "x": 16,
-                "y": 14
+                "y": 53
               },
               "id": 25,
               "interval": null,
@@ -2178,7 +2195,7 @@ data:
               "tableColumn": "",
               "targets": [
                 {
-                  "expr": "sum (container_fs_usage_bytes{id=\"/\",device=\"/dev/mapper/docker_data\"}) / sum (container_fs_limit_bytes{id=\"/\",device=\"/dev/mapper/docker_data\"}) * 100",
+                  "expr": "sum(container_fs_usage_bytes{id=\"/\",device=\"/dev/mapper/docker_data\"}) / sum(container_fs_limit_bytes{id=\"/\",device=\"/dev/mapper/docker_data\"}) * 100",
                   "format": "time_series",
                   "intervalFactor": 2,
                   "refId": "A",
@@ -2221,7 +2238,7 @@ data:
                 "h": 6,
                 "w": 4,
                 "x": 0,
-                "y": 20
+                "y": 59
               },
               "id": 28,
               "interval": null,
@@ -2260,8 +2277,9 @@ data:
               "tableColumn": "",
               "targets": [
                 {
-                  "expr": "sum (rate (container_cpu_usage_seconds_total{image!=\"\",name=~\"^k8s_.*\"}[2m]))",
+                  "expr": "sum(rate(container_cpu_usage_seconds_total{id=\"/\"}[2m]))",
                   "format": "time_series",
+                  "instant": true,
                   "intervalFactor": 2,
                   "refId": "A",
                   "step": 60
@@ -2303,7 +2321,7 @@ data:
                 "h": 6,
                 "w": 4,
                 "x": 4,
-                "y": 20
+                "y": 59
               },
               "id": 26,
               "interval": null,
@@ -2342,8 +2360,9 @@ data:
               "tableColumn": "",
               "targets": [
                 {
-                  "expr": "sum (kube_node_status_allocatable_cpu_cores)",
+                  "expr": "sum(kube_node_status_capacity_cpu_cores)",
                   "format": "time_series",
+                  "instant": true,
                   "intervalFactor": 2,
                   "refId": "A",
                   "step": 60
@@ -2385,7 +2404,7 @@ data:
                 "h": 6,
                 "w": 4,
                 "x": 8,
-                "y": 20
+                "y": 59
               },
               "id": 27,
               "interval": null,
@@ -2424,8 +2443,9 @@ data:
               "tableColumn": "",
               "targets": [
                 {
-                  "expr": "sum (container_memory_working_set_bytes{image!=\"\",name=~\"^k8s_.*\"})",
+                  "expr": "sum(container_memory_working_set_bytes{id=\"/\"})",
                   "format": "time_series",
+                  "instant": true,
                   "intervalFactor": 2,
                   "refId": "A",
                   "step": 60
@@ -2467,7 +2487,7 @@ data:
                 "h": 6,
                 "w": 4,
                 "x": 12,
-                "y": 20
+                "y": 59
               },
               "id": 29,
               "interval": null,
@@ -2506,7 +2526,7 @@ data:
               "tableColumn": "",
               "targets": [
                 {
-                  "expr": "sum (kube_node_status_capacity_memory_bytes)",
+                  "expr": "sum(kube_node_status_capacity_memory_bytes)",
                   "format": "time_series",
                   "intervalFactor": 2,
                   "refId": "A",
@@ -2549,7 +2569,7 @@ data:
                 "h": 6,
                 "w": 4,
                 "x": 16,
-                "y": 20
+                "y": 59
               },
               "id": 32,
               "interval": null,
@@ -2588,8 +2608,9 @@ data:
               "tableColumn": "",
               "targets": [
                 {
-                  "expr": "sum (container_fs_usage_bytes{id=\"/\",device=\"/dev/mapper/docker_data\"})",
+                  "expr": "sum(container_fs_usage_bytes{id=\"/\",device=\"/dev/mapper/docker_data\"})",
                   "format": "time_series",
+                  "instant": true,
                   "intervalFactor": 2,
                   "refId": "A",
                   "step": 60
@@ -2631,7 +2652,7 @@ data:
                 "h": 6,
                 "w": 4,
                 "x": 20,
-                "y": 20
+                "y": 59
               },
               "id": 31,
               "interval": null,
@@ -2670,8 +2691,9 @@ data:
               "tableColumn": "",
               "targets": [
                 {
-                  "expr": "sum (container_fs_limit_bytes{id=\"/\",device=\"/dev/mapper/docker_data\"})",
+                  "expr": "sum(container_fs_limit_bytes{id=\"/\",device=\"/dev/mapper/docker_data\"})",
                   "format": "time_series",
+                  "instant": true,
                   "intervalFactor": 2,
                   "refId": "A",
                   "step": 60
@@ -2701,7 +2723,7 @@ data:
                 "h": 6,
                 "w": 12,
                 "x": 0,
-                "y": 26
+                "y": 65
               },
               "id": 7,
               "legend": {
@@ -2784,7 +2806,7 @@ data:
                 "h": 6,
                 "w": 12,
                 "x": 12,
-                "y": 26
+                "y": 65
               },
               "id": 36,
               "legend": {
@@ -2880,15 +2902,22 @@ data:
             "multi": true,
             "name": "node",
             "options": [],
-            "query": "label_values(kube_node_info, node)",
+            "query": "label_values(kube_node_labels, node)",
             "refresh": 1,
             "regex": "",
             "sort": 0,
-            "tagValuesQuery": "",
-            "tags": [],
-            "tagsQuery": "",
+            "tagValuesQuery": "label_values(kube_node_labels{label_role=~\"$tag\"}, node)",
+            "tags": [
+              "zdb",
+              "worker",
+              "ha-worker",
+              "logging",
+              "management",
+              "edge"
+            ],
+            "tagsQuery": "label_values(kube_node_labels, label_role)",
             "type": "query",
-            "useTags": false
+            "useTags": true
           }
         ]
       },
@@ -2924,7 +2953,7 @@ data:
       "timezone": "",
       "title": "Kubernetes: Cluster Overview",
       "uid": "gsgUObMik",
-      "version": 2
+      "version": 3
     }
   kubernetes-resource-requests.json: |
     {
