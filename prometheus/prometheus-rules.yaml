@@ -4,105 +4,435 @@ data:
     groups:
     - name: node.rules
       rules:
-      - alert: NodeDown
-        expr: up{component="node-exporter",job="kubernetes-monitoring-endpoints"} == 0
+      - alert: NodeExporterDown
+        expr: absent(up{job="kubernetes-nodes-exporter"} == 1)
         for: 2m
         labels:
-          channel: sk-cps-ops
+          channel: default
           severity: critical
           product: zcp-public
           priority: P1
         annotations:
           summary: node-exporter cannot be scraped
-          description: Prometheus failed to scrape Node( {{ $labels.instance}} )) for more than 2m
-      - alert: NodeCPUUsage
-        expr: (100 - (avg by (instance) (irate(node_cpu{job="kubernetes-nodes-exporter",mode="idle"}[5m])) * 100)) > 75
+          description: Prometheus failed to scrape Node({{$labels.instance}}) for more than 2m
+
+      - record: node_cpu_usage_rate
+        expr: (100 - (avg by(dedicated,instance)(irate(node_cpu{mode="idle"}[5m])) * 100))
+      - alert: ManagementNodeCPUUsage
+        expr: node_cpu_usage_rate{dedicated="management"} > 80
         for: 2m
         labels:
-          channel: sk-cps-ops
+          channel: default
           severity: warning
           product: zcp-public
           priority: P4
         annotations:
-          summary: "{{$labels.instance}}: High CPU usage detected"
-          description: "{{$labels.instance}}: CPU usage is above 75% (current value is: {{ $value }})"
-      - alert: NodeCPUUsage
-        expr: (100 - (avg by (instance) (irate(node_cpu{job="kubernetes-nodes-exporter",mode="idle"}[5m])) * 100)) > 95
+          summary: "Node({{$labels.dedicated}}): High CPU usage detected"
+          description: "{{$labels.instance}}: CPU usage is above 80% (current value is: {{$value}})"
+      - alert: LoggingNodeCPUUsage
+        expr: node_cpu_usage_rate{dedicated="logging"} > 80
         for: 2m
         labels:
-          channel: sk-cps-ops
+          channel: default
+          severity: warning
+          product: zcp-public
+          priority: P4
+        annotations:
+          summary: "Node({{$labels.dedicated}}): High CPU usage detected"
+          description: "{{$labels.instance}}: CPU usage is above 80% (current value is: {{$value}})"
+      - alert: WorkerNodeCPUUsage
+        expr: node_cpu_usage_rate{dedicated=~"worker|ha-worker"} > 80
+        for: 2m
+        labels:
+          channel: default
+          severity: warning
+          product: zcp-public
+          priority: P3
+        annotations:
+          summary: "Node({{$labels.dedicated}}): High CPU usage detected"
+          description: "{{$labels.instance}}: CPU usage is above 80% (current value is: {{$value}})"
+      - alert: EdgeNodeCPUUsage
+        expr: node_cpu_usage_rate{dedicated="edge"} > 80
+        for: 2m
+        labels:
+          channel: default
+          severity: warning
+          product: zcp-public
+          priority: P3
+        annotations:
+          summary: "Node({{$labels.dedicated}}): High CPU usage detected"
+          description: "{{$labels.instance}}: CPU usage is above 80% (current value is: {{$value}})"
+      - alert: ZDBNodeCPUUsage
+        expr: node_cpu_usage_rate{dedicated="zdb"} > 80
+        for: 2m
+        labels:
+          channel: default
+          severity: warning
+          product: zcp-public
+          priority: P3
+        annotations:
+          summary: "Node({{$labels.dedicated}}): High CPU usage detected"
+          description: "{{$labels.instance}}: CPU usage is above 80% (current value is: {{$value}})"
+
+      - alert: ManagementNodeCPUUsage
+        expr: node_cpu_usage_rate{dedicated="management"} > 95
+        for: 2m
+        labels:
+          channel: default
           severity: critical
           product: zcp-public
           priority: P1
         annotations:
-          summary: "{{$labels.instance}}: High CPU usage detected"
-          description: "{{$labels.instance}}: CPU usage is above 95% (current value is: {{ $value }})"
-      - alert: NodeLoadAverage5
-        expr: ((node_load5 / count without (cpu, mode) (node_cpu{mode="system"})) > 1)
+          summary: "Node({{$labels.dedicated}}): High CPU usage detected"
+          description: "{{$labels.instance}}: CPU usage is above 95% (current value is: {{$value}})"
+      - alert: LoggingNodeCPUUsage
+        expr: node_cpu_usage_rate{dedicated="logging"} > 95
         for: 2m
         labels:
-          channel: sk-cps-ops
-          severity: warning
-          product: zcp-public
-          priority: P4
-        annotations:
-          summary: "{{$labels.instance}}: High Load Average detected"
-          description: "{{$labels.instance}}: Load Average is high (current value is: {{ $value }})"
-      - alert: NodeMemoryUsage
-        expr: (((node_memory_MemTotal-node_memory_MemFree-node_memory_Buffers-node_memory_Cached)/(node_memory_MemTotal)*100)) > 75
-        for: 2m
-        labels:
-          channel: sk-cps-ops
-          severity: warning
-          product: zcp-public
-          priority: P4
-        annotations:
-          summary: "{{$labels.instance}}: High memory usage detected"
-          description: "{{$labels.instance}}: Memory usage is above 75% (current value is: {{ $value }})"
-      - alert: NodeMemoryUsage
-        expr: (((node_memory_MemTotal-node_memory_MemFree-node_memory_Buffers-node_memory_Cached)/(node_memory_MemTotal)*100)) > 95
-        for: 2m
-        labels:
-          channel: sk-cps-ops
+          channel: default
           severity: critical
           product: zcp-public
           priority: P1
         annotations:
-          summary: "{{$labels.instance}}: High memory usage detected"
-          description: "{{$labels.instance}}: Memory usage is above 95% (current value is: {{ $value }})"
+          summary: "Node({{$labels.dedicated}}): High CPU usage detected"
+          description: "{{$labels.instance}}: CPU usage is above 95% (current value is: {{$value}})"
+      - alert: WorkerNodeCPUUsage
+        expr: node_cpu_usage_rate{dedicated=~"worker|ha-worker"} > 95
+        for: 2m
+        labels:
+          channel: default
+          severity: critical
+          product: zcp-public
+          priority: P1
+        annotations:
+          summary: "Node({{$labels.dedicated}}): High CPU usage detected"
+          description: "{{$labels.instance}}: CPU usage is above 95% (current value is: {{$value}})"
+      - alert: EdgeNodeCPUUsage
+        expr: node_cpu_usage_rate{dedicated="edge"} > 95
+        for: 2m
+        labels:
+          channel: default
+          severity: critical
+          product: zcp-public
+          priority: P1
+        annotations:
+          summary: "Node({{$labels.dedicated}}): High CPU usage detected"
+          description: "{{$labels.instance}}: CPU usage is above 95% (current value is: {{$value}})"
+      - alert: ZDBNodeCPUUsage
+        expr: node_cpu_usage_rate{dedicated="zdb"} > 95
+        for: 2m
+        labels:
+          channel: default
+          severity: critical
+          product: zcp-public
+          priority: P1
+        annotations:
+          summary: "Node({{$labels.dedicated}}): High CPU usage detected"
+          description: "{{$labels.instance}}: CPU usage is above 95% (current value is: {{$value}})"
+
+      - alert: ManagementNodeLoadAverage5
+        expr: node_load5{dedicated="management"} / count without (cpu, mode) (node_cpu{mode="system"}) > 1
+        for: 2m
+        labels:
+          channel: default
+          severity: warning
+          product: zcp-public
+          priority: P4
+        annotations:
+          summary: "Node({{$labels.dedicated}}): High Load Average detected"
+          description: "{{$labels.instance}}: Load Average is high (current value is: {{$value}})"
+      - alert: LoggingNodeLoadAverage5
+        expr: node_load5{dedicated="logging"} / count without (cpu, mode) (node_cpu{mode="system"}) > 1
+        for: 2m
+        labels:
+          channel: default
+          severity: warning
+          product: zcp-public
+          priority: P4
+        annotations:
+          summary: "Node({{$labels.dedicated}}): High Load Average detected"
+          description: "{{$labels.instance}}: Load Average is high (current value is: {{$value}})"
+      - alert: WorkerNodeLoadAverage5
+        expr: node_load5{dedicated=~"worker|ha-worker"} / count without (cpu, mode) (node_cpu{mode="system"}) > 1
+        for: 2m
+        labels:
+          channel: default
+          severity: warning
+          product: zcp-public
+          priority: P4
+        annotations:
+          summary: "Node({{$labels.dedicated}}): High Load Average detected"
+          description: "{{$labels.instance}}: Load Average is high (current value is: {{$value}})"
+      - alert: EdgeNodeLoadAverage5
+        expr: node_load5{dedicated="edge"} / count without (cpu, mode) (node_cpu{mode="system"}) > 1
+        for: 2m
+        labels:
+          channel: default
+          severity: warning
+          product: zcp-public
+          priority: P4
+        annotations:
+          summary: "Node({{$labels.dedicated}}): High Load Average detected"
+          description: "{{$labels.instance}}: Load Average is high (current value is: {{$value}})"
+      - alert: ZDBNodeLoadAverage5
+        expr: node_load5{dedicated="zdb"} / count without (cpu, mode) (node_cpu{mode="system"}) > 1
+        for: 2m
+        labels:
+          channel: default
+          severity: warning
+          product: zcp-public
+          priority: P4
+        annotations:
+          summary: "Node({{$labels.dedicated}}): High Load Average detected"
+          description: "{{$labels.instance}}: Load Average is high (current value is: {{$value}})"
+
+      - record: node_memory_MemUsed
+        expr: node_memory_MemTotal - node_memory_MemFree - node_memory_Buffers - node_memory_Cached
+      - record: node_memory_MemUsed_percent
+        expr: node_memory_MemUsed / node_memory_MemTotal * 100
+      - record: node_memory_MemUnavailable
+        expr: node_memory_MemTotal - node_memory_MemAvailable
+      - record: node_memory_MemUnavailable_percent
+        expr: node_memory_MemUnavailable / node_memory_MemTotal * 100
+      - alert: ManagementNodeMemoryUsage
+        expr: node_memory_MemUsed_percent{dedicated="management"} > 80
+        for: 2m
+        labels:
+          channel: default
+          severity: warning
+          product: zcp-public
+          priority: P4
+        annotations:
+          summary: "Node({{$labels.dedicated}}): High memory usage detected"
+          description: "{{$labels.instance}}: Memory usage is above 80% (current value is: {{$value}})"
+      - alert: LoggingNodeMemoryUsage
+        expr: node_memory_MemUsed_percent{dedicated="logging"} > 80
+        for: 2m
+        labels:
+          channel: default
+          severity: warning
+          product: zcp-public
+          priority: P4
+        annotations:
+          summary: "Node({{$labels.dedicated}}): High memory usage detected"
+          description: "{{$labels.instance}}: Memory usage is above 80% (current value is: {{$value}})"
+      - alert: WorkerNodeMemoryUsage
+        expr: node_memory_MemUsed_percent{dedicated=~"worker|ha-worker"} > 80
+        for: 2m
+        labels:
+          channel: default
+          severity: warning
+          product: zcp-public
+          priority: P3
+        annotations:
+          summary: "Node({{$labels.dedicated}}): High memory usage detected"
+          description: "{{$labels.instance}}: Memory usage is above 80% (current value is: {{$value}})"
+      - alert: EdgeNodeMemoryUsage
+        expr: node_memory_MemUsed_percent{dedicated="edge"} > 80
+        for: 2m
+        labels:
+          channel: default
+          severity: warning
+          product: zcp-public
+          priority: P3
+        annotations:
+          summary: "Node({{$labels.dedicated}}): High memory usage detected"
+          description: "{{$labels.instance}}: Memory usage is above 80% (current value is: {{$value}})"
+      - alert: ZDBNodeMemoryUsage
+        expr: node_memory_MemUsed_percent{dedicated="zdb"} > 80
+        for: 2m
+        labels:
+          channel: default
+          severity: warning
+          product: zcp-public
+          priority: P3
+        annotations:
+          summary: "Node({{$labels.dedicated}}): High memory usage detected"
+          description: "{{$labels.instance}}: Memory usage is above 80% (current value is: {{$value}})"
+
+      - alert: ManagementNodeMemoryUsage
+        expr: node_memory_MemUsed_percent{dedicated="management"} > 95
+        for: 2m
+        labels:
+          channel: default
+          severity: critical
+          product: zcp-public
+          priority: P1
+        annotations:
+          summary: "Node({{$labels.dedicated}}): High memory usage detected"
+          description: "{{$labels.instance}}: Memory usage is above 95% (current value is: {{$value}})"
+      - alert: LoggingNodeMemoryUsage
+        expr: node_memory_MemUsed_percent{dedicated="logging"} > 95
+        for: 2m
+        labels:
+          channel: default
+          severity: critical
+          product: zcp-public
+          priority: P1
+        annotations:
+          summary: "Node({{$labels.dedicated}}): High memory usage detected"
+          description: "{{$labels.instance}}: Memory usage is above 95% (current value is: {{$value}})"
+      - alert: WorkerNodeMemoryUsage
+        expr: node_memory_MemUsed_percent{dedicated=~"worker|ha-worker"} > 95
+        for: 2m
+        labels:
+          channel: default
+          severity: critical
+          product: zcp-public
+          priority: P1
+        annotations:
+          summary: "Node({{$labels.dedicated}}): High memory usage detected"
+          description: "{{$labels.instance}}: Memory usage is above 95% (current value is: {{$value}})"
+      - alert: EdgeNodeMemoryUsage
+        expr: node_memory_MemUsed_percent{dedicated="edge"} > 95
+        for: 2m
+        labels:
+          channel: default
+          severity: critical
+          product: zcp-public
+          priority: P1
+        annotations:
+          summary: "Node({{$labels.dedicated}}): High memory usage detected"
+          description: "{{$labels.instance}}: Memory usage is above 75% (current value is: {{$value}})"
+      - alert: ZDBNodeMemoryUsage
+        expr: node_memory_MemUsed_percent{dedicated="zdb"} > 95
+        for: 2m
+        labels:
+          channel: default
+          severity: critical
+          product: zcp-public
+          priority: P1
+        annotations:
+          summary: "Node({{$labels.dedicated}}): High memory usage detected"
+          description: "{{$labels.instance}}: Memory usage is above 95% (current value is: {{$value}})"
+
       - alert: NodeSwapUsage
-        expr: (((node_memory_SwapTotal-node_memory_SwapFree)/node_memory_SwapTotal)*100) > 75
+        expr: ((node_memory_SwapTotal - node_memory_SwapFree) / node_memory_SwapTotal) * 100 > 75
         for: 2m
         labels:
-          channel: sk-cps-ops
+          channel: default
           severity: warning
           product: zcp-public
           priority: P4
         annotations:
           summary: "{{$labels.instance}}: Swap usage detected"
           description: "{{$labels.instance}}: Swap usage usage is above 75% (current value is: {{ $value }})"
-      - alert: NodeLowRootDisk
-        expr: ((node_filesystem_size{mountpoint="/"} - node_filesystem_free{mountpoint="/"} ) / node_filesystem_size{mountpoint="/"} * 100) > 75
+
+      - record: node_filesystem_used
+        expr: node_filesystem_size - node_filesystem_avail
+      - record: node_filesystem_used_percent
+        expr: node_filesystem_used / node_filesystem_size * 100
+      - alert: ManagementNodeLowRootDisk
+        expr: node_filesystem_used_percent{dedicated="management",mountpoint="/"} > 80
         for: 30m
         labels:
-          channel: sk-cps-ops
+          channel: default
           severity: warning
           product: zcp-public
           priority: P4
         annotations:
-          summary: "{{$labels.instance}}: Low Root disk space"
-          description: "{{$labels.instance}}: Root disk usage is above 75% (current value is: {{ $value }})"
-      - alert: NodeLowRootDisk
-        expr: ((node_filesystem_size{mountpoint="/"} - node_filesystem_free{mountpoint="/"} ) / node_filesystem_size{mountpoint="/"} * 100) > 95
+          summary: "Node({{$labels.dedicated}}): Low root disk space"
+          description: "{{$labels.instance}}: Root disk usage is above 80% (current value is: {{$value}})"
+      - alert: LoggingNodeLowRootDisk
+        expr: node_filesystem_used_percent{dedicated="logging",mountpoint="/"} > 80
         for: 30m
         labels:
-          channel: sk-cps-ops
+          channel: default
+          severity: warning
+          product: zcp-public
+          priority: P4
+        annotations:
+          summary: "Node({{$labels.dedicated}}): Low root disk space"
+          description: "{{$labels.instance}}: Root disk usage is above 80% (current value is: {{$value}})"
+      - alert: WorkerNodeLowRootDisk
+        expr: node_filesystem_used_percent{dedicated=~"worker|ha-worker",mountpoint="/"} > 80
+        for: 30m
+        labels:
+          channel: default
+          severity: warning
+          product: zcp-public
+          priority: P4
+        annotations:
+          summary: "Node({{$labels.dedicated}}): Low root disk space"
+          description: "{{$labels.instance}}: Root disk usage is above 80% (current value is: {{$value}})"
+      - alert: EdgeNodeLowRootDisk
+        expr: node_filesystem_used_percent{dedicated="edge",mountpoint="/"} > 80
+        for: 30m
+        labels:
+          channel: default
+          severity: warning
+          product: zcp-public
+          priority: P4
+        annotations:
+          summary: "Node({{$labels.dedicated}}): Low root disk space"
+          description: "{{$labels.instance}}: Root disk usage is above 80% (current value is: {{$value}})"
+      - alert: ZDBNodeLowRootDisk
+        expr: node_filesystem_used_percent{dedicated="zdb",mountpoint="/"} > 80
+        for: 30m
+        labels:
+          channel: default
+          severity: warning
+          product: zcp-public
+          priority: P4
+        annotations:
+          summary: "Node({{$labels.dedicated}}): Low root disk space"
+          description: "{{$labels.instance}}: Root disk usage is above 80% (current value is: {{$value}})"
+
+      - alert: ManagementNodeLowRootDisk
+        expr: node_filesystem_used_percent{dedicated="management",mountpoint="/"} > 95
+        for: 30m
+        labels:
+          channel: default
           severity: critical
           product: zcp-public
           priority: P1
         annotations:
-          summary: "{{$labels.instance}}: Low Root disk space"
-          description: "{{$labels.instance}}: Root disk usage is above 95% (current value is: {{ $value }})"
+          summary: "Node({{$labels.dedicated}}): Low root disk space"
+          description: "{{$labels.instance}}: Root disk usage is above 95% (current value is: {{$value}})"
+      - alert: LoggingNodeLowRootDisk
+        expr: node_filesystem_used_percent{dedicated="logging",mountpoint="/"} > 95
+        for: 30m
+        labels:
+          channel: default
+          severity: critical
+          product: zcp-public
+          priority: P1
+        annotations:
+          summary: "Node({{$labels.dedicated}}): Low root disk space"
+          description: "{{$labels.instance}}: Root disk usage is above 95% (current value is: {{$value}})"
+      - alert: WorkerNodeLowRootDisk
+        expr: node_filesystem_used_percent{dedicated=~"worker|ha-worker",mountpoint="/"} > 95
+        for: 30m
+        labels:
+          channel: default
+          severity: critical
+          product: zcp-public
+          priority: P1
+        annotations:
+          summary: "Node({{$labels.dedicated}}): Low root disk space"
+          description: "{{$labels.instance}}: Root disk usage is above 95% (current value is: {{$value}})"
+      - alert: EdgeNodeLowRootDisk
+        expr: node_filesystem_used_percent{dedicated="edge",mountpoint="/"} > 95
+        for: 30m
+        labels:
+          channel: default
+          severity: critical
+          product: zcp-public
+          priority: P1
+        annotations:
+          summary: "Node({{$labels.dedicated}}): Low root disk space"
+          description: "{{$labels.instance}}: Root disk usage is above 95% (current value is: {{$value}})"
+      - alert: ZDBNodeLowRootDisk
+        expr: node_filesystem_used_percent{dedicated="zdb",mountpoint="/"} > 95
+        for: 30m
+        labels:
+          channel: default
+          severity: critical
+          product: zcp-public
+          priority: P1
+        annotations:
+          summary: "Node({{$labels.dedicated}}): Low root disk space"
+          description: "{{$labels.instance}}: Root disk usage is above 95% (current value is: {{$value}})"
   kube-apiserver.rules: |-
     groups:
     - name: kube-apiserver.rules
@@ -111,7 +441,7 @@ data:
         expr: up{job="kubernetes-apiservers"} == 0
         for: 5m
         labels:
-          channel: sk-cps-ops
+          channel: default
           severity: warning
           product: zcp-public
           priority: P4
@@ -119,10 +449,10 @@ data:
           summary: API server unreachable
           description: Prometheus failed to scrape API server
       - alert: APIServerErrorsHigh
-        expr: rate(apiserver_request_count{code=~"^(?:5..)$"}[5m]) / rate(apiserver_request_count[5m]) * 100 > 5
+        expr: sum(rate(apiserver_request_count{code=~"^(?:5..)$"}[5m])) / sum(rate(apiserver_request_count[5m])) * 100 > 1
         for: 2m
         labels:
-          channel: sk-cps-ops
+          channel: default
           severity: warning
           product: zcp-public
           priority: P4
@@ -133,7 +463,7 @@ data:
         expr: avg(apiserver_request_latencies_sum / apiserver_request_latencies_count) / 1000000 > 2000
         for: 2m
         labels:
-          channel: sk-cps-ops
+          channel: default
           severity: warning
           product: zcp-public
           priority: P4
@@ -145,27 +475,49 @@ data:
     - name: kubelet.rules
       rules:
       - alert: K8SKubeletDown
-        expr: up{job="kubernetes-nodes"} == 0
+        expr: absent(up{job="kubernetes-nodes-kubelet"} == 1)
         for: 2m
         labels:
-          channel: sk-cps-ops
+          channel: default
           severity: critical
           product: zcp-public
           priority: P4
         annotations:
-          description: Prometheus failed to scrape {{ $labels.instance }} of kubelets.
-          summary: Kubelets cannot be scraped
+          description: "Prometheus failed to scrape {{ $labels.instance }} of kubelet."
+          summary: "Kubelet cannot be scraped"
       - alert: K8SKubeletTooManyPods
         expr: kubelet_running_pod_count > 100
         for: 10m
         labels:
-          channel: sk-cps-ops
+          channel: default
           severity: warning
           product: zcp-public
           priority: P4
         annotations:
-          description: Kubelet {{$labels.instance}} is running {{$value}} pods, close to the limit of 110
-          summary: Kubelet is close to pod limit
+          description: "Kubelet {{$labels.instance}} is running {{$value}} pods, close to the limit of 110"
+          summary: "Kubelet is close to pod limit"
+      - alert: PersistentVolumeLowSpace
+        expr: kubelet_volume_stats_used_bytes / kubelet_volume_stats_capacity_bytes * 100 > 80
+        for: 2m
+        labels:
+          channel: default
+          severity: warning
+          product: zcp-public
+          priority: P3
+        annotations:
+          summary: "Persistent Volume({{$labels.namespace}}/{{$labels.persistentvolumeclaim}}): Low disk space"
+          description: "Persistent Volume({{$labels.namespace}}/{{$labels.persistentvolumeclaim}}): Disk usage is above 80% (current value is: {{$value}})"
+      - alert: PersistentVolumeLowSpace
+        expr: kubelet_volume_stats_used_bytes / kubelet_volume_stats_capacity_bytes * 100 > 95
+        for: 2m
+        labels:
+          channel: default
+          severity: warning
+          product: zcp-public
+          priority: P1
+        annotations:
+          summary: "Persistent Volume({{$labels.namespace}}/{{$labels.persistentvolumeclaim}}): Low disk space"
+          description: "Persistent Volume({{$labels.namespace}}/{{$labels.persistentvolumeclaim}}): Disk usage is above 80% (current value is: {{$value}})"
   etcd.rules: |-
     groups:
     - name: etcd.rules
@@ -174,7 +526,7 @@ data:
         expr: up{job="etcd"} == 0
         for: 2m
         labels:
-          channel: sk-cps-ops
+          channel: default
           severity: critical
           product: zcp-public
           priority: P4
@@ -185,7 +537,7 @@ data:
         expr: etcd_server_has_leader{job="etcd"} == 0
         for: 2m
         labels:
-          channel: sk-cps-ops
+          channel: default
           severity: critical
           product: zcp-public
           priority: P4
@@ -196,7 +548,7 @@ data:
         expr: count(up{job="etcd"} == 0) > (count(up{job="etcd"}) / 2 - 1)
         for: 2m
         labels:
-          channel: sk-cps-ops
+          channel: default
           severity: critical
           product: zcp-public
           priority: P4
@@ -207,7 +559,7 @@ data:
         expr: increase(etcd_server_leader_changes_seen_total{job="etcd"}[1h]) > 3
         for: 2m
         labels:
-          channel: sk-cps-ops
+          channel: default
           severity: critical
           product: zcp-public
           priority: P4
@@ -218,72 +570,297 @@ data:
     groups:
     - name: kube-state-metrics.rules
       rules:
-      - alert: K8SNodeNotReady
-        expr: kube_node_status_condition{condition="Ready",status="true"} == 0
+      - record: kube_node_status_condition_ready
+        expr: kube_node_status_condition{condition="Ready",status="true"}
+      - alert: K8SManagementNodeNotReady
+        expr: kube_node_labels{dedicated="management"} and on (node) kube_node_status_condition_ready == 0
         for: 2m
         labels:
-          channel: sk-cps-ops
+          channel: default
           severity: critical
           product: zcp-public
           priority: P1
         annotations:
-          description: The Kubelet on {{ $labels.node }} has not checked in with the API, or has set itself to NotReady, for more than 2m
-          summary: Node status is NotReady
-      - alert: K8SNodeOutOfDisk
-        expr: kube_node_status_condition{condition="OutOfDisk",status="true"} == 1
+          summary: "Node({{$labels.dedicated}}) status is NotReady"
+          description: "The kubelet on {{$labels.node}} has not checked in with the API, or has set itself to NotReady, for more than 2m."
+      - alert: K8SLoggingNodeNotReady
+        expr: kube_node_labels{dedicated="logging"} and on (node) kube_node_status_condition_ready == 0
         for: 2m
         labels:
-          channel: sk-cps-ops
-          severity: warning
+          channel: default
+          severity: critical
           product: zcp-public
-          priority: P2
+          priority: P1
         annotations:
-          description: "{{ $labels.node }} is insufficient free space on the node for adding new pods"
-          summary: Node ran out of disk space.
-      - alert: K8SNodeMemoryPressure
-        expr: kube_node_status_condition{condition="MemoryPressure",status="true"} == 1
+          summary: "Node({{$labels.dedicated}}) status is NotReady"
+          description: "The kubelet on {{$labels.node}} has not checked in with the API, or has set itself to NotReady, for more than 2m."
+      - alert: K8SWorkerNodeNotReady
+        expr: kube_node_labels{dedicated=~"worker|ha-worker"} and on (node) kube_node_status_condition_ready == 0
         for: 2m
         labels:
-          channel: sk-cps-ops
-          severity: warning
+          channel: default
+          severity: critical
           product: zcp-public
-          priority: P2
+          priority: P1
         annotations:
-          description: "{{ $labels.node }} memory is low"
-          summary: Node is under memory pressure.
-      - alert: K8SNodePIDPressure
-        expr: kube_node_status_condition{condition="PIDPressure",status="true"} == 1
+          summary: "Node({{$labels.dedicated}}) status is NotReady"
+          description: "The kubelet on {{$labels.node}} has not checked in with the API, or has set itself to NotReady, for more than 2m."
+      - alert: K8SEdgeNodeNotReady
+        expr: kube_node_labels{dedicated="edge"} and on (node) kube_node_status_condition_ready == 0
         for: 2m
         labels:
-          channel: sk-cps-ops
-          severity: warning
+          channel: default
+          severity: critical
           product: zcp-public
-          priority: P2
+          priority: P1
         annotations:
-          description: "{{ $labels.node }} is too many processes on the node"
-          summary: Node is under PID pressure.
-      - alert: K8SNodeDiskPressure
-        expr: kube_node_status_condition{condition="DiskPressure",status="true"} == 1
+          summary: "Node({{$labels.dedicated}}) status is NotReady"
+          description: "The kubelet on {{$labels.node}} has not checked in with the API, or has set itself to NotReady, for more than 2m."
+      - alert: K8SZDBNodeNotReady
+        expr: kube_node_labels{dedicated="zdb"} and on (node) kube_node_status_condition_ready == 0
         for: 2m
         labels:
-          channel: sk-cps-ops
+          channel: default
+          severity: critical
+          product: zcp-public
+          priority: P1
+        annotations:
+          summary: "Node({{$labels.dedicated}}) status is NotReady"
+          description: "The kubelet on {{$labels.node}} has not checked in with the API, or has set itself to NotReady, for more than 2m."
+
+      - record: kube_node_status_condition_out_of_disk
+        expr: kube_node_status_condition{condition="OutOfDisk",status="true"}
+      - alert: K8SManagementNodeOutOfDisk
+        expr: kube_node_labels{dedicated="management"} and on (node) kube_node_status_condition_out_of_disk == 1
+        for: 2m
+        labels:
+          product: zcp-public
+          priority: P1
+        annotations:
+          summary: "Node({{$labels.dedicated}}) ran out of disk space."
+          description: "{{$labels.node}} is insufficient free space on the node for adding new pods."
+      - alert: K8SLoggingNodeOutOfDisk
+        expr: kube_node_labels{dedicated="logging"} and on (node) kube_node_status_condition_out_of_disk == 1
+        for: 2m
+        labels:
+          product: zcp-public
+          priority: P1
+        annotations:
+          summary: "Node({{$labels.dedicated}}) ran out of disk space."
+          description: "{{$labels.node}} is insufficient free space on the node for adding new pods."
+      - alert: K8SWorkerNodeOutOfDisk
+        expr: kube_node_labels{dedicated=~"worker|ha-worker"} and on (node) kube_node_status_condition_out_of_disk == 1
+        for: 2m
+        labels:
+          product: zcp-public
+          priority: P1
+        annotations:
+          summary: "Node({{$labels.dedicated}}) ran out of disk space."
+          description: "{{$labels.node}} is insufficient free space on the node for adding new pods."
+      - alert: K8SEdgeNodeOutOfDisk
+        expr: kube_node_labels{dedicated="edge"} and on (node) kube_node_status_condition_out_of_disk == 1
+        for: 2m
+        labels:
+          product: zcp-public
+          priority: P1
+        annotations:
+          summary: "Node({{$labels.dedicated}}) ran out of disk space."
+          description: "{{$labels.node}} is insufficient free space on the node for adding new pods."
+      - alert: K8SZDBNodeOutOfDisk
+        expr: kube_node_labels{dedicated="zdb"} and on (node) kube_node_status_condition_out_of_disk == 1
+        for: 2m
+        labels:
+          product: zcp-public
+          priority: P1
+        annotations:
+          summary: "Node({{$labels.dedicated}}) ran out of disk space."
+          description: "{{$labels.node}} is insufficient free space on the node for adding new pods."
+
+      - record: kube_node_status_condition_memory_pressure
+        expr: kube_node_status_condition{condition="MemoryPressure",status="true"}
+      - alert: K8SManagementNodeMemoryPressure
+        expr: kube_node_labels{dedicated="management"} and on (node) kube_node_status_condition_memory_pressure == 1
+        for: 2m
+        labels:
+          product: zcp-public
+          priority: P1
+        annotations:
+          summary: "Node({{$labels.dedicated}}) is under memory pressure."
+          description: "{{$labels.node}} memory is low."
+      - alert: K8SLoggingNodeMemoryPressure
+        expr: kube_node_labels{dedicated="logging"} and on (node) kube_node_status_condition_memory_pressure == 1
+        for: 2m
+        labels:
+          product: zcp-public
+          priority: P1
+        annotations:
+          summary: "Node({{$labels.dedicated}}) is under memory pressure."
+          description: "{{$labels.node}} memory is low."
+      - alert: K8SWorkerNodeMemoryPressure
+        expr: kube_node_labels{dedicated=~"worker|ha-worker"} and on (node) kube_node_status_condition_memory_pressure == 1
+        for: 2m
+        labels:
+          product: zcp-public
+          priority: P1
+        annotations:
+          summary: "Node({{$labels.dedicated}}) is under memory pressure."
+          description: "{{$labels.node}} memory is low."
+      - alert: K8SEdgeNodeMemoryPressure
+        expr: kube_node_labels{dedicated="edge"} and on (node) kube_node_status_condition_memory_pressure == 1
+        for: 2m
+        labels:
+          product: zcp-public
+          priority: P1
+        annotations:
+          summary: "Node({{$labels.dedicated}}) is under memory pressure."
+          description: "{{$labels.node}} memory is low."
+      - alert: K8SZDBNodeMemoryPressure
+        expr: kube_node_labels{dedicated="zdb"} and on (node) kube_node_status_condition_memory_pressure == 1
+        for: 2m
+        labels:
+          product: zcp-public
+          priority: P1
+        annotations:
+          summary: "Node({{$labels.dedicated}}) is under memory pressure."
+          description: "{{$labels.node}} memory is low."
+
+      - record: kube_node_status_condition_pid_pressure
+        expr: kube_node_status_condition{condition="PIDPressure",status="true"}
+      - alert: K8SManagementNodePIDPressure
+        expr: kube_node_labels{dedicated="management"} and on (node) kube_node_status_condition_pid_pressure == 1
+        for: 2m
+        labels:
+          product: zcp-public
+          priority: P1
+        annotations:
+          summary: "Node({{$labels.dedicated}}) is under PID pressure."
+          description: "{{$labels.node}} is too many processes on the node."
+      - alert: K8SLoggingNodePIDPressure
+        expr: kube_node_labels{dedicated="logging"} and on (node) kube_node_status_condition_pid_pressure == 1
+        for: 2m
+        labels:
+          product: zcp-public
+          priority: P1
+        annotations:
+          summary: "Node({{$labels.dedicated}}) is under PID pressure."
+          description: "{{$labels.node}} is too many processes on the node."
+      - alert: K8SWorkerNodePIDPressure
+        expr: kube_node_labels{dedicated=~"worker|ha-worker"} and on (node) kube_node_status_condition_pid_pressure == 1
+        for: 2m
+        labels:
+          product: zcp-public
+          priority: P1
+        annotations:
+          summary: "Node({{$labels.dedicated}}) is under PID pressure."
+          description: "{{$labels.node}} is too many processes on the node."
+      - alert: K8SEdgeNodePIDPressure
+        expr: kube_node_labels{dedicated="edge"} and on (node) kube_node_status_condition_pid_pressure == 1
+        for: 2m
+        labels:
+          product: zcp-public
+          priority: P1
+        annotations:
+          summary: "Node({{$labels.dedicated}}) is under PID pressure."
+          description: "{{$labels.node}} is too many processes on the node."
+      - alert: K8SZDBNodePIDPressure
+        expr: kube_node_labels{dedicated="zdb"} and on (node) kube_node_status_condition_pid_pressure == 1
+        for: 2m
+        labels:
+          product: zcp-public
+          priority: P1
+        annotations:
+          summary: "Node({{$labels.dedicated}}) is under PID pressure."
+          description: "{{$labels.node}} is too many processes on the node."
+
+      - record: kube_node_status_condition_disk_pressure
+        expr: kube_node_status_condition{condition="DiskPressure",status="true"}
+      - alert: K8SManagementNodeDiskPressure
+        expr: kube_node_labels{dedicated="management"} and on (node) kube_node_status_condition_disk_pressure == 1
+        for: 2m
+        labels:
+          channel: default
           severity: warning
           product: zcp-public
-          priority: P2
+          priority: P1
         annotations:
-          description: "{{ $labels.node }} disk capacity is low"
-          summary: Node is under disk pressure.
+          summary: "Node({{$labels.dedicated}}) is under disk pressure."
+          description: "{{$labels.node}} disk capacity is low."
+      - alert: K8SLoggingNodeDiskPressure
+        expr: kube_node_labels{dedicated="logging"} and on (node) kube_node_status_condition_disk_pressure == 1
+        for: 2m
+        labels:
+          channel: default
+          severity: warning
+          product: zcp-public
+          priority: P1
+        annotations:
+          summary: "Node({{$labels.dedicated}}) is under disk pressure."
+          description: "{{$labels.node}} disk capacity is low."
+      - alert: K8SWorkerNodeDiskPressure
+        expr: kube_node_labels{dedicated=~"worker|ha-worker"} and on (node) kube_node_status_condition_disk_pressure == 1
+        for: 2m
+        labels:
+          channel: default
+          severity: warning
+          product: zcp-public
+          priority: P1
+        annotations:
+          summary: "Node({{$labels.dedicated}}) is under disk pressure."
+          description: "{{$labels.node}} disk capacity is low."
+      - alert: K8SEdgeNodeDiskPressure
+        expr: kube_node_labels{dedicated="edge"} and on (node) kube_node_status_condition_disk_pressure == 1
+        for: 2m
+        labels:
+          channel: default
+          severity: warning
+          product: zcp-public
+          priority: P1
+        annotations:
+          summary: "Node({{$labels.dedicated}}) is under disk pressure."
+          description: "{{$labels.node}} disk capacity is low."
+      - alert: K8SZDBNodeDiskPressure
+        expr: kube_node_labels{dedicated="zdb"} and on (node) kube_node_status_condition_disk_pressure == 1
+        for: 2m
+        labels:
+          product: zcp-public
+          priority: P1
+        annotations:
+          summary: "Node({{$labels.dedicated}}) is under disk pressure."
+          description: "{{$labels.node}} disk capacity is low."
+
       - alert: PodFrequentlyRestarting
         expr: increase(kube_pod_container_status_restarts_total[1h]) > 5
         for: 10m
         labels:
-          channel: sk-cps-ops
+          channel: default
           severity: warning
           product: zcp-public
           priority: P4
         annotations:
-          summary: Pod is restarting frequently
-          description: Pod {{$labels.namespace}}/{{$labels.pod}} is was restarted {{$value}} times within the last hour
+          summary: "Pod is restarting frequently"
+          description: "Pod {{$labels.namespace}}/{{$labels.pod}} is was restarted {{$value}} times within the last hour"
+      - alert: PodAbnormallyTerminated
+        expr: sum_over_time(kube_pod_container_status_terminated_reason{reason!="Completed"}[5m]) > 0
+        for: 2m
+        labels:
+          channel: default
+          severity: warning
+          product: zcp-public
+          priority: P4
+        annotations:
+          summary: "Pod is abnormally terminated"
+          description: "Pod {{$labels.namespace}}/{{$labels.pod}} is abnormally terminated for a {{$labels.reason}}"
+      - alert: PodAbnormallyWaiting
+        expr: sum_over_time(kube_pod_container_status_waiting_reason{reason!="ContainerCreating"}[5m]) > 0
+        for: 2m
+        labels:
+          channel: default
+          severity: warning
+          product: zcp-public
+          priority: P4
+        annotations:
+          summary: "Pod is abnormally waiting"
+          description: "Pod {{$labels.namespace}}/{{$labels.pod}} is abnormally waiting for a {{$labels.reason}}"
   prometheus.rules: |-
     groups:
     - name: prometheus.rules
@@ -292,7 +869,7 @@ data:
         expr: prometheus_config_last_reload_successful == 0
         for: 10m
         labels:
-          channel: sk-cps-ops
+          channel: default
           severity: critical
           product: zcp-public
           priority: P4
@@ -303,7 +880,7 @@ data:
         expr: rate(prometheus_notifications_errors_total[5m]) / rate(prometheus_notifications_sent_total[5m]) > 0.01
         for: 10m
         labels:
-          channel: sk-cps-ops
+          channel: default
           severity: critical
           product: zcp-public
           priority: P4
@@ -318,7 +895,7 @@ data:
         expr: alertmanager_config_last_reload_successful == 0
         for: 10m
         labels:
-          channel: sk-cps-ops
+          channel: default
           severity: critical
           product: zcp-public
           priority: P4
@@ -333,13 +910,51 @@ data:
         expr: up{component=~"alertmanager|blackbox-exporter|grafana|kube-state-metrics|prometheus"} == 0
         for: 2m
         labels:
-          channel: sk-cps-ops
+          channel: default
           severity: critical
           product: zcp-public
           priority: P4
         annotations:
           summary: ZCP Monitoring Component Down
           description: ZCP Monitoring Component Down has failed for {{ $labels.component }}
+  elasticsearch.rules: |-
+    groups:
+    - name: elasticsearch.rules
+      rules:
+      - record: elasticsearch_filesystem_data_used_percent
+        expr: 100 * (elasticsearch_filesystem_data_size_bytes - elasticsearch_filesystem_data_free_bytes) / elasticsearch_filesystem_data_size_bytes
+      - record: elasticsearch_filesystem_data_free_percent
+        expr: 100 - elasticsearch_filesystem_data_used_percent
+      - alert: ElasticsearchDataNodeLowDisk
+        expr: elasticsearch_filesystem_data_used_percent{es_data_node="true"} > 80
+        for: 30m
+        labels:
+          channel: default
+          product: zcp-public
+          priority: P3
+        annotations:
+          summary: "Elasticsearch: Data node low disk space"
+          description: "Elasticsearch: Data node {{ $labels.exported_name }} disk usage is above 80% (current value is: {{ $value }})"
+      - alert: ElasticsearchClusterNotHealthy
+        expr: elasticsearch_cluster_health_status{color="yellow"} == 1
+        for: 2m
+        labels:
+          channel: default
+          product: zcp-public
+          priority: P4
+        annotations:
+          summary: "Elasticsearch cluster is not healthy"
+          description: "Elasticsearch cluster is not healthy (current color is: {{ $labels.color }})"
+      - alert: ElasticsearchClusterNotHealthy
+        expr: elasticsearch_cluster_health_status{color="red"} == 1
+        for: 2m
+        labels:
+          channel: default
+          product: zcp-public
+          priority: P4
+        annotations:
+          summary: "Elasticsearch cluster is not healthy"
+          description: "Elasticsearch cluster is not healthy (current color is: {{ $labels.color }})"
 kind: ConfigMap
 metadata:
   name: prometheus-rules
