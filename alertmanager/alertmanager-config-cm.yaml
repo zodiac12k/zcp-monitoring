@@ -63,9 +63,18 @@ data:
 
       # The child route trees.
       routes:
+      - receiver: default
+        continue: true
+      - receiver: alert-aggregator
+        continue: true
 
     receivers:
     - name: 'default'
+      webhook_configs:
+      - url: http://zcp-alertmanager-store-svc:5000/webhook
+        send_resolved: true
+
+    - name: 'alert-aggregator'
       webhook_configs:
       - url: https://alert.cloudzcp.io/webhook/alertmanager
         send_resolved: true
