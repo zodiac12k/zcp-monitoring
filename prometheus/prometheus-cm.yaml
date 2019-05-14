@@ -49,6 +49,9 @@ data:
       relabel_configs:
       - action: labelmap
         regex: __meta_kubernetes_node_label_(.+)
+      - action: labelmap
+        regex: __meta_kubernetes_node_label_node_role_kubernetes_io_(.+)
+        replacement: dedicated
       scheme: https
       tls_config:
         ca_file: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
@@ -56,25 +59,18 @@ data:
       bearer_token_file: /var/run/secrets/kubernetes.io/serviceaccount/token
 
     - job_name: 'kubernetes-nodes-exporter'
-
-      scheme: https
-
-      tls_config:
-        ca_file: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
-      bearer_token_file: /var/run/secrets/kubernetes.io/serviceaccount/token
-
       kubernetes_sd_configs:
       - role: node
-
       relabel_configs:
       - action: labelmap
         regex: __meta_kubernetes_node_label_(.+)
-      - target_label: __address__
-        replacement: kubernetes.default.svc:443
+      - action: labelmap
+        regex: __meta_kubernetes_node_label_node_role_kubernetes_io_(.+)
+        replacement: dedicated
       - source_labels: [__meta_kubernetes_node_name]
         regex: (.+)
-        target_label: __metrics_path__
-        replacement: /api/v1/nodes/${1}:9100/proxy/metrics
+        target_label: __address__
+        replacement: ${1}:9100
 
     - job_name: 'kubernetes-nodes-cadvisor'
       kubernetes_sd_configs:
@@ -82,6 +78,9 @@ data:
       relabel_configs:
       - action: labelmap
         regex: __meta_kubernetes_node_label_(.+)
+      - action: labelmap
+        regex: __meta_kubernetes_node_label_node_role_kubernetes_io_(.+)
+        replacement: dedicated
       - target_label: __metrics_path__
         replacement: /metrics/cadvisor
       scheme: https
@@ -125,6 +124,10 @@ data:
       - source_labels: [__meta_kubernetes_service_name]
         action: replace
         target_label: kubernetes_name
+      metric_relabel_configs:
+      - action: labelmap
+        regex: label_node_role_kubernetes_io_(.+)
+        replacement: dedicated
 
     - job_name: 'kubernetes-service-endpoints'
 
