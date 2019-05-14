@@ -43,21 +43,28 @@ Monitoring 용도 ETCD TLS Secret 생성
 $ kubectl patch secret calico-etcd-secrets -n kube-system -p='{"metadata": {"name": "etcd-secrets", "namespace": "zcp-system"}}' --dry-run -o yaml | kubectl create -f -
 # kubectl clent version 1.10 or lower, run the following command
 $ kubectl get secret calico-etcd-secrets -n kube-system -o yaml | sed 's/\(name\):.*$/\1: etcd-secrets/' | sed 's/\(namespace\):.*$/\1: zcp-system/' | kubectl create -f -
-$ kubectl get secret
-NAME           TYPE     DATA   AGE
-etcd-secrets   Opaque   3      56s
+$ kubectl get secret -n zcp-system
+NAME           TYPE     DATA
+etcd-secrets   Opaque   3   
 ```
 
 ## Prometheus
 
-### prometheus configmap 설정
+### prometheus configmap 설정 및 생성
 
-외부에서 식별 가능한 Cluster Name 변경(env 설정)
+외부에서 식별 가능한 Cluster Name 변경하고 configmap 생성
 
 ```
-$ kubectl config current-context | tr '[:lower:]' '[:upper:]'
-CLOUDZCP-EXAMPLE-DEV
-$ vi prometheus/prometheus-cm.yaml
+$ cluster_name=$(kubectl config current-context | tr '[:lower:]' '[:upper:]')
+$ cat prometheus/prometheus-cm.yaml | sed 's/CLOUDZCP-EXAMPLE-DEV/'$cluster_name'/' | kubectl create -f -
+```
+
+정상적으로 생성되었는지 확인
+```
+$ kubectl get cm -n zcp-system
+NAME              DATA
+prometheus-config 1   
+$ kubectl get cm -n zcp-system prometheus-config -o yaml
 ...
 data:
   prometheus.yml: |-
@@ -67,13 +74,15 @@ data:
       evaluation_interval: 15s
       external_labels:
         env: 'CLOUDZCP-EXAMPLE-DEV'
+...
 ```
 
-### Persistent Volume 설정 및 생성
+### (Optional) Persistent Volume 설정 및 생성
 
-Storage-Class 설정 및 PV 생성 Option 변경(Block Storage 기준)
+필요할 경우 storage-class, billingType, storage 용량 등 설정 변경
+아래는 Block Storage 기준 기본값
 ```
-$ vi prometheus/prometheus-pvc.yaml
+$ cat prometheus/prometheus-pvc.yaml
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
@@ -91,9 +100,9 @@ spec:
       storage: 100Gi
 ```
 
-### Prometheus 환경 정보 설정
+### (Optional) Prometheus 환경 정보 설정
 
-Metric 유지 기간 설정 변경 (--storage.tsdb.retention)
+필요할 경우 tsdb metric 저장 유지 기간 설정 변경 (--storage.tsdb.retention)
 ```
 $ vi prometheus/prometheus-deployment.yaml
 ...
@@ -127,15 +136,33 @@ $ kubectl create -f exporters/node-exporter
 $ kubectl create -f exporters/blackbox-exporter
 ```
 * elasticsearch-exporter
-  * [Move to installation guide](exporters/elasticsearch-exporter/README.md)
+  * [Go to the installation guide](exporters/elasticsearch-exporter/README.md)
+
+## Alertmanager
+
+### Deploy alertmanager resources
+```
+$ kubectl create -f alertmanager
+```
 
 ## Grafana
 
 ### grafana 설정
 
-monitoring domain name 과 keycloak iam 인증을 위한 url 변경
+monitoring domain name 과 keycloak iam 인증을 위한 url 변경 적용하기 위해 configmap 설정 변경
 ```
-$ vi grafana/grafana-cm.yaml
+$ environment=$(kubectl config current-context | cut -d'-' -f3)
+$ host_prefix=$(kubectl config current-context | if [ environment = "dev" ];then cut -d'-' -f2,3;else cut -d'-' -f2;fi)
+$ cat grafana/grafana-cm.yaml | sed 's/example/'${host_prefix}'/' | kubectl create -f -
+...
+```
+
+정상적으로 생성되었는지 확인
+```
+$ kubectl get cm -n zcp-system
+NAME                      DATA
+monitoring-grafana-config 1   
+$ kubectl get cm -n zcp-system monitoring-grafana-config -o yaml
 ...
     [server]
     protocol = http
@@ -152,19 +179,13 @@ $ vi grafana/grafana-cm.yaml
     auth_url = https://example-iam.cloudzcp.io/auth/realms/zcp/protocol/openid-connect/auth
     token_url = https://example-iam.cloudzcp.io/auth/realms/zcp/protocol/openid-connect/token
 ...
+
 ```
 
 ### Deploy grafana resources
 
 ```
 $ kubectl create -f grafana
-```
-
-## Alertmanager
-
-### Deploy alertmanager resources
-```
-$ kubectl create -f alertmanager
 ```
 
 ## Ingress 생성 및 Monitoring 서비스 접속 확인
@@ -174,5 +195,5 @@ Ingress host 정보 내 Domain 정보 변경 및 생성
 $ environment=$(kubectl config current-context | cut -d'-' -f3)
 $ host_prefix=$(kubectl config current-context | if [ environment = "dev" ];then cut -d'-' -f2,3;else cut -d'-' -f2;fi)
 $ alb_id=$(kubectl get deployment -n kube-system --no-headers=true -o=custom-columns=NAME:.metadata.name | grep "private-.*-alb")
-$ cat ingress.yaml | sed 's/example/${host_prefix}/' | sed 's/\(ingress\.bluemix\.net\/ALB-ID\):.*$/\1: ${alb_id}/' | kubectl create -f -
+$ cat ingress.yaml | sed 's/example/'${host_prefix}'/' | sed 's/\(ingress\.bluemix\.net\/ALB-ID\):.*$/\1: '${alb_id}'/' | kubectl create -f -
 ```
