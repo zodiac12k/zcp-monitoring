@@ -926,15 +926,15 @@ data:
       - record: elasticsearch_filesystem_data_free_percent
         expr: 100 - elasticsearch_filesystem_data_used_percent
       - alert: ElasticsearchClusterDown
-          expr: absent(elasticsearch_cluster_health_up == 1)
-          for: 2m
-          labels:
-            channel: default
-            product: zcp-public
-            priority: P4
-          annotations:
-            summary: "Elasticsearch cluster down"
-            description: "Elasticsearch cluster is down"
+        expr: absent(elasticsearch_cluster_health_up == 1)
+        for: 2m
+        labels:
+          channel: default
+          product: zcp-public
+          priority: P4
+        annotations:
+          summary: "Elasticsearch cluster down"
+          description: "Elasticsearch cluster is down"
       - alert: ElasticsearchDataNodeLowDisk
         expr: elasticsearch_filesystem_data_used_percent{es_data_node="true"} > 80
         for: 30m
