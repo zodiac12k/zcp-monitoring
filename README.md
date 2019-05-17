@@ -152,7 +152,7 @@ $ kubectl create -f alertmanager
 monitoring domain name 과 keycloak iam 인증을 위한 url 변경 적용하기 위해 configmap 설정 변경
 ```
 $ environment=$(kubectl config current-context | cut -d'-' -f3)
-$ host_prefix=$(kubectl config current-context | if [ environment = "dev" ];then cut -d'-' -f2,3;else cut -d'-' -f2;fi)
+$ host_prefix=$(kubectl config current-context | if [ $environment = "dev" ];then cut -d'-' -f2,3;else cut -d'-' -f2;fi)
 $ cat grafana/grafana-cm.yaml | sed 's/example/'${host_prefix}'/' | kubectl create -f -
 ...
 ```
