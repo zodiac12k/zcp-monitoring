@@ -11,7 +11,7 @@ data:
           channel: default
           severity: critical
           product: zcp-public
-          priority: P1
+          priority: P4
         annotations:
           summary: node-exporter cannot be scraped
           description: Prometheus failed to scrape Node({{$labels.instance}}) for more than 2m
