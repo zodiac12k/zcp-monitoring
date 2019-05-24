@@ -7,7 +7,7 @@
 |Grafana| 5.0.4 |grafana/grafana:5.0.4
 |Prometheus|  2.2.1 |prom/prometheus:v2.2.1
 |Alertmanager|  0.14.0  |prom/alertmanager:v0.14.0
-|kube-state-metrics| 1.6.0 |k8s.gcr.io/kube-state-metrics:v1.6.0
+|kube-state-metrics| 1.6.0 |quay.io/coreos/kube-state-metrics:v1.6.0
 |Node-Exporter| 0.15.2  |node-exporter:v0.15.2
 |Blackbox-Exporter| 0.12.0  |prom/blackbox-exporter:v0.12.0
 |ElasticSearch-Exporter| 1.0.2  |justwatch/elasticsearch_exporter:1.0.2
@@ -56,7 +56,7 @@ etcd-secrets   Opaque   3
 
 ```
 $ cluster_name=$(kubectl config current-context | tr '[:lower:]' '[:upper:]')
-$ cat prometheus/prometheus-cm.yaml | sed 's/CLOUDZCP-EXAMPLE-DEV/'$cluster_name'/' | kubectl create -f -
+$ cat prometheus-config/prometheus-cm.yaml | sed 's/CLOUDZCP-EXAMPLE-DEV/'$cluster_name'/' | kubectl create -f -
 ```
 
 정상적으로 생성되었는지 확인
@@ -122,7 +122,7 @@ containers:
 $ kubectl create -f prometheus
 ```
 
-## Prometheus exporters
+## Deploy prometheus exporters resources
 * kube-state-metric
 ```
 $ kubectl create -f exporters/kube-state-metric
@@ -153,7 +153,7 @@ monitoring domain name 과 keycloak iam 인증을 위한 url 변경 적용하기
 ```
 $ environment=$(kubectl config current-context | cut -d'-' -f3)
 $ host_prefix=$(kubectl config current-context | if [ $environment = "dev" ];then cut -d'-' -f2,3;else cut -d'-' -f2;fi)
-$ cat grafana/grafana-cm.yaml | sed 's/example/'${host_prefix}'/' | kubectl create -f -
+$ cat grafana-config/grafana-cm.yaml | sed 's/example/'${host_prefix}'/' | kubectl create -f -
 ...
 ```
 
