@@ -926,7 +926,7 @@ data:
       - record: elasticsearch_filesystem_data_free_percent
         expr: 100 - elasticsearch_filesystem_data_used_percent
       - alert: ElasticsearchClusterDown
-        expr: absent(elasticsearch_cluster_health_up == 1)
+        expr: elasticsearch_cluster_health_up == 0
         for: 2m
         labels:
           channel: default
