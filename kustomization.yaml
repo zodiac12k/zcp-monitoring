@@ -54,6 +54,9 @@ configMapGenerator:
   - alertmanager/config/config.yml
   name: alertmanager
 - files:
+  - grafana/config/grafana.ini
+  name: monitoring-grafana-config
+- files:
   - grafana/dashboard/addon/zcp-logging-es-overview.json
   - grafana/dashboard/addon/zcp-service-status.json
   name: monitoring-grafana-dashboard-addon
