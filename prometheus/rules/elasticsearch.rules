@@ -1,0 +1,47 @@
+groups:
+- name: elasticsearch.rules
+  rules:
+  - record: elasticsearch_filesystem_data_used_percent
+    expr: 100 * (elasticsearch_filesystem_data_size_bytes - elasticsearch_filesystem_data_free_bytes) / elasticsearch_filesystem_data_size_bytes
+  - record: elasticsearch_filesystem_data_free_percent
+    expr: 100 - elasticsearch_filesystem_data_used_percent
+  - alert: ElasticsearchClusterDown
+    expr: elasticsearch_cluster_health_up == 0
+    for: 2m
+    labels:
+      channel: default
+      product: zcp-public
+      priority: P4
+    annotations:
+      summary: "Elasticsearch cluster down"
+      description: "Elasticsearch cluster is down"
+  - alert: ElasticsearchDataNodeLowDisk
+    expr: elasticsearch_filesystem_data_used_percent{es_data_node="true"} > 80
+    for: 30m
+    labels:
+      channel: default
+      product: zcp-public
+      priority: P3
+    annotations:
+      summary: "Elasticsearch: Data node low disk space"
+      description: "Elasticsearch: Data node {{ $labels.exported_name }} disk usage is above 80% (current value is: {{ $value }})"
+  - alert: ElasticsearchClusterNotHealthy
+    expr: elasticsearch_cluster_health_status{color="yellow"} == 1
+    for: 2m
+    labels:
+      channel: default
+      product: zcp-public
+      priority: P4
+    annotations:
+      summary: "Elasticsearch cluster is not healthy"
+      description: "Elasticsearch cluster is not healthy (current color is: {{ $labels.color }})"
+  - alert: ElasticsearchClusterNotHealthy
+    expr: elasticsearch_cluster_health_status{color="red"} == 1
+    for: 2m
+    labels:
+      channel: default
+      product: zcp-public
+      priority: P4
+    annotations:
+      summary: "Elasticsearch cluster is not healthy"
+      description: "Elasticsearch cluster is not healthy (current color is: {{ $labels.color }})"

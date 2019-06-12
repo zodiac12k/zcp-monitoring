@@ -1,0 +1,432 @@
+groups:
+- name: node.rules
+  rules:
+  - alert: NodeExporterDown
+    expr: absent(up{job="kubernetes-nodes-exporter"} == 1)
+    for: 2m
+    labels:
+      channel: default
+      severity: critical
+      product: zcp-public
+      priority: P4
+    annotations:
+      summary: node-exporter cannot be scraped
+      description: Prometheus failed to scrape Node({{$labels.instance}}) for more than 2m
+
+  - record: node_cpu_usage_rate
+    expr: (100 - (avg by(dedicated,instance)(irate(node_cpu{mode="idle"}[5m])) * 100))
+  - alert: ManagementNodeCPUUsage
+    expr: node_cpu_usage_rate{dedicated="management"} > 80
+    for: 2m
+    labels:
+      channel: default
+      severity: warning
+      product: zcp-public
+      priority: P4
+    annotations:
+      summary: "Node({{$labels.dedicated}}): High CPU usage detected"
+      description: "{{$labels.instance}}: CPU usage is above 80% (current value is: {{$value}})"
+  - alert: LoggingNodeCPUUsage
+    expr: node_cpu_usage_rate{dedicated="logging"} > 80
+    for: 2m
+    labels:
+      channel: default
+      severity: warning
+      product: zcp-public
+      priority: P4
+    annotations:
+      summary: "Node({{$labels.dedicated}}): High CPU usage detected"
+      description: "{{$labels.instance}}: CPU usage is above 80% (current value is: {{$value}})"
+  - alert: WorkerNodeCPUUsage
+    expr: node_cpu_usage_rate{dedicated=~"worker|ha-worker"} > 80
+    for: 2m
+    labels:
+      channel: default
+      severity: warning
+      product: zcp-public
+      priority: P3
+    annotations:
+      summary: "Node({{$labels.dedicated}}): High CPU usage detected"
+      description: "{{$labels.instance}}: CPU usage is above 80% (current value is: {{$value}})"
+  - alert: EdgeNodeCPUUsage
+    expr: node_cpu_usage_rate{dedicated="edge"} > 80
+    for: 2m
+    labels:
+      channel: default
+      severity: warning
+      product: zcp-public
+      priority: P3
+    annotations:
+      summary: "Node({{$labels.dedicated}}): High CPU usage detected"
+      description: "{{$labels.instance}}: CPU usage is above 80% (current value is: {{$value}})"
+  - alert: ZDBNodeCPUUsage
+    expr: node_cpu_usage_rate{dedicated="zdb"} > 80
+    for: 2m
+    labels:
+      channel: default
+      severity: warning
+      product: zcp-public
+      priority: P3
+    annotations:
+      summary: "Node({{$labels.dedicated}}): High CPU usage detected"
+      description: "{{$labels.instance}}: CPU usage is above 80% (current value is: {{$value}})"
+
+  - alert: ManagementNodeCPUUsage
+    expr: node_cpu_usage_rate{dedicated="management"} > 95
+    for: 2m
+    labels:
+      channel: default
+      severity: critical
+      product: zcp-public
+      priority: P1
+    annotations:
+      summary: "Node({{$labels.dedicated}}): High CPU usage detected"
+      description: "{{$labels.instance}}: CPU usage is above 95% (current value is: {{$value}})"
+  - alert: LoggingNodeCPUUsage
+    expr: node_cpu_usage_rate{dedicated="logging"} > 95
+    for: 2m
+    labels:
+      channel: default
+      severity: critical
+      product: zcp-public
+      priority: P1
+    annotations:
+      summary: "Node({{$labels.dedicated}}): High CPU usage detected"
+      description: "{{$labels.instance}}: CPU usage is above 95% (current value is: {{$value}})"
+  - alert: WorkerNodeCPUUsage
+    expr: node_cpu_usage_rate{dedicated=~"worker|ha-worker"} > 95
+    for: 2m
+    labels:
+      channel: default
+      severity: critical
+      product: zcp-public
+      priority: P1
+    annotations:
+      summary: "Node({{$labels.dedicated}}): High CPU usage detected"
+      description: "{{$labels.instance}}: CPU usage is above 95% (current value is: {{$value}})"
+  - alert: EdgeNodeCPUUsage
+    expr: node_cpu_usage_rate{dedicated="edge"} > 95
+    for: 2m
+    labels:
+      channel: default
+      severity: critical
+      product: zcp-public
+      priority: P1
+    annotations:
+      summary: "Node({{$labels.dedicated}}): High CPU usage detected"
+      description: "{{$labels.instance}}: CPU usage is above 95% (current value is: {{$value}})"
+  - alert: ZDBNodeCPUUsage
+    expr: node_cpu_usage_rate{dedicated="zdb"} > 95
+    for: 2m
+    labels:
+      channel: default
+      severity: critical
+      product: zcp-public
+      priority: P1
+    annotations:
+      summary: "Node({{$labels.dedicated}}): High CPU usage detected"
+      description: "{{$labels.instance}}: CPU usage is above 95% (current value is: {{$value}})"
+
+  - alert: ManagementNodeLoadAverage5
+    expr: node_load5{dedicated="management"} / count without (cpu, mode) (node_cpu{mode="system"}) > 1
+    for: 2m
+    labels:
+      channel: default
+      severity: warning
+      product: zcp-public
+      priority: P4
+    annotations:
+      summary: "Node({{$labels.dedicated}}): High Load Average detected"
+      description: "{{$labels.instance}}: Load Average is high (current value is: {{$value}})"
+  - alert: LoggingNodeLoadAverage5
+    expr: node_load5{dedicated="logging"} / count without (cpu, mode) (node_cpu{mode="system"}) > 1
+    for: 2m
+    labels:
+      channel: default
+      severity: warning
+      product: zcp-public
+      priority: P4
+    annotations:
+      summary: "Node({{$labels.dedicated}}): High Load Average detected"
+      description: "{{$labels.instance}}: Load Average is high (current value is: {{$value}})"
+  - alert: WorkerNodeLoadAverage5
+    expr: node_load5{dedicated=~"worker|ha-worker"} / count without (cpu, mode) (node_cpu{mode="system"}) > 1
+    for: 2m
+    labels:
+      channel: default
+      severity: warning
+      product: zcp-public
+      priority: P4
+    annotations:
+      summary: "Node({{$labels.dedicated}}): High Load Average detected"
+      description: "{{$labels.instance}}: Load Average is high (current value is: {{$value}})"
+  - alert: EdgeNodeLoadAverage5
+    expr: node_load5{dedicated="edge"} / count without (cpu, mode) (node_cpu{mode="system"}) > 1
+    for: 2m
+    labels:
+      channel: default
+      severity: warning
+      product: zcp-public
+      priority: P4
+    annotations:
+      summary: "Node({{$labels.dedicated}}): High Load Average detected"
+      description: "{{$labels.instance}}: Load Average is high (current value is: {{$value}})"
+  - alert: ZDBNodeLoadAverage5
+    expr: node_load5{dedicated="zdb"} / count without (cpu, mode) (node_cpu{mode="system"}) > 1
+    for: 2m
+    labels:
+      channel: default
+      severity: warning
+      product: zcp-public
+      priority: P4
+    annotations:
+      summary: "Node({{$labels.dedicated}}): High Load Average detected"
+      description: "{{$labels.instance}}: Load Average is high (current value is: {{$value}})"
+
+  - record: node_memory_MemUsed
+    expr: node_memory_MemTotal - node_memory_MemFree - node_memory_Buffers - node_memory_Cached
+  - record: node_memory_MemUsed_percent
+    expr: node_memory_MemUsed / node_memory_MemTotal * 100
+  - record: node_memory_MemUnavailable
+    expr: node_memory_MemTotal - node_memory_MemAvailable
+  - record: node_memory_MemUnavailable_percent
+    expr: node_memory_MemUnavailable / node_memory_MemTotal * 100
+  - alert: ManagementNodeMemoryUsage
+    expr: node_memory_MemUsed_percent{dedicated="management"} > 80
+    for: 2m
+    labels:
+      channel: default
+      severity: warning
+      product: zcp-public
+      priority: P4
+    annotations:
+      summary: "Node({{$labels.dedicated}}): High memory usage detected"
+      description: "{{$labels.instance}}: Memory usage is above 80% (current value is: {{$value}})"
+  - alert: LoggingNodeMemoryUsage
+    expr: node_memory_MemUsed_percent{dedicated="logging"} > 80
+    for: 2m
+    labels:
+      channel: default
+      severity: warning
+      product: zcp-public
+      priority: P4
+    annotations:
+      summary: "Node({{$labels.dedicated}}): High memory usage detected"
+      description: "{{$labels.instance}}: Memory usage is above 80% (current value is: {{$value}})"
+  - alert: WorkerNodeMemoryUsage
+    expr: node_memory_MemUsed_percent{dedicated=~"worker|ha-worker"} > 80
+    for: 2m
+    labels:
+      channel: default
+      severity: warning
+      product: zcp-public
+      priority: P3
+    annotations:
+      summary: "Node({{$labels.dedicated}}): High memory usage detected"
+      description: "{{$labels.instance}}: Memory usage is above 80% (current value is: {{$value}})"
+  - alert: EdgeNodeMemoryUsage
+    expr: node_memory_MemUsed_percent{dedicated="edge"} > 80
+    for: 2m
+    labels:
+      channel: default
+      severity: warning
+      product: zcp-public
+      priority: P3
+    annotations:
+      summary: "Node({{$labels.dedicated}}): High memory usage detected"
+      description: "{{$labels.instance}}: Memory usage is above 80% (current value is: {{$value}})"
+  - alert: ZDBNodeMemoryUsage
+    expr: node_memory_MemUsed_percent{dedicated="zdb"} > 80
+    for: 2m
+    labels:
+      channel: default
+      severity: warning
+      product: zcp-public
+      priority: P3
+    annotations:
+      summary: "Node({{$labels.dedicated}}): High memory usage detected"
+      description: "{{$labels.instance}}: Memory usage is above 80% (current value is: {{$value}})"
+
+  - alert: ManagementNodeMemoryUsage
+    expr: node_memory_MemUsed_percent{dedicated="management"} > 95
+    for: 2m
+    labels:
+      channel: default
+      severity: critical
+      product: zcp-public
+      priority: P1
+    annotations:
+      summary: "Node({{$labels.dedicated}}): High memory usage detected"
+      description: "{{$labels.instance}}: Memory usage is above 95% (current value is: {{$value}})"
+  - alert: LoggingNodeMemoryUsage
+    expr: node_memory_MemUsed_percent{dedicated="logging"} > 95
+    for: 2m
+    labels:
+      channel: default
+      severity: critical
+      product: zcp-public
+      priority: P1
+    annotations:
+      summary: "Node({{$labels.dedicated}}): High memory usage detected"
+      description: "{{$labels.instance}}: Memory usage is above 95% (current value is: {{$value}})"
+  - alert: WorkerNodeMemoryUsage
+    expr: node_memory_MemUsed_percent{dedicated=~"worker|ha-worker"} > 95
+    for: 2m
+    labels:
+      channel: default
+      severity: critical
+      product: zcp-public
+      priority: P1
+    annotations:
+      summary: "Node({{$labels.dedicated}}): High memory usage detected"
+      description: "{{$labels.instance}}: Memory usage is above 95% (current value is: {{$value}})"
+  - alert: EdgeNodeMemoryUsage
+    expr: node_memory_MemUsed_percent{dedicated="edge"} > 95
+    for: 2m
+    labels:
+      channel: default
+      severity: critical
+      product: zcp-public
+      priority: P1
+    annotations:
+      summary: "Node({{$labels.dedicated}}): High memory usage detected"
+      description: "{{$labels.instance}}: Memory usage is above 75% (current value is: {{$value}})"
+  - alert: ZDBNodeMemoryUsage
+    expr: node_memory_MemUsed_percent{dedicated="zdb"} > 95
+    for: 2m
+    labels:
+      channel: default
+      severity: critical
+      product: zcp-public
+      priority: P1
+    annotations:
+      summary: "Node({{$labels.dedicated}}): High memory usage detected"
+      description: "{{$labels.instance}}: Memory usage is above 95% (current value is: {{$value}})"
+
+  - alert: NodeSwapUsage
+    expr: ((node_memory_SwapTotal - node_memory_SwapFree) / node_memory_SwapTotal) * 100 > 75
+    for: 2m
+    labels:
+      channel: default
+      severity: warning
+      product: zcp-public
+      priority: P4
+    annotations:
+      summary: "{{$labels.instance}}: Swap usage detected"
+      description: "{{$labels.instance}}: Swap usage usage is above 75% (current value is: {{ $value }})"
+
+  - record: node_filesystem_used
+    expr: node_filesystem_size - node_filesystem_avail
+  - record: node_filesystem_used_percent
+    expr: node_filesystem_used / node_filesystem_size * 100
+  - alert: ManagementNodeLowRootDisk
+    expr: node_filesystem_used_percent{dedicated="management",mountpoint="/"} > 80
+    for: 30m
+    labels:
+      channel: default
+      severity: warning
+      product: zcp-public
+      priority: P4
+    annotations:
+      summary: "Node({{$labels.dedicated}}): Low root disk space"
+      description: "{{$labels.instance}}: Root disk usage is above 80% (current value is: {{$value}})"
+  - alert: LoggingNodeLowRootDisk
+    expr: node_filesystem_used_percent{dedicated="logging",mountpoint="/"} > 80
+    for: 30m
+    labels:
+      channel: default
+      severity: warning
+      product: zcp-public
+      priority: P4
+    annotations:
+      summary: "Node({{$labels.dedicated}}): Low root disk space"
+      description: "{{$labels.instance}}: Root disk usage is above 80% (current value is: {{$value}})"
+  - alert: WorkerNodeLowRootDisk
+    expr: node_filesystem_used_percent{dedicated=~"worker|ha-worker",mountpoint="/"} > 80
+    for: 30m
+    labels:
+      channel: default
+      severity: warning
+      product: zcp-public
+      priority: P4
+    annotations:
+      summary: "Node({{$labels.dedicated}}): Low root disk space"
+      description: "{{$labels.instance}}: Root disk usage is above 80% (current value is: {{$value}})"
+  - alert: EdgeNodeLowRootDisk
+    expr: node_filesystem_used_percent{dedicated="edge",mountpoint="/"} > 80
+    for: 30m
+    labels:
+      channel: default
+      severity: warning
+      product: zcp-public
+      priority: P4
+    annotations:
+      summary: "Node({{$labels.dedicated}}): Low root disk space"
+      description: "{{$labels.instance}}: Root disk usage is above 80% (current value is: {{$value}})"
+  - alert: ZDBNodeLowRootDisk
+    expr: node_filesystem_used_percent{dedicated="zdb",mountpoint="/"} > 80
+    for: 30m
+    labels:
+      channel: default
+      severity: warning
+      product: zcp-public
+      priority: P4
+    annotations:
+      summary: "Node({{$labels.dedicated}}): Low root disk space"
+      description: "{{$labels.instance}}: Root disk usage is above 80% (current value is: {{$value}})"
+
+  - alert: ManagementNodeLowRootDisk
+    expr: node_filesystem_used_percent{dedicated="management",mountpoint="/"} > 95
+    for: 30m
+    labels:
+      channel: default
+      severity: critical
+      product: zcp-public
+      priority: P1
+    annotations:
+      summary: "Node({{$labels.dedicated}}): Low root disk space"
+      description: "{{$labels.instance}}: Root disk usage is above 95% (current value is: {{$value}})"
+  - alert: LoggingNodeLowRootDisk
+    expr: node_filesystem_used_percent{dedicated="logging",mountpoint="/"} > 95
+    for: 30m
+    labels:
+      channel: default
+      severity: critical
+      product: zcp-public
+      priority: P1
+    annotations:
+      summary: "Node({{$labels.dedicated}}): Low root disk space"
+      description: "{{$labels.instance}}: Root disk usage is above 95% (current value is: {{$value}})"
+  - alert: WorkerNodeLowRootDisk
+    expr: node_filesystem_used_percent{dedicated=~"worker|ha-worker",mountpoint="/"} > 95
+    for: 30m
+    labels:
+      channel: default
+      severity: critical
+      product: zcp-public
+      priority: P1
+    annotations:
+      summary: "Node({{$labels.dedicated}}): Low root disk space"
+      description: "{{$labels.instance}}: Root disk usage is above 95% (current value is: {{$value}})"
+  - alert: EdgeNodeLowRootDisk
+    expr: node_filesystem_used_percent{dedicated="edge",mountpoint="/"} > 95
+    for: 30m
+    labels:
+      channel: default
+      severity: critical
+      product: zcp-public
+      priority: P1
+    annotations:
+      summary: "Node({{$labels.dedicated}}): Low root disk space"
+      description: "{{$labels.instance}}: Root disk usage is above 95% (current value is: {{$value}})"
+  - alert: ZDBNodeLowRootDisk
+    expr: node_filesystem_used_percent{dedicated="zdb",mountpoint="/"} > 95
+    for: 30m
+    labels:
+      channel: default
+      severity: critical
+      product: zcp-public
+      priority: P1
+    annotations:
+      summary: "Node({{$labels.dedicated}}): Low root disk space"
+      description: "{{$labels.instance}}: Root disk usage is above 95% (current value is: {{$value}})"

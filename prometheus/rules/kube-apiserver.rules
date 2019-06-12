@@ -1,0 +1,36 @@
+groups:
+- name: kube-apiserver.rules
+  rules:
+  - alert: APIServerDown
+    expr: up{job="kubernetes-apiservers"} == 0
+    for: 5m
+    labels:
+      channel: default
+      severity: warning
+      product: zcp-public
+      priority: P4
+    annotations:
+      summary: API server unreachable
+      description: Prometheus failed to scrape API server
+  - alert: APIServerErrorsHigh
+    expr: sum(rate(apiserver_request_count{code=~"^(?:5..)$"}[5m])) / sum(rate(apiserver_request_count[5m])) * 100 > 1
+    for: 2m
+    labels:
+      channel: default
+      severity: warning
+      product: zcp-public
+      priority: P4
+    annotations:
+      summary: API server Errors High
+      description: "API server returns errors for {{$value}}% of requests summary: API server request errors"
+  - alert: APIServerLatencyHigh
+    expr: avg(apiserver_request_latencies_sum / apiserver_request_latencies_count) / 1000000 > 2000
+    for: 2m
+    labels:
+      channel: default
+      severity: warning
+      product: zcp-public
+      priority: P4
+    annotations:
+      summary: API server Latency High
+      description: "API server latency High above 2s (current value: {{ $value }}ms"

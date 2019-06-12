@@ -1,0 +1,47 @@
+groups:
+- name: etcd.rules
+  rules:
+  - alert: ETCD_Down
+    expr: up{job="etcd"} == 0
+    for: 2m
+    labels:
+      channel: default
+      severity: critical
+      product: zcp-public
+      priority: P4
+    annotations:
+      summary: ETCD server unreachable
+      description: Prometheus failed to scrape ETCD server
+  - alert: ETCD_NoLeader
+    expr: etcd_server_has_leader{job="etcd"} == 0
+    for: 2m
+    labels:
+      channel: default
+      severity: critical
+      product: zcp-public
+      priority: P4
+    annotations:
+      summary: ETCD Member has no leader
+      description: ETCD Member {{ $labels.instance }} has no leader
+  - alert: ETCD_InsufficientMembers
+    expr: count(up{job="etcd"} == 0) > (count(up{job="etcd"}) / 2 - 1)
+    for: 2m
+    labels:
+      channel: default
+      severity: critical
+      product: zcp-public
+      priority: P4
+    annotations:
+      summary: ETCD server insufficient members
+      description: If one more etcd member goes down the cluster will be unavailable
+  - alert: ETCD_HighNumberOfLeaderChanges
+    expr: increase(etcd_server_leader_changes_seen_total{job="etcd"}[1h]) > 3
+    for: 2m
+    labels:
+      channel: default
+      severity: critical
+      product: zcp-public
+      priority: P4
+    annotations:
+      summary: ETCD a high number of leader changes within the etcd cluster are happening
+      description: ETCD instance {{ $labels.instance }} has seen {{ $value }} leader changes within the last hour

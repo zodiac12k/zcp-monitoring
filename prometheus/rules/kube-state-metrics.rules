@@ -1,0 +1,294 @@
+groups:
+- name: kube-state-metrics.rules
+  rules:
+  - record: kube_node_status_condition_ready
+    expr: kube_node_status_condition{condition="Ready",status="true"}
+  - alert: K8SManagementNodeNotReady
+    expr: kube_node_labels{dedicated="management"} and on (node) kube_node_status_condition_ready == 0
+    for: 2m
+    labels:
+      channel: default
+      severity: critical
+      product: zcp-public
+      priority: P1
+    annotations:
+      summary: "Node({{$labels.dedicated}}) status is NotReady"
+      description: "The kubelet on {{$labels.node}} has not checked in with the API, or has set itself to NotReady, for more than 2m."
+  - alert: K8SLoggingNodeNotReady
+    expr: kube_node_labels{dedicated="logging"} and on (node) kube_node_status_condition_ready == 0
+    for: 2m
+    labels:
+      channel: default
+      severity: critical
+      product: zcp-public
+      priority: P1
+    annotations:
+      summary: "Node({{$labels.dedicated}}) status is NotReady"
+      description: "The kubelet on {{$labels.node}} has not checked in with the API, or has set itself to NotReady, for more than 2m."
+  - alert: K8SWorkerNodeNotReady
+    expr: kube_node_labels{dedicated=~"worker|ha-worker"} and on (node) kube_node_status_condition_ready == 0
+    for: 2m
+    labels:
+      channel: default
+      severity: critical
+      product: zcp-public
+      priority: P1
+    annotations:
+      summary: "Node({{$labels.dedicated}}) status is NotReady"
+      description: "The kubelet on {{$labels.node}} has not checked in with the API, or has set itself to NotReady, for more than 2m."
+  - alert: K8SEdgeNodeNotReady
+    expr: kube_node_labels{dedicated="edge"} and on (node) kube_node_status_condition_ready == 0
+    for: 2m
+    labels:
+      channel: default
+      severity: critical
+      product: zcp-public
+      priority: P1
+    annotations:
+      summary: "Node({{$labels.dedicated}}) status is NotReady"
+      description: "The kubelet on {{$labels.node}} has not checked in with the API, or has set itself to NotReady, for more than 2m."
+  - alert: K8SZDBNodeNotReady
+    expr: kube_node_labels{dedicated="zdb"} and on (node) kube_node_status_condition_ready == 0
+    for: 2m
+    labels:
+      channel: default
+      severity: critical
+      product: zcp-public
+      priority: P1
+    annotations:
+      summary: "Node({{$labels.dedicated}}) status is NotReady"
+      description: "The kubelet on {{$labels.node}} has not checked in with the API, or has set itself to NotReady, for more than 2m."
+
+  - record: kube_node_status_condition_out_of_disk
+    expr: kube_node_status_condition{condition="OutOfDisk",status="true"}
+  - alert: K8SManagementNodeOutOfDisk
+    expr: kube_node_labels{dedicated="management"} and on (node) kube_node_status_condition_out_of_disk == 1
+    for: 2m
+    labels:
+      product: zcp-public
+      priority: P1
+    annotations:
+      summary: "Node({{$labels.dedicated}}) ran out of disk space."
+      description: "{{$labels.node}} is insufficient free space on the node for adding new pods."
+  - alert: K8SLoggingNodeOutOfDisk
+    expr: kube_node_labels{dedicated="logging"} and on (node) kube_node_status_condition_out_of_disk == 1
+    for: 2m
+    labels:
+      product: zcp-public
+      priority: P1
+    annotations:
+      summary: "Node({{$labels.dedicated}}) ran out of disk space."
+      description: "{{$labels.node}} is insufficient free space on the node for adding new pods."
+  - alert: K8SWorkerNodeOutOfDisk
+    expr: kube_node_labels{dedicated=~"worker|ha-worker"} and on (node) kube_node_status_condition_out_of_disk == 1
+    for: 2m
+    labels:
+      product: zcp-public
+      priority: P1
+    annotations:
+      summary: "Node({{$labels.dedicated}}) ran out of disk space."
+      description: "{{$labels.node}} is insufficient free space on the node for adding new pods."
+  - alert: K8SEdgeNodeOutOfDisk
+    expr: kube_node_labels{dedicated="edge"} and on (node) kube_node_status_condition_out_of_disk == 1
+    for: 2m
+    labels:
+      product: zcp-public
+      priority: P1
+    annotations:
+      summary: "Node({{$labels.dedicated}}) ran out of disk space."
+      description: "{{$labels.node}} is insufficient free space on the node for adding new pods."
+  - alert: K8SZDBNodeOutOfDisk
+    expr: kube_node_labels{dedicated="zdb"} and on (node) kube_node_status_condition_out_of_disk == 1
+    for: 2m
+    labels:
+      product: zcp-public
+      priority: P1
+    annotations:
+      summary: "Node({{$labels.dedicated}}) ran out of disk space."
+      description: "{{$labels.node}} is insufficient free space on the node for adding new pods."
+
+  - record: kube_node_status_condition_memory_pressure
+    expr: kube_node_status_condition{condition="MemoryPressure",status="true"}
+  - alert: K8SManagementNodeMemoryPressure
+    expr: kube_node_labels{dedicated="management"} and on (node) kube_node_status_condition_memory_pressure == 1
+    for: 2m
+    labels:
+      product: zcp-public
+      priority: P1
+    annotations:
+      summary: "Node({{$labels.dedicated}}) is under memory pressure."
+      description: "{{$labels.node}} memory is low."
+  - alert: K8SLoggingNodeMemoryPressure
+    expr: kube_node_labels{dedicated="logging"} and on (node) kube_node_status_condition_memory_pressure == 1
+    for: 2m
+    labels:
+      product: zcp-public
+      priority: P1
+    annotations:
+      summary: "Node({{$labels.dedicated}}) is under memory pressure."
+      description: "{{$labels.node}} memory is low."
+  - alert: K8SWorkerNodeMemoryPressure
+    expr: kube_node_labels{dedicated=~"worker|ha-worker"} and on (node) kube_node_status_condition_memory_pressure == 1
+    for: 2m
+    labels:
+      product: zcp-public
+      priority: P1
+    annotations:
+      summary: "Node({{$labels.dedicated}}) is under memory pressure."
+      description: "{{$labels.node}} memory is low."
+  - alert: K8SEdgeNodeMemoryPressure
+    expr: kube_node_labels{dedicated="edge"} and on (node) kube_node_status_condition_memory_pressure == 1
+    for: 2m
+    labels:
+      product: zcp-public
+      priority: P1
+    annotations:
+      summary: "Node({{$labels.dedicated}}) is under memory pressure."
+      description: "{{$labels.node}} memory is low."
+  - alert: K8SZDBNodeMemoryPressure
+    expr: kube_node_labels{dedicated="zdb"} and on (node) kube_node_status_condition_memory_pressure == 1
+    for: 2m
+    labels:
+      product: zcp-public
+      priority: P1
+    annotations:
+      summary: "Node({{$labels.dedicated}}) is under memory pressure."
+      description: "{{$labels.node}} memory is low."
+
+  - record: kube_node_status_condition_pid_pressure
+    expr: kube_node_status_condition{condition="PIDPressure",status="true"}
+  - alert: K8SManagementNodePIDPressure
+    expr: kube_node_labels{dedicated="management"} and on (node) kube_node_status_condition_pid_pressure == 1
+    for: 2m
+    labels:
+      product: zcp-public
+      priority: P1
+    annotations:
+      summary: "Node({{$labels.dedicated}}) is under PID pressure."
+      description: "{{$labels.node}} is too many processes on the node."
+  - alert: K8SLoggingNodePIDPressure
+    expr: kube_node_labels{dedicated="logging"} and on (node) kube_node_status_condition_pid_pressure == 1
+    for: 2m
+    labels:
+      product: zcp-public
+      priority: P1
+    annotations:
+      summary: "Node({{$labels.dedicated}}) is under PID pressure."
+      description: "{{$labels.node}} is too many processes on the node."
+  - alert: K8SWorkerNodePIDPressure
+    expr: kube_node_labels{dedicated=~"worker|ha-worker"} and on (node) kube_node_status_condition_pid_pressure == 1
+    for: 2m
+    labels:
+      product: zcp-public
+      priority: P1
+    annotations:
+      summary: "Node({{$labels.dedicated}}) is under PID pressure."
+      description: "{{$labels.node}} is too many processes on the node."
+  - alert: K8SEdgeNodePIDPressure
+    expr: kube_node_labels{dedicated="edge"} and on (node) kube_node_status_condition_pid_pressure == 1
+    for: 2m
+    labels:
+      product: zcp-public
+      priority: P1
+    annotations:
+      summary: "Node({{$labels.dedicated}}) is under PID pressure."
+      description: "{{$labels.node}} is too many processes on the node."
+  - alert: K8SZDBNodePIDPressure
+    expr: kube_node_labels{dedicated="zdb"} and on (node) kube_node_status_condition_pid_pressure == 1
+    for: 2m
+    labels:
+      product: zcp-public
+      priority: P1
+    annotations:
+      summary: "Node({{$labels.dedicated}}) is under PID pressure."
+      description: "{{$labels.node}} is too many processes on the node."
+
+  - record: kube_node_status_condition_disk_pressure
+    expr: kube_node_status_condition{condition="DiskPressure",status="true"}
+  - alert: K8SManagementNodeDiskPressure
+    expr: kube_node_labels{dedicated="management"} and on (node) kube_node_status_condition_disk_pressure == 1
+    for: 2m
+    labels:
+      channel: default
+      severity: warning
+      product: zcp-public
+      priority: P1
+    annotations:
+      summary: "Node({{$labels.dedicated}}) is under disk pressure."
+      description: "{{$labels.node}} disk capacity is low."
+  - alert: K8SLoggingNodeDiskPressure
+    expr: kube_node_labels{dedicated="logging"} and on (node) kube_node_status_condition_disk_pressure == 1
+    for: 2m
+    labels:
+      channel: default
+      severity: warning
+      product: zcp-public
+      priority: P1
+    annotations:
+      summary: "Node({{$labels.dedicated}}) is under disk pressure."
+      description: "{{$labels.node}} disk capacity is low."
+  - alert: K8SWorkerNodeDiskPressure
+    expr: kube_node_labels{dedicated=~"worker|ha-worker"} and on (node) kube_node_status_condition_disk_pressure == 1
+    for: 2m
+    labels:
+      channel: default
+      severity: warning
+      product: zcp-public
+      priority: P1
+    annotations:
+      summary: "Node({{$labels.dedicated}}) is under disk pressure."
+      description: "{{$labels.node}} disk capacity is low."
+  - alert: K8SEdgeNodeDiskPressure
+    expr: kube_node_labels{dedicated="edge"} and on (node) kube_node_status_condition_disk_pressure == 1
+    for: 2m
+    labels:
+      channel: default
+      severity: warning
+      product: zcp-public
+      priority: P1
+    annotations:
+      summary: "Node({{$labels.dedicated}}) is under disk pressure."
+      description: "{{$labels.node}} disk capacity is low."
+  - alert: K8SZDBNodeDiskPressure
+    expr: kube_node_labels{dedicated="zdb"} and on (node) kube_node_status_condition_disk_pressure == 1
+    for: 2m
+    labels:
+      product: zcp-public
+      priority: P1
+    annotations:
+      summary: "Node({{$labels.dedicated}}) is under disk pressure."
+      description: "{{$labels.node}} disk capacity is low."
+
+  - alert: PodFrequentlyRestarting
+    expr: increase(kube_pod_container_status_restarts_total[1h]) > 5
+    for: 10m
+    labels:
+      channel: default
+      severity: warning
+      product: zcp-public
+      priority: P4
+    annotations:
+      summary: "Pod is restarting frequently"
+      description: "Pod {{$labels.namespace}}/{{$labels.pod}} is was restarted {{$value}} times within the last hour"
+  - alert: PodAbnormallyTerminated
+    expr: sum_over_time(kube_pod_container_status_terminated_reason{reason!="Completed"}[5m]) > 0
+    for: 2m
+    labels:
+      channel: default
+      severity: warning
+      product: zcp-public
+      priority: P4
+    annotations:
+      summary: "Pod is abnormally terminated"
+      description: "Pod {{$labels.namespace}}/{{$labels.pod}} is abnormally terminated for a {{$labels.reason}}"
+  - alert: PodAbnormallyWaiting
+    expr: sum_over_time(kube_pod_container_status_waiting_reason{reason!="ContainerCreating"}[5m]) > 0
+    for: 2m
+    labels:
+      channel: default
+      severity: warning
+      product: zcp-public
+      priority: P4
+    annotations:
+      summary: "Pod is abnormally waiting"
+      description: "Pod {{$labels.namespace}}/{{$labels.pod}} is abnormally waiting for a {{$labels.reason}}"

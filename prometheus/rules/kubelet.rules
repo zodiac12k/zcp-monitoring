@@ -1,0 +1,47 @@
+groups:
+- name: kubelet.rules
+  rules:
+  - alert: K8SKubeletDown
+    expr: absent(up{job="kubernetes-nodes-kubelet"} == 1)
+    for: 2m
+    labels:
+      channel: default
+      severity: critical
+      product: zcp-public
+      priority: P4
+    annotations:
+      description: "Prometheus failed to scrape {{ $labels.instance }} of kubelet."
+      summary: "Kubelet cannot be scraped"
+  - alert: K8SKubeletTooManyPods
+    expr: kubelet_running_pod_count > 100
+    for: 10m
+    labels:
+      channel: default
+      severity: warning
+      product: zcp-public
+      priority: P4
+    annotations:
+      description: "Kubelet {{$labels.instance}} is running {{$value}} pods, close to the limit of 110"
+      summary: "Kubelet is close to pod limit"
+  - alert: PersistentVolumeLowSpace
+    expr: kubelet_volume_stats_used_bytes / kubelet_volume_stats_capacity_bytes * 100 > 80
+    for: 2m
+    labels:
+      channel: default
+      severity: warning
+      product: zcp-public
+      priority: P3
+    annotations:
+      summary: "Persistent Volume({{$labels.namespace}}/{{$labels.persistentvolumeclaim}}): Low disk space"
+      description: "Persistent Volume({{$labels.namespace}}/{{$labels.persistentvolumeclaim}}): Disk usage is above 80% (current value is: {{$value}})"
+  - alert: PersistentVolumeLowSpace
+    expr: kubelet_volume_stats_used_bytes / kubelet_volume_stats_capacity_bytes * 100 > 95
+    for: 2m
+    labels:
+      channel: default
+      severity: warning
+      product: zcp-public
+      priority: P1
+    annotations:
+      summary: "Persistent Volume({{$labels.namespace}}/{{$labels.persistentvolumeclaim}}): Low disk space"
+      description: "Persistent Volume({{$labels.namespace}}/{{$labels.persistentvolumeclaim}}): Disk usage is above 80% (current value is: {{$value}})"

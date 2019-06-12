@@ -1,0 +1,14 @@
+groups:
+- name: alertmanager.rules
+  rules:
+  - alert: AlertmanagerFailedReload
+    expr: alertmanager_config_last_reload_successful == 0
+    for: 10m
+    labels:
+      channel: default
+      severity: critical
+      product: zcp-public
+      priority: P4
+    annotations:
+      description: Reloading Alertmanager's configuration has failed
+      summary: Alertmanager configuration reload has failed
