@@ -1413,7 +1413,7 @@ data:
       "gnetId": 5303,
       "graphTooltip": 1,
       "id": null,
-      "iteration": 1557209476915,
+      "iteration": 1560486176756,
       "links": [],
       "panels": [
         {
@@ -1811,7 +1811,7 @@ data:
           "tableColumn": "",
           "targets": [
             {
-              "expr": "time() - kube_deployment_created{deployment=\"$deployment_name\"}",
+              "expr": "time() - kube_deployment_created{namespace=\"$deployment_namespace\",deployment=\"$deployment_name\"}",
               "format": "time_series",
               "instant": true,
               "intervalFactor": 1,
@@ -2716,7 +2716,7 @@ data:
             "name": "pod_name",
             "options": [],
             "query": "label_values(kube_pod_info{namespace=\"$deployment_namespace\",created_by_kind=\"ReplicaSet\",created_by_name=~\"$deployment_name-[-a-z0-9]{7,10}\"}, pod)",
-            "refresh": 1,
+            "refresh": 2,
             "regex": "",
             "sort": 0,
             "tagValuesQuery": "",
@@ -2759,7 +2759,7 @@ data:
       "timezone": "browser",
       "title": "Kubernetes: Deployment Overview",
       "uid": "ORYiYUzmk",
-      "version": 4
+      "version": 5
     }
   kubernetes-daemonset-overview.json: |
     {
@@ -2817,7 +2817,7 @@ data:
       "gnetId": 5330,
       "graphTooltip": 1,
       "id": null,
-      "iteration": 1557207298006,
+      "iteration": 1560487434328,
       "links": [],
       "panels": [
         {
@@ -3309,7 +3309,7 @@ data:
           "tableColumn": "",
           "targets": [
             {
-              "expr": "time() - kube_daemonset_created{daemonset=~\"$daemonset_name\"}",
+              "expr": "time() - kube_daemonset_created{namespace=\"$daemonset_namespace\",daemonset=\"$daemonset_name\"}",
               "format": "time_series",
               "instant": true,
               "intervalFactor": 1,
@@ -4124,7 +4124,7 @@ data:
             "name": "pod_name",
             "options": [],
             "query": "label_values(kube_pod_info{namespace=\"$daemonset_namespace\",created_by_kind=\"DaemonSet\",created_by_name=\"$daemonset_name\"}, pod)",
-            "refresh": 1,
+            "refresh": 2,
             "regex": "",
             "sort": 0,
             "tagValuesQuery": "",
@@ -4168,7 +4168,7 @@ data:
       "timezone": "browser",
       "title": "Kubernetes: DaemonSet Overview",
       "uid": "gekRLzHiz",
-      "version": 4
+      "version": 5
     }
   kubernetes-statefulset-overview.json: |
     {
@@ -4226,7 +4226,7 @@ data:
       "gnetId": 5330,
       "graphTooltip": 1,
       "id": null,
-      "iteration": 1557209595322,
+      "iteration": 1560487558071,
       "links": [],
       "panels": [
         {
@@ -4623,7 +4623,7 @@ data:
           "tableColumn": "",
           "targets": [
             {
-              "expr": "time() - kube_statefulset_created{statefulset=\"$statefulset_name\"}",
+              "expr": "time() - kube_statefulset_created{namespace=\"$statefulset_namespace\",statefulset=\"$statefulset_name\"}",
               "format": "time_series",
               "instant": true,
               "intervalFactor": 1,
@@ -5422,7 +5422,7 @@ data:
             "name": "pod_name",
             "options": [],
             "query": "label_values(kube_pod_info{namespace=\"$statefulset_namespace\",created_by_kind=\"StatefulSet\",created_by_name=\"$statefulset_name\"}, pod)",
-            "refresh": 1,
+            "refresh": 2,
             "regex": "",
             "sort": 0,
             "tagValuesQuery": "",
@@ -5463,9 +5463,9 @@ data:
         ]
       },
       "timezone": "browser",
-      "title": "Kubernetes: StatefulSets Overview",
+      "title": "Kubernetes: StatefulSet Overview",
       "uid": "XYPiY8kik",
-      "version": 6
+      "version": 7
     }
 kind: ConfigMap
 metadata:
