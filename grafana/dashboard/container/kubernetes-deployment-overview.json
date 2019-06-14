@@ -53,7 +53,7 @@
   "gnetId": 5303,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1557209476915,
+  "iteration": 1560486176756,
   "links": [],
   "panels": [
     {
@@ -451,7 +451,7 @@
       "tableColumn": "",
       "targets": [
         {
-          "expr": "time() - kube_deployment_created{deployment=\"$deployment_name\"}",
+          "expr": "time() - kube_deployment_created{namespace=\"$deployment_namespace\",deployment=\"$deployment_name\"}",
           "format": "time_series",
           "instant": true,
           "intervalFactor": 1,
@@ -1356,7 +1356,7 @@
         "name": "pod_name",
         "options": [],
         "query": "label_values(kube_pod_info{namespace=\"$deployment_namespace\",created_by_kind=\"ReplicaSet\",created_by_name=~\"$deployment_name-[-a-z0-9]{7,10}\"}, pod)",
-        "refresh": 1,
+        "refresh": 2,
         "regex": "",
         "sort": 0,
         "tagValuesQuery": "",
@@ -1399,5 +1399,5 @@
   "timezone": "browser",
   "title": "Kubernetes: Deployment Overview",
   "uid": "ORYiYUzmk",
-  "version": 4
+  "version": 5
 }

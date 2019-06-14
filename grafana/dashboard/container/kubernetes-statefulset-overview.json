@@ -53,7 +53,7 @@
   "gnetId": 5330,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1557209595322,
+  "iteration": 1560487558071,
   "links": [],
   "panels": [
     {
@@ -450,7 +450,7 @@
       "tableColumn": "",
       "targets": [
         {
-          "expr": "time() - kube_statefulset_created{statefulset=\"$statefulset_name\"}",
+          "expr": "time() - kube_statefulset_created{namespace=\"$statefulset_namespace\",statefulset=\"$statefulset_name\"}",
           "format": "time_series",
           "instant": true,
           "intervalFactor": 1,
@@ -1249,7 +1249,7 @@
         "name": "pod_name",
         "options": [],
         "query": "label_values(kube_pod_info{namespace=\"$statefulset_namespace\",created_by_kind=\"StatefulSet\",created_by_name=\"$statefulset_name\"}, pod)",
-        "refresh": 1,
+        "refresh": 2,
         "regex": "",
         "sort": 0,
         "tagValuesQuery": "",
@@ -1290,7 +1290,7 @@
     ]
   },
   "timezone": "browser",
-  "title": "Kubernetes: StatefulSets Overview",
+  "title": "Kubernetes: StatefulSet Overview",
   "uid": "XYPiY8kik",
-  "version": 6
+  "version": 7
 }
