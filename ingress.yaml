@@ -5,7 +5,6 @@ metadata:
   namespace: zcp-system
   annotations:
     ingress.bluemix.net/redirect-to-https: "True"
-    ingress.bluemix.net/ALB-ID: private-cr6221beebe0454d3eaa259838844f46d6-alb1
 spec:
   rules:
   - host: example-monitoring.cloudzcp.io
