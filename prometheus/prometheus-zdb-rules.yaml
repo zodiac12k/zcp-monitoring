@@ -6,3 +6,5 @@ kind: ConfigMap
 metadata:
   name: prometheus-zdb-rules
   namespace: zcp-system
+  annotations:
+    argocd.argoproj.io/compare-options: IgnoreExtraneous
