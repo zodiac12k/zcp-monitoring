@@ -55,8 +55,8 @@ etcd-secrets   Opaque   3
 외부에서 식별 가능한 Cluster Name 변경하고 configmap 생성
 
 ```
-$ cluster_name=$(kubectl config current-context | tr '[:lower:]' '[:upper:]')
-$ cat prometheus-config/prometheus-cm.yaml | sed 's/CLOUDZCP-EXAMPLE-DEV/'$cluster_name'/' | kubectl create -f -
+$ cluster_name=$(kubectl config current-context | tr '[:lower:]' '[:upper:]') &&
+  cat prometheus-config/prometheus-cm.yaml | sed 's/CLOUDZCP-EXAMPLE-DEV/'$cluster_name'/' | kubectl create -f -
 ```
 
 정상적으로 생성되었는지 확인
@@ -151,10 +151,9 @@ $ kubectl create -f alertmanager
 
 monitoring domain name 과 keycloak iam 인증을 위한 url 변경 적용하기 위해 configmap 설정 변경
 ```
-$ environment=$(kubectl config current-context | cut -d'-' -f3)
-$ host_prefix=$(kubectl config current-context | if [ $environment = "dev" ];then cut -d'-' -f2,3;else cut -d'-' -f2;fi)
-$ cat grafana-config/grafana-cm.yaml | sed 's/example/'${host_prefix}'/' | kubectl create -f -
-...
+$ cluster_name=$(kubectl config current-context) &&
+  host_prefix=$(if [ ${cluster_name##*-} = "dev" ]; then echo ${cluster_name#*-}; else remainder=${cluster_name#*-}; echo ${remainder%-*}; fi) &&
+  cat grafana-config/grafana-cm.yaml | sed 's/example/'${host_prefix}'/' | kubectl create -f -
 ```
 
 정상적으로 생성되었는지 확인
@@ -192,8 +191,9 @@ $ kubectl create -f grafana
 
 Ingress host 정보 내 Domain 정보 변경 및 생성
 ```
-$ environment=$(kubectl config current-context | cut -d'-' -f3)
-$ host_prefix=$(kubectl config current-context | if [ environment = "dev" ];then cut -d'-' -f2,3;else cut -d'-' -f2;fi)
-$ alb_id=$(kubectl get deployment -n kube-system --no-headers=true -o=custom-columns=NAME:.metadata.name | grep "private-.*-alb")
-$ cat ingress.yaml | sed 's/example/'${host_prefix}'/' | sed 's/\(ingress\.bluemix\.net\/ALB-ID\):.*$/\1: '${alb_id}'/' | kubectl create -f -
+$ cluster_name=$(kubectl config current-context) &&
+  host_prefix=$(if [ ${cluster_name##*-} = "dev" ]; then echo ${cluster_name#*-}; else remainder=${cluster_name#*-}; echo ${remainder%-*}; fi) &&
+  cat ingress.yaml | sed 's/example/'${host_prefix}'/' | kubectl create -f - &&
+  alb_id=$(kubectl get deployment -n kube-system --no-headers=true -o=custom-columns=NAME:.metadata.name | grep "private-.*-alb") &&
+  if [ ! -z $alb_id ]; then kubectl annotate ingress monitoring-ingress -n zcp-system ingress.bluemix.net/ALB-ID=$alb_id; fi
 ```
