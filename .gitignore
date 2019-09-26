@@ -1,6 +1,6 @@
 
-# Created by https://www.gitignore.io/api/macos,eclipse,intellij+all,visualstudiocode
-# Edit at https://www.gitignore.io/?templates=macos,eclipse,intellij+all,visualstudiocode
+# Created by https://www.gitignore.io/api/linux,macos,windows,eclipse,intellij+all,visualstudiocode
+# Edit at https://www.gitignore.io/?templates=linux,macos,windows,eclipse,intellij+all,visualstudiocode
 
 ### Eclipse ###
 .metadata
@@ -105,6 +105,8 @@ local.properties
 # .idea/modules.xml
 # .idea/*.iml
 # .idea/modules
+# *.iml
+# *.ipr
 
 # CMake
 cmake-build-*/
@@ -139,9 +141,6 @@ fabric.properties
 # Android studio 3.1+ serialized cache file
 .idea/caches/build_file_checksums.ser
 
-# JetBrains templates
-**___jb_tmp___
-
 ### Intellij+all Patch ###
 # Ignores the whole .idea folder and all .iml files
 # See https://github.com/joeblau/gitignore.io/issues/186 and https://github.com/joeblau/gitignore.io/issues/360
@@ -157,6 +156,21 @@ modules.xml
 
 # Sonarlint plugin
 .idea/sonarlint
+
+### Linux ###
+*~
+
+# temporary files which can be created if a process still has a handle open of a deleted file
+.fuse_hidden*
+
+# KDE directory preferences
+.directory
+
+# Linux trash folder which might appear on any partition or disk
+.Trash-*
+
+# .nfs files are created when an open file is removed but is still being accessed
+.nfs*
 
 ### macOS ###
 # General
@@ -197,4 +211,30 @@ Temporary Items
 # Ignore all local history of files
 .history
 
-# End of https://www.gitignore.io/api/macos,eclipse,intellij+all,visualstudiocode
+### Windows ###
+# Windows thumbnail cache files
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
+
+# Dump file
+*.stackdump
+
+# Folder config file
+[Dd]esktop.ini
+
+# Recycle Bin used on file shares
+$RECYCLE.BIN/
+
+# Windows Installer files
+*.cab
+*.msi
+*.msix
+*.msm
+*.msp
+
+# Windows shortcuts
+*.lnk
+
+# End of https://www.gitignore.io/api/linux,macos,windows,eclipse,intellij+all,visualstudiocode
