@@ -1,0 +1,25 @@
+groups:
+- name: prometheus.rules
+  rules:
+  - alert: PrometheusFailedReload
+    expr: prometheus_config_last_reload_successful == 0
+    for: 10m
+    labels:
+      channel: default
+      severity: critical
+      product: zcp-public
+      priority: P4
+    annotations:
+      summary: Prometheus configuration reload has failed
+      description: Reloading Prometheus' configuration has failed for {{ $labels.namespace}}/{{ $labels.pod}}.
+  - alert: PrometheusErrorSendingAlerts
+    expr: rate(prometheus_notifications_errors_total[5m]) / rate(prometheus_notifications_sent_total[5m]) > 0.01
+    for: 10m
+    labels:
+      channel: default
+      severity: critical
+      product: zcp-public
+      priority: P4
+    annotations:
+      summary: Errors while sending alerts from Prometheus
+      description: Errors while sending alerts from Prometheus to Alertmanager {{$labels.Alertmanager}}

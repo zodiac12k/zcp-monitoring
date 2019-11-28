@@ -1,6 +1,6 @@
 
-# Created by https://www.gitignore.io/api/macos,windows,eclipse,intellij,visualstudiocode
-# Edit at https://www.gitignore.io/?templates=macos,windows,eclipse,intellij,visualstudiocode
+# Created by https://www.gitignore.io/api/linux,macos,windows,eclipse,intellij+all,visualstudiocode
+# Edit at https://www.gitignore.io/?templates=linux,macos,windows,eclipse,intellij+all,visualstudiocode
 
 ### Eclipse ###
 .metadata
@@ -71,7 +71,7 @@ local.properties
 
 .sts4-cache/
 
-### Intellij ###
+### Intellij+all ###
 # Covers JetBrains IDEs: IntelliJ, RubyMine, PhpStorm, AppCode, PyCharm, CLion, Android Studio and WebStorm
 # Reference: https://intellij-support.jetbrains.com/hc/en-us/articles/206544839
 
@@ -141,23 +141,36 @@ fabric.properties
 # Android studio 3.1+ serialized cache file
 .idea/caches/build_file_checksums.ser
 
-### Intellij Patch ###
-# Comment Reason: https://github.com/joeblau/gitignore.io/issues/186#issuecomment-215987721
+### Intellij+all Patch ###
+# Ignores the whole .idea folder and all .iml files
+# See https://github.com/joeblau/gitignore.io/issues/186 and https://github.com/joeblau/gitignore.io/issues/360
 
-# *.iml
-# modules.xml
-# .idea/misc.xml
-# *.ipr
+.idea/
+
+# Reason: https://github.com/joeblau/gitignore.io/issues/186#issuecomment-249601023
+
+*.iml
+modules.xml
+.idea/misc.xml
+*.ipr
 
 # Sonarlint plugin
-.idea/**/sonarlint/
+.idea/sonarlint
 
-# SonarQube Plugin
-.idea/**/sonarIssues.xml
+### Linux ###
+*~
 
-# Markdown Navigator plugin
-.idea/**/markdown-navigator.xml
-.idea/**/markdown-navigator/
+# temporary files which can be created if a process still has a handle open of a deleted file
+.fuse_hidden*
+
+# KDE directory preferences
+.directory
+
+# Linux trash folder which might appear on any partition or disk
+.Trash-*
+
+# .nfs files are created when an open file is removed but is still being accessed
+.nfs*
 
 ### macOS ###
 # General
@@ -224,4 +237,4 @@ $RECYCLE.BIN/
 # Windows shortcuts
 *.lnk
 
-# End of https://www.gitignore.io/api/macos,windows,eclipse,intellij,visualstudiocode
+# End of https://www.gitignore.io/api/linux,macos,windows,eclipse,intellij+all,visualstudiocode
