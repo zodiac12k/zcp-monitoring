@@ -1,6 +1,6 @@
-# ZCP Monitoring Repo
+# Cloud Z CP Public Monitoring
 
-## Monitoring Component 
+## Monitoring Component
 
 | Component        | Version           | Image  |
 | ------------- |-------------|-----|
@@ -30,170 +30,31 @@
 |Addon Dashboards|ElasticSearch|
 |                |ZCP Service Status|
 
-## Clone this git repository
+## Installation
+
+### Prerequisite
+
+* kubectl client version 1.14 or higher
+
+### Clone this git repository
+
 ```
 $ git clone https://github.com/cnpst/zcp-monitoring.git
 ```
 
-## Get IKS Deploy Env 
-
-Monitoring 용도 ETCD TLS Secret 생성
-```
-# kubectl clent version 1.11 or higher, run the following command
-$ kubectl patch secret calico-etcd-secrets -n kube-system -p='{"metadata": {"name": "etcd-secrets", "namespace": "zcp-system"}}' --dry-run -o yaml | kubectl create -f -
-# kubectl clent version 1.10 or lower, run the following command
-$ kubectl get secret calico-etcd-secrets -n kube-system -o yaml | sed 's/\(name\):.*$/\1: etcd-secrets/' | sed 's/\(namespace\):.*$/\1: zcp-system/' | kubectl create -f -
-$ kubectl get secret -n zcp-system
-NAME           TYPE     DATA
-etcd-secrets   Opaque   3   
-```
-
-## Prometheus
-
-### prometheus configmap 설정 및 생성
-
-외부에서 식별 가능한 Cluster Name 변경하고 configmap 생성
+### Run the install script
 
 ```
-$ cluster_name=$(kubectl config current-context | tr '[:lower:]' '[:upper:]') &&
-  cat prometheus-config/prometheus-cm.yaml | sed 's/CLOUDZCP-EXAMPLE-DEV/'$cluster_name'/' | kubectl create -f -
+$ ./install.sh
 ```
 
-정상적으로 생성되었는지 확인
-```
-$ kubectl get cm -n zcp-system
-NAME              DATA
-prometheus-config 1   
-$ kubectl get cm -n zcp-system prometheus-config -o yaml
-...
-data:
-  prometheus.yml: |-
-    global:
-      scrape_interval: 15s
-      scrape_timeout: 15s
-      evaluation_interval: 15s
-      external_labels:
-        env: 'CLOUDZCP-EXAMPLE-DEV'
-...
-```
+### (Optional) Install elasticsearch exporter
 
-### (Optional) Persistent Volume 설정 및 생성
+elasticsearch exporter 는 Logging 컴포넌트를 구성할 경우에만 설치합니다.
 
-필요할 경우 storage-class, billingType, storage 용량 등 설정 변경
-아래는 Block Storage 기준 기본값
-```
-$ cat prometheus/prometheus-pvc.yaml
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: prometheus-data
-  namespace: zcp-system
-  annotations:
-    volume.beta.kubernetes.io/storage-class: "ibmc-block-retain-silver"
-  labels:
-    billingType: "hourly"
-spec:
-  accessModes:
-    - ReadWriteOnce
-  resources:
-    requests:
-      storage: 100Gi
-```
-
-### (Optional) Prometheus 환경 정보 설정
-
-필요할 경우 tsdb metric 저장 유지 기간 설정 변경 (--storage.tsdb.retention)
-```
-$ vi prometheus/prometheus-deployment.yaml
-...
-containers:
-  - name: prometheus
-    image: prom/prometheus:v2.2.1
-    args:
-      - "--config.file=/etc/prometheus/prometheus.yml"
-      - "--storage.tsdb.path=/prometheus/"
-      - "--storage.tsdb.retention=20d"
-      - "--web.enable-lifecycle"
-      - "--web.enable-admin-api"
-```
-### Deploy prometheus resources
-
-```
-$ kubectl create -f prometheus
-```
-
-## Deploy prometheus exporters resources
-* kube-state-metric
-```
-$ kubectl create -f exporters/kube-state-metric
-```
-* node-exporter
-```
-$ kubectl create -f exporters/node-exporter
-```
-* blackbox-exporter
-```
-$ kubectl create -f exporters/blackbox-exporter
-```
 * elasticsearch-exporter
   * [Go to the installation guide](exporters/elasticsearch-exporter/README.md)
 
-## Alertmanager
+## How to use
 
-### Deploy alertmanager resources
-```
-$ kubectl create -f alertmanager
-```
-
-## Grafana
-
-### grafana 설정
-
-monitoring domain name 과 keycloak iam 인증을 위한 url 변경 적용하기 위해 configmap 설정 변경
-```
-$ cluster_name=$(kubectl config current-context) &&
-  host_prefix=$(if [ ${cluster_name##*-} = "dev" ]; then echo ${cluster_name#*-}; else remainder=${cluster_name#*-}; echo ${remainder%-*}; fi) &&
-  cat grafana-config/grafana-cm.yaml | sed 's/example/'${host_prefix}'/' | kubectl create -f -
-```
-
-정상적으로 생성되었는지 확인
-```
-$ kubectl get cm -n zcp-system
-NAME                      DATA
-monitoring-grafana-config 1   
-$ kubectl get cm -n zcp-system monitoring-grafana-config -o yaml
-...
-    [server]
-    protocol = http
-    http_port = 3000
-    domain = example-monitoring.cloudzcp.io
-...
-    [auth.generic_oauth]
-    name = OAuth
-    enabled = true
-    allow_sign_up = true
-    client_id = monitoring
-    client_secret = 4138cbf9-4091-4029-a1d6-d64450994f55
-    scopes = openid email name
-    auth_url = https://example-iam.cloudzcp.io/auth/realms/zcp/protocol/openid-connect/auth
-    token_url = https://example-iam.cloudzcp.io/auth/realms/zcp/protocol/openid-connect/token
-...
-
-```
-
-### Deploy grafana resources
-
-```
-$ kubectl create -f grafana
-```
-
-## Ingress 생성 및 Monitoring 서비스 접속 확인
-
-Ingress host 정보 내 Domain 정보 변경 및 생성
-```
-$ cluster_name=$(kubectl config current-context) &&
-  host_prefix=$(if [ ${cluster_name##*-} = "dev" ]; then echo ${cluster_name#*-}; else remainder=${cluster_name#*-}; echo ${remainder%-*}; fi) &&
-  cat ingress.yaml | sed 's/example/'${host_prefix}'/' | kubectl create -f - &&
-  alb_id=$(kubectl get deployment -n kube-system --no-headers=true -o=custom-columns=NAME:.metadata.name | grep "private-.*-alb") &&
-  if [ ! -z $alb_id ]; then kubectl annotate ingress monitoring-ingress -n zcp-system ingress.bluemix.net/ALB-ID=$alb_id; fi
-```
+[User guide](https://support.cloudz.co.kr/support/solutions/articles/42000042547-%EB%AA%A8%EB%8B%88%ED%84%B0%EB%A7%81-%EC%A1%B0%ED%9A%8C-cluster-admin-)
