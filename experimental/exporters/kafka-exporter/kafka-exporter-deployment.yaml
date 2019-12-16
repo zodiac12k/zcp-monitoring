@@ -1,0 +1,45 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: kafka-exporter
+  namespace: zcp-system
+  labels:
+    app: kafka
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kafka-exporter
+  template:
+    metadata:
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "9308"
+      labels:
+        app: kafka-exporter
+    spec:
+      containers:
+      - image: registry.au-syd.bluemix.net/cloudzcp/kafka-exporter:v1.2.0
+        name: kafka-exporter
+        args:
+        - --kafka.server=oms-kafka-service.oms-backservice:9092
+        - --web.listen-address=:9308
+        ports:
+        - containerPort: 9308
+        resources:
+      tolerations:
+      - key: "management"
+        operator: "Equal"
+        value: "true"
+        effect: "NoSchedule"
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: beta.kubernetes.io/arch
+                operator: In
+                values:
+                - "amd64"
+              - key: node-role.kubernetes.io/management
+                operator: Exists

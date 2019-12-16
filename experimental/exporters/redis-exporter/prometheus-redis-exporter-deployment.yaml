@@ -1,0 +1,57 @@
+apiVersion: apps/v1beta2
+kind: Deployment
+metadata:
+  name: prometheus-redis-exporter
+  namespace: oms-backservice
+  labels:
+    app: prometheus-redis-exporter
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: prometheus-redis-exporter
+  template:
+    metadata:
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "9121"
+      labels:
+        app: prometheus-redis-exporter
+    spec:
+      serviceAccountName: default
+      containers:
+      - name: prometheus-redis-exporter
+        image: registry.au-syd.bluemix.net/cloudzcp/redis_exporter:v0.28.0
+        imagePullPolicy: IfNotPresent
+        args:
+        ports:
+        - name: exporter-port
+          containerPort: 9121
+        env:
+        - name: REDIS_ADDR
+          value: redis://oms-redis-redis-ha.oms-backservice:6379,redis://oms-redis-redis-ha-announce-0.oms-backservice:6379,redis://oms-redis-redis-ha-announce-1.oms-backservice:6379,redis://oms-redis-redis-ha-announce-2.oms-backservice:6379,redis://oms-redis-redis-ha.oms-backservice.svc.cluster.local:6379
+        livenessProbe:
+          httpGet:
+            path: /
+            port: exporter-port
+        readinessProbe:
+          httpGet:
+            path: /
+            port: exporter-port
+        resources: {}
+      tolerations:
+      - key: "management"
+        operator: "Equal"
+        value: "true"
+        effect: "NoSchedule"
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: beta.kubernetes.io/arch
+                operator: In
+                values:
+                - "amd64"
+              - key: node-role.kubernetes.io/management
+                operator: Exists

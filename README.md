@@ -44,8 +44,28 @@ $ git clone https://github.com/cnpst/zcp-monitoring.git
 
 ### Run the install script
 
+### for IKS
+
 ```
-$ ./install.sh
+$ ./install --provider iks
+```
+
+만약 public 접근이 필요하다면
+
+```
+$ ./install --provider iks --access public
+```
+
+### for EKS
+
+```
+$ ./install --provider eks
+```
+
+만약 public 접근이 필요하다면
+
+```
+$ ./install --provider eks --access public
 ```
 
 ### (Optional) Install elasticsearch exporter
@@ -53,7 +73,7 @@ $ ./install.sh
 elasticsearch exporter 는 Logging 컴포넌트를 구성할 경우에만 설치합니다.
 
 * elasticsearch-exporter
-  * [Go to the installation guide](exporters/elasticsearch-exporter/README.md)
+  * [Go to the installation guide](helm/elasticsearch-exporter/README.md)
 
 ## How to use
 

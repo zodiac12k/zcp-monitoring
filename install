@@ -1,0 +1,108 @@
+#!/bin/bash
+# Cloud Z CP Public monitoring component installation script
+# I will change this script to golang code
+
+usage() {
+  cat <<"EOF"
+USAGE:
+  install -p,--provider         : kubernetes service provider (iks, eks)
+  install -a,--access           : ingress access type (private or public)
+
+  install -h,--help             : show this message
+EOF
+}
+
+install() {
+  local provider="${1}"
+  local access="${2}"
+
+  # Set variables
+  current_context=$(kubectl config current-context)
+  if [ "${provider}" = "iks" ]; then
+    cluster_name=${current_context%%/*}
+  elif [ "${provider}" = "eks" ]; then
+    cluster_name=${current_context##*/}
+  fi
+  CLUSTER_NAME=$(echo $cluster_name | tr '[:lower:]' '[:upper:]')
+  host_prefix=$(if [ ${cluster_name##*-} = "dev" ]; then echo ${cluster_name#*-}; else remainder=${cluster_name#*-}; echo ${remainder%-*}; fi)
+
+  if [ "${provider}" = "iks" ]; then
+    if [ "${access}" = "private" ]; then
+      alb_id=$(kubectl get deployment -n kube-system --no-headers=true -o=custom-columns=NAME:.metadata.name | grep "private-.*-alb1")
+    elif [ "${access}" = "public" ]; then
+      alb_id=$(kubectl get deployment -n kube-system --no-headers=true -o=custom-columns=NAME:.metadata.name | grep "public-.*-alb1")
+    fi
+  elif [ "${provider}" = "eks" ]; then
+    if [ "${access}" = "private" ]; then
+      ingress_class="private_nginx"
+    elif [ "${access}" = "public" ]; then
+      ingress_class="nginx"
+    fi
+  fi
+
+  if [ "${provider}" = "iks" ]; then
+    # Create ectd secret
+    kubectl patch secret calico-etcd-secrets -n kube-system -p='{"metadata": {"name": "etcd-secrets", "namespace": "zcp-system"}}' --dry-run -o yaml | kubectl create -f -
+  fi
+
+  mkdir -p .kustomize
+  # Clean kustomize resources for cluster
+  rm -rf .kustomize/${cluster_name}
+  # Create kustomize overlay resource for cluster
+  cp -r templates/${provider} .kustomize/${cluster_name}
+
+  # Patch ingress and config files
+  sed -i '' 's/CLOUDZCP-TEMPLATE/'${CLUSTER_NAME}'/g' .kustomize/${cluster_name}/prometheus/config/prometheus.yml
+  sed -i '' 's/template/'${host_prefix}'/g' .kustomize/${cluster_name}/grafana/config/grafana.ini
+  sed -i '' 's/template/'${host_prefix}'/g' .kustomize/${cluster_name}/ingress_patch.yaml
+  if [ "${provider}" = "iks" ]; then
+    sed -i '' 's/alb_id/'${alb_id}'/g' .kustomize/${cluster_name}/ingress_patch.yaml
+  elif [ "${provider}" = "eks" ]; then
+    sed -i '' 's/ingress_class/'${ingress_class}'/g' .kustomize/${cluster_name}/ingress_patch.yaml
+  fi
+
+  # Apply kustomize resources
+  kubectl kustomize .kustomize/${cluster_name}
+  while true; do
+      read -p "## Check this resources before applying. Right? (Input y or n) " yn
+      case $yn in
+          [Yy]* ) echo "It will be applying this resources to your cluster" && break;;
+          [Nn]* ) echo "Exit this program" && exit;;
+      esac
+  done
+  kubectl apply -k .kustomize/${cluster_name}
+}
+
+main() {
+  provider=
+  access="private" # Default access is private
+  while [ "$1" != "" ]; do
+    case $1 in
+        -p | --provider )       shift
+                                provider=$1
+                                ;;
+        -a | --access )         shift
+                                access=$1
+                                ;;
+        -h | --help )           usage
+                                exit
+                                ;;
+        * )                     usage
+                                exit 1
+    esac
+    shift
+  done
+
+  if [ "${provider}" != "iks" ] && [ "${provider}" != "eks" ]; then
+    echo "Provider must be iks or eks"
+    exit 1
+  fi
+
+  if [ "${access}" != "private" ] && [ "${access}" != "public" ]; then
+    echo "Access must be private or public"
+    exit 1
+  fi
+  install "${provider}" "${access}"
+}
+
+main "$@"

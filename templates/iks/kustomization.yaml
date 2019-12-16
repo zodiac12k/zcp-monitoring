@@ -1,0 +1,33 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+bases:
+- ../../providers/iks
+patchesStrategicMerge:
+#- ingress.yaml
+#- prometheus/prometheus-cm.yaml
+#- grafana/grafana-cm.yaml
+#- prometheus/prometheus-deployment.yaml
+patchesJson6902:
+- path: ingress_patch.yaml
+  target:
+    group: extensions
+    kind: Ingress
+    name: monitoring-ingress
+    version: v1beta1
+- path: prometheus/prometheus-deployment_patch.yaml
+  target:
+    group: extensions
+    kind: Deployment
+    name: prometheus-deployment
+    version: v1beta1
+configMapGenerator:
+- files:
+  - prometheus/config/prometheus.yml
+  name: prometheus-config
+  namespace: zcp-system
+  behavior: replace
+- files:
+  - grafana/config/grafana.ini
+  name: monitoring-grafana-config
+  namespace: zcp-system
+  behavior: replace

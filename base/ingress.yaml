@@ -1,0 +1,34 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: monitoring-ingress
+  namespace: zcp-system
+spec:
+  rules:
+  - host: base-monitoring.cloudzcp.io
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: grafana-service
+          servicePort: 3000
+  - host: base-prometheus.cloudzcp.io
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: prometheus-service
+          servicePort: 9090
+  - host: base-alertmanager.cloudzcp.io
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: alertmanager-service
+          servicePort: 9093
+  tls:
+  - secretName: cloudzcp-io-cert
+    hosts:
+    - base-monitoring.cloudzcp.io
+    - base-prometheus.cloudzcp.io
+    - base-alertmanager.cloudzcp.io
