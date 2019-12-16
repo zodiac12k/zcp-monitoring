@@ -280,7 +280,7 @@ groups:
       priority: P4
     annotations:
       summary: "Pod is abnormally terminated"
-      description: "Pod {{$labels.namespace}}/{{$labels.pod}} is abnormally terminated for a {{$labels.reason}}"
+      description: "Pod {{$labels.namespace}}/{{$labels.pod}}/{{$labels.container}} is abnormally terminated for a {{$labels.reason}}"
   - alert: PodAbnormallyWaiting
     expr: sum_over_time(kube_pod_container_status_waiting_reason{reason!="ContainerCreating"}[5m]) > 0
     for: 2m
@@ -291,4 +291,4 @@ groups:
       priority: P4
     annotations:
       summary: "Pod is abnormally waiting"
-      description: "Pod {{$labels.namespace}}/{{$labels.pod}} is abnormally waiting for a {{$labels.reason}}"
+      description: "Pod {{$labels.namespace}}/{{$labels.pod}}/{{$labels.container}} is abnormally waiting for a {{$labels.reason}}"
