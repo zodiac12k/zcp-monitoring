@@ -1,7 +1,7 @@
 groups:
 - name: component-up-monitoring.rules
   rules:
-  - alert: ZCPMonitoringDown
+  - alert: MonitoringComponentDown
     expr: up{component=~"alertmanager|blackbox-exporter|grafana|kube-state-metrics|prometheus"} == 0
     for: 2m
     labels:
@@ -10,5 +10,5 @@ groups:
       product: zcp-public
       priority: P4
     annotations:
-      summary: ZCP Monitoring Component Down
-      description: ZCP Monitoring Component Down has failed for {{ $labels.component }}
+      summary: Monitoring Component Down
+      description: Monitoring Component has failed for {{ $labels.namespace }}/{{ $labels.component }}
