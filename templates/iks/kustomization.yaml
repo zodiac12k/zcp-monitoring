@@ -1,7 +1,7 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 bases:
-- ../../providers/iks
+- ../../../providers/iks
 patchesStrategicMerge:
 #- ingress.yaml
 #- prometheus/prometheus-cm.yaml
@@ -31,3 +31,9 @@ configMapGenerator:
   name: monitoring-grafana-config
   namespace: zcp-system
   behavior: replace
+secretGenerator:
+- name: alertmanager-secret
+  env: alertmanager/secret.properties
+  type: Opaque
+generatorOptions:
+  disableNameSuffixHash: true

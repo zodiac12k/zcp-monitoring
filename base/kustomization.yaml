@@ -1,13 +1,11 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 namespace: zcp-system
-generatorOptions:
-  disableNameSuffixHash: true
+bases:
+- ./alertmanager
+- ./grafana
+- ./prometheus
 resources:
-#- alertmanager/alertmanager-config-cm.yaml
-- alertmanager/alertmanager-deployment.yaml
-- alertmanager/alertmanager-service.yaml
-- alertmanager/alertmanager-template-cm.yaml
 - exporters/blackbox-exporter/blackbox-exporter-config-cm.yaml
 - exporters/blackbox-exporter/blackbox-exporter-deployment.yaml
 - exporters/blackbox-exporter/blackbox-exporter-service.yaml
@@ -16,64 +14,6 @@ resources:
 - exporters/kube-state-metric/kube-state-metrics-svc.yaml
 - exporters/node-exporter/node-exporter-ds-svc.yaml
 - exporters/node-exporter/node-exporter-ds.yaml
-#- grafana-config/grafana-cm.yaml
-- grafana/grafana-config-provisioning-prometheus.yaml
-- grafana/grafana-config-provisioning.yaml
-#- grafana/grafana-dashboard-addon-cm.yaml
-#- grafana/grafana-dashboard-cluster-cm.yaml
-#- grafana/grafana-dashboard-container-cm.yaml
-#- grafana/grafana-dashboard-system-cm.yaml
-- grafana/grafana-deployment.yaml
-- grafana/grafana-pvc.yaml
-- grafana/grafana-service.yaml
 - ingress.yaml
-#- prometheus-config/prometheus-cm.yaml
-- prometheus/prometheus-deployment.yaml
-- prometheus/prometheus-pvc.yaml
-- prometheus/prometheus-rbac.yaml
-#- prometheus/prometheus-rules.yaml
-- prometheus/prometheus-service.yaml
-- prometheus/prometheus-user-rules.yaml
-- prometheus/prometheus-zdb-rules.yaml
-configMapGenerator:
-- files:
-  - prometheus/rules/alertmanager.rules
-  - prometheus/rules/component-up-monitoring.rules
-  - prometheus/rules/elasticsearch.rules
-  - prometheus/rules/etcd.rules
-  - prometheus/rules/kube-apiserver.rules
-  - prometheus/rules/kube-state-metrics.rules
-  - prometheus/rules/kubelet.rules
-  - prometheus/rules/node.rules
-  - prometheus/rules/prometheus.rules
-  name: prometheus-rules
-- files:
-  - prometheus/config/prometheus.yml
-  name: prometheus-config
-- files:
-  - alertmanager/config/config.yml
-  name: alertmanager
-- files:
-  - grafana/config/grafana.ini
-  name: monitoring-grafana-config
-- files:
-  - grafana/dashboard/addon/zcp-logging-es-overview.json
-  - grafana/dashboard/addon/zcp-service-status.json
-  name: monitoring-grafana-dashboard-addon
-- files:
-  - grafana/dashboard/cluster/etcd-cluster.json
-  - grafana/dashboard/cluster/kubernetes-cluster-overview.json
-  - grafana/dashboard/cluster/kubernetes-performance-overview.json
-  - grafana/dashboard/cluster/kubernetes-resource-requests.json
-  name: monitoring-grafana-dashboard-cluster
-- files:
-  - grafana/dashboard/container/kubernetes-daemonset-overview.json
-  - grafana/dashboard/container/kubernetes-deployment-overview.json
-  - grafana/dashboard/container/kubernetes-pod-overview.json
-  - grafana/dashboard/container/kubernetes-statefulset-overview.json
-  name: monitoring-grafana-dashboard-container
-- files:
-  - grafana/dashboard/system/kubernetes-system-disk-space.json
-  - grafana/dashboard/system/kubernetes-system-overview.json
-  - grafana/dashboard/system/kubernetes-system-usage-overview.json
-  name: monitoring-grafana-dashboard-system
+generatorOptions:
+  disableNameSuffixHash: true

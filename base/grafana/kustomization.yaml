@@ -1,0 +1,41 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: zcp-system
+resources:
+#- grafana-cm.yaml
+- grafana-config-provisioning-prometheus.yaml
+- grafana-config-provisioning.yaml
+#- grafana-dashboard-addon-cm.yaml
+#- grafana-dashboard-cluster-cm.yaml
+#- grafana-dashboard-container-cm.yaml
+#- grafana-dashboard-system-cm.yaml
+- grafana-deployment.yaml
+- grafana-pvc.yaml
+- grafana-service.yaml
+configMapGenerator:
+- files:
+  - config/grafana.ini
+  name: monitoring-grafana-config
+- files:
+  - dashboard/addon/zcp-logging-es-overview.json
+  - dashboard/addon/zcp-service-status.json
+  name: monitoring-grafana-dashboard-addon
+- files:
+  - dashboard/cluster/etcd-cluster.json
+  - dashboard/cluster/kubernetes-cluster-overview.json
+  - dashboard/cluster/kubernetes-performance-overview.json
+  - dashboard/cluster/kubernetes-resource-requests.json
+  name: monitoring-grafana-dashboard-cluster
+- files:
+  - dashboard/container/kubernetes-daemonset-overview.json
+  - dashboard/container/kubernetes-deployment-overview.json
+  - dashboard/container/kubernetes-pod-overview.json
+  - dashboard/container/kubernetes-statefulset-overview.json
+  name: monitoring-grafana-dashboard-container
+- files:
+  - dashboard/system/kubernetes-system-disk-space.json
+  - dashboard/system/kubernetes-system-overview.json
+  - dashboard/system/kubernetes-system-usage-overview.json
+  name: monitoring-grafana-dashboard-system
+generatorOptions:
+  disableNameSuffixHash: true

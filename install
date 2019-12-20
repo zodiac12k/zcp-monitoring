@@ -15,6 +15,7 @@ EOF
 install() {
   local provider="${1}"
   local access="${2}"
+  local upgrade=${3}
 
   # Set variables
   current_context=$(kubectl config current-context)
@@ -42,40 +43,57 @@ install() {
 
   if [ "${provider}" = "iks" ]; then
     # Create ectd secret
-    kubectl patch secret calico-etcd-secrets -n kube-system -p='{"metadata": {"name": "etcd-secrets", "namespace": "zcp-system"}}' --dry-run -o yaml | kubectl create -f -
+    if ! ${upgrade}; then
+      kubectl patch secret calico-etcd-secrets -n kube-system -p='{"metadata": {"name": "etcd-secrets", "namespace": "zcp-system"}}' --dry-run -o yaml | kubectl create -f -
+    fi
   fi
 
-  mkdir -p .kustomize
-  # Clean kustomize resources for cluster
-  rm -rf .kustomize/${cluster_name}
-  # Create kustomize overlay resource for cluster
-  cp -r templates/${provider} .kustomize/${cluster_name}
+  mkdir -p .kustomize/${cluster_name}
+  # Clean up kustomize resources for cluster
+  rm -rf .kustomize/${cluster_name}/*
+  # Copy kustomize overlay resources for cluster from templates
+  cp templates/kustomization.yaml .kustomize/${cluster_name}
+  cp -r templates/${provider} .kustomize/${cluster_name}/upgrade
 
   # Patch ingress and config files
-  sed -i '' 's/CLOUDZCP-TEMPLATE/'${CLUSTER_NAME}'/g' .kustomize/${cluster_name}/prometheus/config/prometheus.yml
-  sed -i '' 's/template/'${host_prefix}'/g' .kustomize/${cluster_name}/grafana/config/grafana.ini
-  sed -i '' 's/template/'${host_prefix}'/g' .kustomize/${cluster_name}/ingress_patch.yaml
+  sed -i '' 's/CLOUDZCP-TEMPLATE/'${CLUSTER_NAME}'/g' .kustomize/${cluster_name}/upgrade/prometheus/config/prometheus.yml
+  sed -i '' 's/template/'${host_prefix}'/g' .kustomize/${cluster_name}/upgrade/grafana/config/grafana.ini
+  sed -i '' 's/template/'${host_prefix}'/g' .kustomize/${cluster_name}/upgrade/ingress_patch.yaml
   if [ "${provider}" = "iks" ]; then
-    sed -i '' 's/alb_id/'${alb_id}'/g' .kustomize/${cluster_name}/ingress_patch.yaml
+    sed -i '' 's/alb_id/'${alb_id}'/g' .kustomize/${cluster_name}/upgrade/ingress_patch.yaml
   elif [ "${provider}" = "eks" ]; then
-    sed -i '' 's/ingress_class/'${ingress_class}'/g' .kustomize/${cluster_name}/ingress_patch.yaml
+    sed -i '' 's/ingress_class/'${ingress_class}'/g' .kustomize/${cluster_name}/upgrade/ingress_patch.yaml
   fi
+  read -p "Please input password for alertmanager webhook config: " api_password
+  sed -i '' 's/${API_PASSWORD}/'${api_password}'/g' .kustomize/${cluster_name}/upgrade/alertmanager/secret.properties
 
   # Apply kustomize resources
-  kubectl kustomize .kustomize/${cluster_name}
+  if ${upgrade}; then
+    kubectl kustomize .kustomize/${cluster_name}/upgrade
+  else
+    kubectl kustomize .kustomize/${cluster_name}
+  fi
   while true; do
-      read -p "## Check this resources before applying. Right? (Input y or n) " yn
+      read -p "## Check the above resources before applying. Is it right? (Input y or n): " yn
       case $yn in
           [Yy]* ) echo "It will be applying this resources to your cluster" && break;;
-          [Nn]* ) echo "Exit this program" && exit;;
+          [Nn]* ) echo "Bye!" && exit;;
       esac
   done
-  kubectl apply -k .kustomize/${cluster_name}
+  if ${upgrade}; then
+    kubectl apply -k .kustomize/${cluster_name}/upgrade
+    sleep 60
+    kubectl exec -it $(kubectl get pod -lcomponent=zcp-alertmanager --no-headers=true -o=custom-columns=NAME:.metadata.name) -- curl -X POST http://alertmanager-service:9093/-/reload
+    kubectl exec -it $(kubectl get pod -lcomponent=zcp-alertmanager --no-headers=true -o=custom-columns=NAME:.metadata.name) -- curl -X POST http://prometheus-service:9090/-/reload
+  else
+    kubectl apply -k .kustomize/${cluster_name}
+  fi
 }
 
 main() {
   provider=
   access="private" # Default access is private
+  upgrade=false
   while [ "$1" != "" ]; do
     case $1 in
         -p | --provider )       shift
@@ -83,6 +101,8 @@ main() {
                                 ;;
         -a | --access )         shift
                                 access=$1
+                                ;;
+        --upgrade )             upgrade=true
                                 ;;
         -h | --help )           usage
                                 exit
@@ -102,7 +122,7 @@ main() {
     echo "Access must be private or public"
     exit 1
   fi
-  install "${provider}" "${access}"
+  install "${provider}" "${access}" ${upgrade}
 }
 
 main "$@"
