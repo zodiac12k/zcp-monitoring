@@ -33,7 +33,7 @@ spec:
                 operator: Exists
       containers:
       - name: alertmanager
-        image: registry.au-syd.bluemix.net/cloudzcp/alertmanager:v0.14.0
+        image: registry.au-syd.bluemix.net/cloudzcp/alertmanager:v0.15.0
         resources:
           limits:
             cpu: 100m
@@ -75,8 +75,10 @@ spec:
           mountPath: /alertmanager
         - name: alertmanager-templates-volume
           mountPath: /etc/alertmanager-templates
-        - name: tz-config
-          mountPath: /etc/localtime
+        - name: alertmanager-secrets-volume
+          mountPath: /etc/alertmanager-secrets
+          subPath: ""
+          readOnly: true
       volumes:
       - name: config-volume
         configMap:
@@ -86,7 +88,6 @@ spec:
           name: alertmanager-templates
       - name: alertmanager
         emptyDir: {}
-      - name: tz-config
-        hostPath:
-          path: /usr/share/zoneinfo/Asia/Seoul
-
+      - name: alertmanager-secrets-volume
+        secret:
+          secretName: alertmanager-secret
