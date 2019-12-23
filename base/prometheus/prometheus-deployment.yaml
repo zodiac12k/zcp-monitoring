@@ -81,9 +81,9 @@ spec:
               mountPath: /etc/prometheus-zdb-rules/
             - name: user-rules-volume
               mountPath: /etc/prometheus-user-rules/
-            - name: etcd-secrets-volume
-              mountPath: /etc/config
-              readOnly: true
+#            - name: etcd-secrets-volume
+#              mountPath: /etc/config
+#              readOnly: true
       volumes:
         - name: prometheus-config-volume
           configMap:
@@ -104,6 +104,6 @@ spec:
           configMap:
             defaultMode: 420
             name: prometheus-user-rules
-        - name: etcd-secrets-volume
-          secret:
-            secretName: etcd-secrets
+#        - name: etcd-secrets-volume
+#          secret:
+#            secretName: etcd-secrets

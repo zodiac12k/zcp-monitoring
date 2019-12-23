@@ -21,7 +21,7 @@ configMapGenerator:
   - dashboard/addon/zcp-service-status.json
   name: monitoring-grafana-dashboard-addon
 - files:
-  - dashboard/cluster/etcd-cluster.json
+#  - dashboard/cluster/etcd-cluster.json
   - dashboard/cluster/kubernetes-cluster-overview.json
   - dashboard/cluster/kubernetes-performance-overview.json
   - dashboard/cluster/kubernetes-resource-requests.json

@@ -68,6 +68,18 @@ $ ./install --provider eks
 $ ./install --provider eks --access public
 ```
 
+### for AKS
+
+```
+$ ./install --provider aks
+```
+
+만약 public 접근이 필요하다면
+
+```
+$ ./install --provider aks --access public
+```
+
 ### (Optional) Install elasticsearch exporter
 
 elasticsearch exporter 는 Logging 컴포넌트를 구성할 경우에만 설치합니다.

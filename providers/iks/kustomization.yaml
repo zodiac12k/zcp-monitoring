@@ -4,3 +4,19 @@ patchesStrategicMerge:
 - ingress.yaml
 - prometheus/prometheus-pvc.yaml
 - grafana/grafana-pvc.yaml
+patchesJson6902:
+- path: prometheus/prometheus-deployment_patch.yaml
+  target:
+    group: extensions
+    kind: Deployment
+    name: prometheus-deployment
+    version: v1beta1
+configMapGenerator:
+- files:
+  - grafana/dashboard/cluster/etcd-cluster.json
+  behavior: merge
+  name: monitoring-grafana-dashboard-cluster
+- files:
+  - prometheus/rules/etcd.rules
+  behavior: merge
+  name: prometheus-rules

@@ -15,7 +15,7 @@ configMapGenerator:
   - rules/alertmanager.rules
   - rules/component-up-monitoring.rules
   - rules/elasticsearch.rules
-  - rules/etcd.rules
+#  - rules/etcd.rules
   - rules/kube-apiserver.rules
   - rules/kube-state-metrics.rules
   - rules/kubelet.rules

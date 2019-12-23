@@ -5,8 +5,9 @@
 usage() {
   cat <<"EOF"
 USAGE:
-  install -p,--provider         : kubernetes service provider (iks, eks)
+  install -p,--provider         : kubernetes service provider (iks, eks, aks)
   install -a,--access           : ingress access type (private or public)
+  install --upgrade             : upgrade mode
 
   install -h,--help             : show this message
 EOF
@@ -23,6 +24,8 @@ install() {
     cluster_name=${current_context%%/*}
   elif [ "${provider}" = "eks" ]; then
     cluster_name=${current_context##*/}
+  elif [ "${provider}" = "aks" ]; then
+    cluster_name=${current_context}
   fi
   CLUSTER_NAME=$(echo $cluster_name | tr '[:lower:]' '[:upper:]')
   host_prefix=$(if [ ${cluster_name##*-} = "dev" ]; then echo ${cluster_name#*-}; else remainder=${cluster_name#*-}; echo ${remainder%-*}; fi)
@@ -33,9 +36,9 @@ install() {
     elif [ "${access}" = "public" ]; then
       alb_id=$(kubectl get deployment -n kube-system --no-headers=true -o=custom-columns=NAME:.metadata.name | grep "public-.*-alb1")
     fi
-  elif [ "${provider}" = "eks" ]; then
+  elif [ "${provider}" = "eks" ] || [ "${provider}" = "aks" ]; then
     if [ "${access}" = "private" ]; then
-      ingress_class="private_nginx"
+      ingress_class="private-nginx"
     elif [ "${access}" = "public" ]; then
       ingress_class="nginx"
     fi
@@ -61,7 +64,7 @@ install() {
   sed -i '' 's/template/'${host_prefix}'/g' .kustomize/${cluster_name}/upgrade/ingress_patch.yaml
   if [ "${provider}" = "iks" ]; then
     sed -i '' 's/alb_id/'${alb_id}'/g' .kustomize/${cluster_name}/upgrade/ingress_patch.yaml
-  elif [ "${provider}" = "eks" ]; then
+  elif [ "${provider}" = "eks" ] || [ "${provider}" = "aks" ]; then
     sed -i '' 's/ingress_class/'${ingress_class}'/g' .kustomize/${cluster_name}/upgrade/ingress_patch.yaml
   fi
   read -p "Please input password for alertmanager webhook config: " api_password
@@ -113,8 +116,8 @@ main() {
     shift
   done
 
-  if [ "${provider}" != "iks" ] && [ "${provider}" != "eks" ]; then
-    echo "Provider must be iks or eks"
+  if [ "${provider}" != "iks" ] && [ "${provider}" != "eks" ] && [ "${provider}" != "aks" ]; then
+    echo "Provider must be iks, eks or aks"
     exit 1
   fi
 

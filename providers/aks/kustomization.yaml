@@ -1,0 +1,6 @@
+bases:
+- ../../base
+patchesStrategicMerge:
+- ingress.yaml
+- prometheus/prometheus-pvc.yaml
+- grafana/grafana-pvc.yaml
