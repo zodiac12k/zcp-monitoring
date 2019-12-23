@@ -6,7 +6,7 @@
 | ------------- |-------------|-----|
 |Grafana| 5.0.4 |grafana/grafana:5.0.4
 |Prometheus|  2.2.1 |prom/prometheus:v2.2.1
-|Alertmanager|  0.14.0  |prom/alertmanager:v0.14.0
+|Alertmanager|  0.15.0  |prom/alertmanager:v0.15.0
 |kube-state-metrics| 1.6.0 |quay.io/coreos/kube-state-metrics:v1.6.0
 |Node-Exporter| 0.15.2  |node-exporter:v0.15.2
 |Blackbox-Exporter| 0.12.0  |prom/blackbox-exporter:v0.12.0
