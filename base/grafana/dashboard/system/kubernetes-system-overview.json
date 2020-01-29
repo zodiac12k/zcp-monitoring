@@ -1688,10 +1688,10 @@
         "multiFormat": "regex values",
         "name": "host",
         "options": [],
-        "query": "label_values(node_load1, instance)",
+        "query": "label_values(node_load1{job=\"kubernetes-nodes-exporter\"}, instance)",
         "refresh": 1,
         "refresh_on_load": false,
-        "regex": "/^(.*):[0-9]+/",
+        "regex": "",
         "sort": 1,
         "tagValuesQuery": "instance",
         "tags": [],
@@ -1739,5 +1739,5 @@
   "timezone": "browser",
   "title": "System: Overview",
   "uid": "system_overview",
-  "version": 2
+  "version": 3
 }

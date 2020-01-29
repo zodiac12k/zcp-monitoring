@@ -821,7 +821,7 @@
         "multi": false,
         "name": "server",
         "options": [],
-        "query": "label_values(node_boot_time, instance)",
+        "query": "label_values(node_boot_time{job=\"kubernetes-nodes-exporter\"}, instance)",
         "refresh": 1,
         "regex": "",
         "sort": 0,
@@ -864,5 +864,5 @@
   },
   "timezone": "browser",
   "title": "System Usage Overview",
-  "version": 1
+  "version": 2
 }
