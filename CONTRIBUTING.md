@@ -31,9 +31,11 @@
 5. 추가한 upstream 을 fetch 합니다.
     ```
     $ git fetch upstream
+    From https://github.com/cnpst/zcp-monitoring
+     * [new branch]      master               -> upstream/master
     ```
 6. FORK REPOSITORY 의 master, 즉 `origin/master` 에서 새로운 branch 를 생성합니다.
-만약 새로운 branch 를 feature 라고 한다면 
+만약 새로운 branch 를 _feature_ 라고 한다면 
     ```
     $ git checkout -b feature
     ```
@@ -44,11 +46,19 @@
     $ git push origin feature
     ```
 8. 개발이 완료되면 github 에서 해당 branch 를 ORIGINAL REPOSITORY 의 master 를 대상으로 pull request 합니다.
-9. ORIGINAL REPOSITORY 에서 merge 가 완료되면 해당 branch 를 삭제하거나 만약 cherry pick 이 되어야 할 branch 라면 남겨 둡니다.
-10. FORK REPOSITORY 의 master 에서 ORIGINAL REPOSITORY 의 master 와 merge 하여 동기화합니다.
+9. ORIGINAL REPOSITORY 에서 merge 가 완료되면 해당 branch 를 삭제합니다.
+만약 cherry pick 이 되어야 할 branch 라면 남겨 둡니다.
     ```
     $ git checkout master
     Switched to branch 'master'
+    $ git branch -D feature
+    Deleted branch feature.
+    $ git push origin :feature
+    To https://github.com/YOUR_USERNAME/zcp-monitoring.git
+     - [deleted]         feature
+    ```
+10. FORK REPOSITORY 의 master 에서 ORIGINAL REPOSITORY 의 master 와 merge 하여 동기화합니다.
+    ```
     $ git merge upstream/master
     ```
 5 ~ 10 을 반복합니다.
