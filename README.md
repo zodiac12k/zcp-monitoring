@@ -90,3 +90,7 @@ elasticsearch exporter 는 Logging 컴포넌트를 구성할 경우에만 설치
 ## How to use
 
 [User guide](https://support.cloudz.co.kr/support/solutions/articles/42000042547-%EB%AA%A8%EB%8B%88%ED%84%B0%EB%A7%81-%EC%A1%B0%ED%9A%8C-cluster-admin-)
+
+## Contributing
+
+[CONTRIBUTING.md](CONTRIBUTING.md)
