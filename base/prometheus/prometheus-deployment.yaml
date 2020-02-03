@@ -42,7 +42,7 @@ spec:
           args:
             - "--config.file=/etc/prometheus/prometheus.yml"
             - "--storage.tsdb.path=/prometheus/"
-            - "--storage.tsdb.retention=20d"
+            - "--storage.tsdb.retention=37d"
             - "--web.enable-lifecycle"
             - "--web.enable-admin-api"
           ports:
