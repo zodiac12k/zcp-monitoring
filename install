@@ -55,41 +55,36 @@ install() {
   # Clean up kustomize resources for cluster
   rm -rf .kustomize/${cluster_name}/*
   # Copy kustomize overlay resources for cluster from templates
-  cp templates/kustomization.yaml .kustomize/${cluster_name}
-  cp -r templates/${provider} .kustomize/${cluster_name}/upgrade
+  cp -r templates/${provider}/* .kustomize/${cluster_name}
 
   # Patch ingress and config files
-  sed -i '' 's/CLOUDZCP-TEMPLATE/'${CLUSTER_NAME}'/g' .kustomize/${cluster_name}/upgrade/prometheus/config/prometheus.yml
-  sed -i '' 's/template/'${host_prefix}'/g' .kustomize/${cluster_name}/upgrade/grafana/config/grafana.ini
-  sed -i '' 's/template/'${host_prefix}'/g' .kustomize/${cluster_name}/upgrade/ingress_patch.yaml
+  sed -i '' 's/CLOUDZCP-TEMPLATE/'${CLUSTER_NAME}'/g' .kustomize/${cluster_name}/prometheus/config/prometheus.yml
+  sed -i '' 's/template/'${host_prefix}'/g' .kustomize/${cluster_name}/grafana/config/grafana.ini
+  sed -i '' 's/template/'${host_prefix}'/g' .kustomize/${cluster_name}/ingress_patch.yaml
   if [ "${provider}" = "iks" ]; then
-    sed -i '' 's/alb_id/'${alb_id}'/g' .kustomize/${cluster_name}/upgrade/ingress_patch.yaml
+    sed -i '' 's/alb_id/'${alb_id}'/g' .kustomize/${cluster_name}/ingress_patch.yaml
   elif [ "${provider}" = "eks" ] || [ "${provider}" = "aks" ]; then
-    sed -i '' 's/ingress_class/'${ingress_class}'/g' .kustomize/${cluster_name}/upgrade/ingress_patch.yaml
+    sed -i '' 's/ingress_class/'${ingress_class}'/g' .kustomize/${cluster_name}/ingress_patch.yaml
   fi
   read -p "Please input password for alertmanager webhook config: " api_password
-  sed -i '' 's/${API_PASSWORD}/'${api_password}'/g' .kustomize/${cluster_name}/upgrade/alertmanager/secret.properties
+  sed -i '' 's/${API_PASSWORD}/'${api_password}'/g' .kustomize/${cluster_name}/alertmanager/secret.properties
 
   # Apply kustomize resources
-  if ${upgrade}; then
-    kubectl kustomize .kustomize/${cluster_name}/upgrade
-  else
-    kubectl kustomize .kustomize/${cluster_name}
-  fi
+  kubectl kustomize .kustomize/${cluster_name}
   while true; do
-      read -p "## Check the above resources before applying. Is it right? (Input y or n): " yn
+      read -p "## Check the above resources before applying. Is it right? (y/n): " yn
       case $yn in
           [Yy]* ) echo "It will be applying this resources to your cluster" && break;;
           [Nn]* ) echo "Bye!" && exit;;
       esac
   done
   if ${upgrade}; then
-    kubectl apply -k .kustomize/${cluster_name}/upgrade
+    kubectl apply -k .kustomize/${cluster_name} -l'resource-policy!=skip'
     sleep 60
     kubectl exec -it $(kubectl get pod -lcomponent=zcp-alertmanager --no-headers=true -o=custom-columns=NAME:.metadata.name) -- curl -X POST http://alertmanager-service:9093/-/reload
     kubectl exec -it $(kubectl get pod -lcomponent=zcp-alertmanager --no-headers=true -o=custom-columns=NAME:.metadata.name) -- curl -X POST http://prometheus-service:9090/-/reload
   else
-    kubectl apply -k .kustomize/${cluster_name}
+    kubectl create -k .kustomize/${cluster_name}
   fi
 }
 

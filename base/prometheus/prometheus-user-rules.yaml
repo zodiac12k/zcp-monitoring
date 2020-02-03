@@ -6,3 +6,5 @@ kind: ConfigMap
 metadata:
   name: prometheus-user-rules
   namespace: zcp-system
+  labels:
+    resource-policy: skip
