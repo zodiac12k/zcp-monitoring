@@ -45,23 +45,37 @@
     $ git commit -m "commit message"
     $ git push origin feature
     ```
-8. 개발이 완료되면 github 에서 해당 branch 를 ORIGINAL REPOSITORY 의 master 를 대상으로 pull request 합니다.
-9. ORIGINAL REPOSITORY 에서 merge 가 완료되면 해당 branch 를 삭제합니다.
-만약 cherry pick 이 되어야 할 branch 라면 남겨 둡니다.
+8. 개발을 완료하면 github 에서 해당 branch 를 ORIGINAL REPOSITORY 의 master 로 pull request 합니다.
+9. ORIGINAL REPOSITORY 에서 merge 가 완료되면 upstream 정보를 갱신합니다.
+    ```
+    $ git fetch upstream
+    remote: Enumerating objects: 4, done.
+    remote: Counting objects: 100% (4/4), done.
+    remote: Compressing objects: 100% (4/4), done.
+    remote: Total 4 (delta 0), reused 0 (delta 0), pack-reused 0
+    Unpacking objects: 100% (4/4), done.
+    From https://github.com/cnpst/zcp-monitoring
+       04ee9ea..2820c86  master     -> upstream/master
+    ```
+10. FORK REPOSITORY 의 master 에서 ORIGINAL REPOSITORY 의 master 와 merge 하여 동기화합니다.
     ```
     $ git checkout master
     Switched to branch 'master'
+    $ git merge upstream/master
+    ```
+11. FORK REPOSITORY 의 원격 master, 즉 github 에 반영합니다.
+    ```
+    $ git push origin master
+    ```
+12. 필요하다면 해당 branch 를 삭제합니다. 만약 cherry-pick 이 되어야 할 branch 라면 남겨 둡니다.
+    ```
     $ git branch -D feature
     Deleted branch feature.
     $ git push origin :feature
     To https://github.com/YOUR_USERNAME/zcp-monitoring.git
      - [deleted]         feature
     ```
-10. FORK REPOSITORY 의 master 에서 ORIGINAL REPOSITORY 의 master 와 merge 하여 동기화합니다.
-    ```
-    $ git merge upstream/master
-    ```
-5 ~ 10 을 반복합니다.
+feature 개발은 6 ~ 12 를 반복합니다.
 
 ## Code of Conduct
 
