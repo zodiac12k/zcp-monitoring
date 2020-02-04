@@ -59,7 +59,7 @@ install() {
 
   # Patch ingress and config files
   sed -i '' 's/CLOUDZCP-TEMPLATE/'${CLUSTER_NAME}'/g' .kustomize/${cluster_name}/prometheus/config/prometheus.yml
-  sed -i '' 's/template/'${host_prefix}'/g' .kustomize/${cluster_name}/grafana/config/grafana.ini
+  sed -i '' 's/${HOST_PREFIX}/'${host_prefix}'/g' .kustomize/${cluster_name}/grafana/config.properties
   sed -i '' 's/template/'${host_prefix}'/g' .kustomize/${cluster_name}/ingress_patch.yaml
   if [ "${provider}" = "iks" ]; then
     sed -i '' 's/alb_id/'${alb_id}'/g' .kustomize/${cluster_name}/ingress_patch.yaml
