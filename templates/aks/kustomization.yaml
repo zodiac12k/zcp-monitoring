@@ -11,12 +11,40 @@ patchesStrategicMerge:
 #- grafana/grafana-cm.yaml
 #- prometheus/prometheus-deployment.yaml
 patchesJson6902:
-- path: ingress_patch.yaml
+- path: ingress_alertmanager_patch.yaml
   target:
     group: extensions
     kind: Ingress
-    name: monitoring-ingress
+    name: monitoring-alertmanager-ingress
     version: v1beta1
+- path: ingress_grafana_patch.yaml
+  target:
+    group: extensions
+    kind: Ingress
+    name: monitoring-grafana-ingress
+    version: v1beta1
+- path: ingress_prometheus_patch.yaml
+  target:
+    group: extensions
+    kind: Ingress
+    name: monitoring-prometheus-ingress
+    version: v1beta1
+- path: ingress_annotations_patch.yaml
+  target:
+    group: extensions
+    kind: Ingress
+    name: monitoring-alertmanager-ingress
+    version: v1beta1
+  target:
+    group: extensions
+    kind: Ingress
+    name: monitoring-grafana-ingress
+    version: v1beta1
+  target:
+    group: extensions
+    kind: Ingress
+    name: monitoring-prometheus-ingress
+    version: v1beta1    
 - path: prometheus/prometheus-deployment_patch.yaml
   target:
     group: extensions

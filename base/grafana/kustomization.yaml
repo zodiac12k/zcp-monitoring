@@ -12,6 +12,7 @@ resources:
 - grafana-deployment.yaml
 - grafana-pvc.yaml
 - grafana-service.yaml
+- grafana-ingress.yaml
 configMapGenerator:
 - files:
   - config/grafana.ini

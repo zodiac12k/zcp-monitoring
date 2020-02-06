@@ -1,0 +1,18 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: monitoring-grafana-ingress
+  namespace: zcp-system
+spec:
+  rules:
+  - host: base-monitoring.cloudzcp.io
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: grafana-service
+          servicePort: 3000
+  tls:
+  - secretName: cloudzcp-io-cert
+    hosts:
+    - base-monitoring.cloudzcp.io
