@@ -10,6 +10,7 @@ resources:
 - prometheus-service.yaml
 - prometheus-user-rules.yaml
 - prometheus-zdb-rules.yaml
+- prometheus-ingress.yaml
 configMapGenerator:
 - files:
   - rules/alertmanager.rules

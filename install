@@ -60,11 +60,20 @@ install() {
   # Patch ingress and config files
   sed -i '' 's/CLOUDZCP-TEMPLATE/'${CLUSTER_NAME}'/g' .kustomize/${cluster_name}/prometheus/config/prometheus.yml
   sed -i '' 's/${HOST_PREFIX}/'${host_prefix}'/g' .kustomize/${cluster_name}/grafana/config.properties
-  sed -i '' 's/template/'${host_prefix}'/g' .kustomize/${cluster_name}/ingress_patch.yaml
+  sed -i '' 's/template/'${host_prefix}'/g' .kustomize/${cluster_name}/ingress_alertmanager_patch.yaml
+  sed -i '' 's/template/'${host_prefix}'/g' .kustomize/${cluster_name}/ingress_grafana_patch.yaml
+  sed -i '' 's/template/'${host_prefix}'/g' .kustomize/${cluster_name}/ingress_prometheus_patch.yaml
+  sed -i '' 's/template/'${host_prefix}'/g' .kustomize/${cluster_name}/ingress_annotations_patch.yaml
   if [ "${provider}" = "iks" ]; then
-    sed -i '' 's/alb_id/'${alb_id}'/g' .kustomize/${cluster_name}/ingress_patch.yaml
+    sed -i '' 's/alb_id/'${alb_id}'/g' .kustomize/${cluster_name}/ingress_alertmanager_patch.yaml
+    sed -i '' 's/alb_id/'${alb_id}'/g' .kustomize/${cluster_name}/ingress_grafana_patch.yaml
+    sed -i '' 's/alb_id/'${alb_id}'/g' .kustomize/${cluster_name}/ingress_prometheus_patch.yaml
+    sed -i '' 's/alb_id/'${alb_id}'/g' .kustomize/${cluster_name}/ingress_annotations_patch.yaml
   elif [ "${provider}" = "eks" ] || [ "${provider}" = "aks" ]; then
-    sed -i '' 's/ingress_class/'${ingress_class}'/g' .kustomize/${cluster_name}/ingress_patch.yaml
+    sed -i '' 's/ingress_class/'${ingress_class}'/g' .kustomize/${cluster_name}/ingress_alertmanager_patch.yaml
+    sed -i '' 's/ingress_class/'${ingress_class}'/g' .kustomize/${cluster_name}/ingress_grafana_patch.yaml
+    sed -i '' 's/ingress_class/'${ingress_class}'/g' .kustomize/${cluster_name}/ingress_prometheus_patch.yaml
+    sed -i '' 's/ingress_class/'${ingress_class}'/g' .kustomize/${cluster_name}/ingress_annotations_patch.yaml
   fi
   read -p "Please input password for alertmanager webhook config: " api_password
   sed -i '' 's/${API_PASSWORD}/'${api_password}'/g' .kustomize/${cluster_name}/alertmanager/secret.properties

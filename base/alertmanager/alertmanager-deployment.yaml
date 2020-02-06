@@ -35,12 +35,12 @@ spec:
       - name: alertmanager
         image: registry.au-syd.bluemix.net/cloudzcp/alertmanager:v0.15.0
         resources:
-          limits:
-            cpu: 100m
-            memory: 100Mi
           requests:
-            cpu: 100m
-            memory: 100Mi
+            cpu: 10m
+            memory: 50Mi
+          limits:
+            cpu: 10m
+            memory: 50Mi
         args:
           - '--config.file=/etc/alertmanager/config.yml'
           - '--storage.path=/alertmanager'

@@ -32,6 +32,13 @@ spec:
                 operator: Exists
       containers:
         - image: registry.au-syd.bluemix.net/cloudzcp/blackbox-exporter:v0.12.0
+          resources:
+            requests:
+              cpu: 5m
+              memory: 25Mi
+            limits:
+              cpu: 10m
+              memory: 50Mi
           args:
             - "--config.file=/etc/config/blackbox.yml"
           name: blackbox-exporter

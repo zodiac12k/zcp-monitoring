@@ -1,6 +1,8 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 namespace: zcp-system
+commonLabels:
+  release: zcp-monitoring
 bases:
 - ./alertmanager
 - ./grafana
@@ -14,6 +16,5 @@ resources:
 - exporters/kube-state-metric/kube-state-metrics-svc.yaml
 - exporters/node-exporter/node-exporter-ds-svc.yaml
 - exporters/node-exporter/node-exporter-ds.yaml
-- ingress.yaml
 generatorOptions:
   disableNameSuffixHash: true

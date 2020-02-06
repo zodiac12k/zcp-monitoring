@@ -1,0 +1,7 @@
+- op: replace
+  path: /spec/rules/0/host
+  value: template-prometheus.cloudzcp.io
+
+- op: replace
+  path: /spec/tls/0/hosts/0
+  value: template-prometheus.cloudzcp.io
