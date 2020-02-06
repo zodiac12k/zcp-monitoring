@@ -34,6 +34,13 @@ spec:
       containers:
         - name: kube-state-metrics
           image: registry.au-syd.bluemix.net/cloudzcp/kube-state-metrics:v1.6.0
+          resources:
+            requests:
+              cpu: 10m
+              memory: 50Mi
+            limits:
+              cpu: 50m
+              memory: 100Mi
           ports:
           - containerPort: 8080
             name: metrics
