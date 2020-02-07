@@ -57,11 +57,10 @@ configMapGenerator:
   name: prometheus-config
   namespace: zcp-system
   behavior: replace
-- files:
-  - grafana/config/grafana.ini
-  name: monitoring-grafana-config
+- name: monitoring-grafana-config
   namespace: zcp-system
-  behavior: replace
+  behavior: merge
+  env: grafana/config.properties
 secretGenerator:
 - name: alertmanager-secret
   env: alertmanager/secret.properties

@@ -42,6 +42,16 @@ spec:
           value: admin
         - name: GF_SECURITY_ADMIN_PASSWORD
           value: admin
+        - name: GF_SERVER_DOMAIN
+          valueFrom:
+            configMapKeyRef:
+              name: monitoring-grafana-config
+              key: GF_SERVER_DOMAIN
+        - name: GF_AUTH_GENERIC_OAUTH_AUTH_URL
+          valueFrom:
+            configMapKeyRef:
+              name: monitoring-grafana-config
+              key: GF_AUTH_GENERIC_OAUTH_AUTH_URL
 #        - name: GF_INSTALL_PLUGINS
 #          value: grafana-clock-panel,grafana-worldmap-panel
         ports:
