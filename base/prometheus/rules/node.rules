@@ -78,7 +78,7 @@ groups:
       channel: default
       severity: critical
       product: zcp-public
-      priority: P1
+      priority: P2
     annotations:
       summary: "Node({{$labels.dedicated}}): High CPU usage detected"
       description: "{{$labels.instance}}: CPU usage is above 95% (current value is: {{$value}})"
@@ -89,7 +89,7 @@ groups:
       channel: default
       severity: critical
       product: zcp-public
-      priority: P1
+      priority: P2
     annotations:
       summary: "Node({{$labels.dedicated}}): High CPU usage detected"
       description: "{{$labels.instance}}: CPU usage is above 95% (current value is: {{$value}})"
