@@ -10,7 +10,7 @@ groups:
       channel: default
       severity: critical
       product: zcp-public
-      priority: P1
+      priority: P2
     annotations:
       summary: "Node({{$labels.dedicated}}) status is NotReady"
       description: "The kubelet on {{$labels.node}} has not checked in with the API, or has set itself to NotReady, for more than 2m."
@@ -21,7 +21,7 @@ groups:
       channel: default
       severity: critical
       product: zcp-public
-      priority: P1
+      priority: P2
     annotations:
       summary: "Node({{$labels.dedicated}}) status is NotReady"
       description: "The kubelet on {{$labels.node}} has not checked in with the API, or has set itself to NotReady, for more than 2m."
@@ -66,7 +66,7 @@ groups:
     for: 2m
     labels:
       product: zcp-public
-      priority: P1
+      priority: P2
     annotations:
       summary: "Node({{$labels.dedicated}}) ran out of disk space."
       description: "{{$labels.node}} is insufficient free space on the node for adding new pods."
@@ -75,7 +75,7 @@ groups:
     for: 2m
     labels:
       product: zcp-public
-      priority: P1
+      priority: P2
     annotations:
       summary: "Node({{$labels.dedicated}}) ran out of disk space."
       description: "{{$labels.node}} is insufficient free space on the node for adding new pods."
@@ -114,7 +114,7 @@ groups:
     for: 2m
     labels:
       product: zcp-public
-      priority: P1
+      priority: P2
     annotations:
       summary: "Node({{$labels.dedicated}}) is under memory pressure."
       description: "{{$labels.node}} memory is low."
@@ -123,7 +123,7 @@ groups:
     for: 2m
     labels:
       product: zcp-public
-      priority: P1
+      priority: P2
     annotations:
       summary: "Node({{$labels.dedicated}}) is under memory pressure."
       description: "{{$labels.node}} memory is low."
@@ -162,7 +162,7 @@ groups:
     for: 2m
     labels:
       product: zcp-public
-      priority: P1
+      priority: P2
     annotations:
       summary: "Node({{$labels.dedicated}}) is under PID pressure."
       description: "{{$labels.node}} is too many processes on the node."
@@ -171,7 +171,7 @@ groups:
     for: 2m
     labels:
       product: zcp-public
-      priority: P1
+      priority: P2
     annotations:
       summary: "Node({{$labels.dedicated}}) is under PID pressure."
       description: "{{$labels.node}} is too many processes on the node."
@@ -212,7 +212,7 @@ groups:
       channel: default
       severity: warning
       product: zcp-public
-      priority: P1
+      priority: P2
     annotations:
       summary: "Node({{$labels.dedicated}}) is under disk pressure."
       description: "{{$labels.node}} disk capacity is low."
@@ -223,7 +223,7 @@ groups:
       channel: default
       severity: warning
       product: zcp-public
-      priority: P1
+      priority: P2
     annotations:
       summary: "Node({{$labels.dedicated}}) is under disk pressure."
       description: "{{$labels.node}} disk capacity is low."
@@ -266,12 +266,23 @@ groups:
       channel: default
       severity: warning
       product: zcp-public
-      priority: P4
+      priority: P5
     annotations:
       summary: "Pod is restarting frequently"
       description: "Pod {{$labels.namespace}}/{{$labels.pod}} is was restarted {{$value}} times within the last hour"
   - alert: PodAbnormallyTerminated
-    expr: sum_over_time(kube_pod_container_status_terminated_reason{reason!="Completed"}[5m]) > 0
+    expr: sum_over_time(kube_pod_container_status_terminated_reason{namespace!~"kube-system|ibm-system|zcp-system|zdb-system|zdb-managed",reason!~"Completed|Error"}[5m]) > 0
+    for: 2m
+    labels:
+      channel: default
+      severity: warning
+      product: zcp-public
+      priority: P3
+    annotations:
+      summary: "Pod is abnormally terminated"
+      description: "Pod {{$labels.namespace}}/{{$labels.pod}}/{{$labels.container}} is abnormally terminated for a {{$labels.reason}}"
+  - alert: PodAbnormallyTerminated
+    expr: sum_over_time(kube_pod_container_status_terminated_reason{namespace=~"kube-system|ibm-system|zcp-system|zdb-system|zdb-managed",reason!~"Completed|Error"}[5m]) > 0
     for: 2m
     labels:
       channel: default
@@ -282,7 +293,18 @@ groups:
       summary: "Pod is abnormally terminated"
       description: "Pod {{$labels.namespace}}/{{$labels.pod}}/{{$labels.container}} is abnormally terminated for a {{$labels.reason}}"
   - alert: PodAbnormallyWaiting
-    expr: sum_over_time(kube_pod_container_status_waiting_reason{reason!="ContainerCreating"}[5m]) > 0
+    expr: sum_over_time(kube_pod_container_status_waiting_reason{namespace!~"kube-system|ibm-system|zcp-system|zdb-system|zdb-managed",reason!="ContainerCreating"}[5m]) > 0
+    for: 2m
+    labels:
+      channel: default
+      severity: warning
+      product: zcp-public
+      priority: P3
+    annotations:
+      summary: "Pod is abnormally waiting"
+      description: "Pod {{$labels.namespace}}/{{$labels.pod}}/{{$labels.container}} is abnormally waiting for a {{$labels.reason}}"
+  - alert: PodAbnormallyWaiting
+    expr: sum_over_time(kube_pod_container_status_waiting_reason{namespace=~"kube-system|ibm-system|zcp-system|zdb-system|zdb-managed",reason!="ContainerCreating"}[5m]) > 0
     for: 2m
     labels:
       channel: default
@@ -292,3 +314,14 @@ groups:
     annotations:
       summary: "Pod is abnormally waiting"
       description: "Pod {{$labels.namespace}}/{{$labels.pod}}/{{$labels.container}} is abnormally waiting for a {{$labels.reason}}"
+  - alert: PodErrorTerminated
+    expr: sum_over_time(kube_pod_container_status_terminated_reason{reason="Error"}[5m]) > 0
+    for: 2m
+    labels:
+      channel: default
+      severity: warning
+      product: zcp-public
+      priority: P5
+    annotations:
+      summary: "Pod is terminated for an error"
+      description: "Pod {{$labels.namespace}}/{{$labels.pod}}/{{$labels.container}} is abnormally terminated for an Error"
