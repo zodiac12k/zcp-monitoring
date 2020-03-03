@@ -3,7 +3,7 @@ global:
   scrape_timeout: 15s
   evaluation_interval: 15s
   external_labels:
-    env: 'CLOUDZCP-EXAMPLE-DEV'
+    env: 'CLOUDZCP-BASE'
 
 alerting:
   alertmanagers:
@@ -315,15 +315,3 @@ scrape_configs:
     target_label: instance
   - target_label: __address__
     replacement: blackbox:9115
-
-
-- job_name: 'etcd'
-  static_configs:
-  - targets:
-    - "172.20.0.1:2041"
-  tls_config:
-    ca_file: /etc/config/etcd-ca
-    cert_file: /etc/config/etcd-cert
-    key_file: /etc/config/etcd-key
-    insecure_skip_verify: true
-  scheme: https

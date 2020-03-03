@@ -3,7 +3,7 @@ global:
   scrape_timeout: 15s
   evaluation_interval: 15s
   external_labels:
-    env: 'CLOUDZCP-TEMPLATE'
+    env: '${CLUSTER_NAME}'
 
 alerting:
   alertmanagers:
