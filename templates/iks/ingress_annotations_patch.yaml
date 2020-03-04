@@ -1,3 +1,3 @@
 - op: replace
   path: /metadata/annotations/ingress.bluemix.net~1ALB-ID
-  value: alb_id
+  value: ${ALB_ID}
