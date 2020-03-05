@@ -59,16 +59,16 @@ install() {
   cp -r templates/${provider} .kustomize/${cluster_name}/upgrade
 
   # Patch ingress and config files
-  sed -i '' 's/CLOUDZCP-TEMPLATE/'${CLUSTER_NAME}'/g' .kustomize/${cluster_name}/upgrade/prometheus/config/prometheus.yml
-  sed -i '' 's/template/'${host_prefix}'/g' .kustomize/${cluster_name}/upgrade/grafana/config/grafana.ini
-  sed -i '' 's/template/'${host_prefix}'/g' .kustomize/${cluster_name}/upgrade/ingress_patch.yaml
+  sed -i'.bak' 's/CLOUDZCP-TEMPLATE/'${CLUSTER_NAME}'/g' .kustomize/${cluster_name}/upgrade/prometheus/config/prometheus.yml
+  sed -i'.bak' 's/template/'${host_prefix}'/g' .kustomize/${cluster_name}/upgrade/grafana/config/grafana.ini
+  sed -i'.bak' 's/template/'${host_prefix}'/g' .kustomize/${cluster_name}/upgrade/ingress_patch.yaml
   if [ "${provider}" = "iks" ]; then
-    sed -i '' 's/alb_id/'${alb_id}'/g' .kustomize/${cluster_name}/upgrade/ingress_patch.yaml
+    sed -i'.bak' 's/alb_id/'${alb_id}'/g' .kustomize/${cluster_name}/upgrade/ingress_patch.yaml
   elif [ "${provider}" = "eks" ] || [ "${provider}" = "aks" ]; then
-    sed -i '' 's/ingress_class/'${ingress_class}'/g' .kustomize/${cluster_name}/upgrade/ingress_patch.yaml
+    sed -i'.bak' 's/ingress_class/'${ingress_class}'/g' .kustomize/${cluster_name}/upgrade/ingress_patch.yaml
   fi
   read -p "Please input password for alertmanager webhook config: " api_password
-  sed -i '' 's/${API_PASSWORD}/'${api_password}'/g' .kustomize/${cluster_name}/upgrade/alertmanager/secret.properties
+  sed -i'.bak' 's/${API_PASSWORD}/'${api_password}'/g' .kustomize/${cluster_name}/upgrade/alertmanager/secret.properties
 
   # Apply kustomize resources
   if ${upgrade}; then
