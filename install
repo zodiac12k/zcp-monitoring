@@ -59,19 +59,19 @@ install() {
   cp -r templates/${provider}/* .kustomize/${cluster_name}
 
   # Patch ingress and config files
-  sed -i '' 's/${CLUSTER_NAME}/'${CLUSTER_NAME}'/g' .kustomize/${cluster_name}/prometheus/config/prometheus.yml
-  sed -i '' 's/${HOST_PREFIX}/'${host_prefix}'/g' .kustomize/${cluster_name}/grafana/config.properties
-  sed -i '' 's/${HOST_PREFIX}/'${host_prefix}'/g' .kustomize/${cluster_name}/alertmanager/alertmanager-ingress_patch.yaml
-  sed -i '' 's/${HOST_PREFIX}/'${host_prefix}'/g' .kustomize/${cluster_name}/grafana/grafana-ingress_patch.yaml
-  sed -i '' 's/${HOST_PREFIX}/'${host_prefix}'/g' .kustomize/${cluster_name}/prometheus/prometheus-ingress_patch.yaml
+  sed -i'.bak' -e 's/${CLUSTER_NAME}/'${CLUSTER_NAME}'/g' .kustomize/${cluster_name}/prometheus/config/prometheus.yml
+  sed -i'.bak' -e 's/${HOST_PREFIX}/'${host_prefix}'/g' .kustomize/${cluster_name}/grafana/config.properties
+  sed -i'.bak' -e 's/${HOST_PREFIX}/'${host_prefix}'/g' .kustomize/${cluster_name}/alertmanager/alertmanager-ingress_patch.yaml
+  sed -i'.bak' -e 's/${HOST_PREFIX}/'${host_prefix}'/g' .kustomize/${cluster_name}/grafana/grafana-ingress_patch.yaml
+  sed -i'.bak' -e 's/${HOST_PREFIX}/'${host_prefix}'/g' .kustomize/${cluster_name}/prometheus/prometheus-ingress_patch.yaml
   if [ "${provider}" = "iks" ]; then
-    sed -i '' 's/${ALB_ID}/'${alb_id}'/g' .kustomize/${cluster_name}/ingress_annotations_patch.yaml
+    sed -i'.bak' -e 's/${ALB_ID}/'${alb_id}'/g' .kustomize/${cluster_name}/ingress_annotations_patch.yaml
   elif [ "${provider}" = "eks" ] || [ "${provider}" = "aks" ]; then
-    sed -i '' 's/${INGRESS_CLASS}/'${ingress_class}'/g' .kustomize/${cluster_name}/ingress_annotations_patch.yaml
+    sed -i'.bak' -e 's/${INGRESS_CLASS}/'${ingress_class}'/g' .kustomize/${cluster_name}/ingress_annotations_patch.yaml
 
   fi
   read -p "Please input password for alertmanager webhook config: " api_password
-  sed -i '' 's/${API_PASSWORD}/'${api_password}'/g' .kustomize/${cluster_name}/alertmanager/secret.properties
+  sed -i'.bak' -e 's/${API_PASSWORD}/'${api_password}'/g' .kustomize/${cluster_name}/alertmanager/secret.properties
 
   # Apply kustomize resources
   kubectl kustomize .kustomize/${cluster_name}
