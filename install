@@ -27,8 +27,7 @@ install() {
   elif [ "${provider}" = "aks" ]; then
     cluster_name=${current_context}
   fi
-  CLUSTER_NAME=$(echo $cluster_name | tr '[:lower:]' '[:upper:]')
-  host_prefix=$(if [ ${cluster_name##*-} = "dev" ]; then echo ${cluster_name#*-}; else remainder=${cluster_name#*-}; echo ${remainder%-*}; fi)
+  host_prefix=$(if [ "${cluster_name##*-}" = "dev" ]; then echo "${cluster_name#*-}"; else remainder=${cluster_name#*-}; echo "${remainder%-*}"; fi)
 
   if [ "${provider}" = "iks" ]; then
     if [ "${access}" = "private" ]; then
@@ -51,44 +50,65 @@ install() {
     fi
   fi
 
-  mkdir -p .kustomize/${cluster_name}
+  mkdir -p .kustomize/"${cluster_name}"
   # Clean up kustomize resources for cluster
-  rm -rf .kustomize/${cluster_name}/*
+  rm -rf .kustomize/"${cluster_name}"/*
   # Copy kustomize overlay resources for cluster from templates
-  cp -r templates/common/* .kustomize/${cluster_name}
-  cp -r templates/${provider}/* .kustomize/${cluster_name}
+  cp -r templates/common/* .kustomize/"${cluster_name}"
+  cp -r templates/"${provider}"/* .kustomize/"${cluster_name}"
 
   # Patch ingress and config files
-  sed -i'.bak' -e 's/${CLUSTER_NAME}/'${CLUSTER_NAME}'/g' .kustomize/${cluster_name}/prometheus/config/prometheus.yml
-  sed -i'.bak' -e 's/${HOST_PREFIX}/'${host_prefix}'/g' .kustomize/${cluster_name}/grafana/config.properties
-  sed -i'.bak' -e 's/${HOST_PREFIX}/'${host_prefix}'/g' .kustomize/${cluster_name}/alertmanager/alertmanager-ingress_patch.yaml
-  sed -i'.bak' -e 's/${HOST_PREFIX}/'${host_prefix}'/g' .kustomize/${cluster_name}/grafana/grafana-ingress_patch.yaml
-  sed -i'.bak' -e 's/${HOST_PREFIX}/'${host_prefix}'/g' .kustomize/${cluster_name}/prometheus/prometheus-ingress_patch.yaml
-  if [ "${provider}" = "iks" ]; then
-    sed -i'.bak' -e 's/${ALB_ID}/'${alb_id}'/g' .kustomize/${cluster_name}/ingress_annotations_patch.yaml
-  elif [ "${provider}" = "eks" ] || [ "${provider}" = "aks" ]; then
-    sed -i'.bak' -e 's/${INGRESS_CLASS}/'${ingress_class}'/g' .kustomize/${cluster_name}/ingress_annotations_patch.yaml
-
+  echo "Please check the cluster name, \"${cluster_name}\""
+  read -rp "If it is correct, please press ENTER key, otherwise enter the correct cluster name: " input_cluster_name
+  if [ "${input_cluster_name}" != "" ]; then
+    cluster_name=${input_cluster_name}
   fi
-  read -p "Please input password for alertmanager webhook config: " api_password
-  sed -i'.bak' -e 's/${API_PASSWORD}/'${api_password}'/g' .kustomize/${cluster_name}/alertmanager/secret.properties
+  CLUSTER_NAME=$(echo "${cluster_name}" | tr '[:lower:]' '[:upper:]')
+  sed -i'.bak' -e 's/${CLUSTER_NAME}/'${CLUSTER_NAME}'/g' .kustomize/"${cluster_name}"/prometheus/config/prometheus.yml
+
+  echo "Please check the subdomain prefix, \"${host_prefix}\""
+  read -rp "If it is correct, please press ENTER key, otherwise enter the correct subdomain prefix: " input_host_prefix
+  if [ "${input_host_prefix}" != "" ]; then
+    host_prefix=${input_host_prefix}
+  fi
+  sed -i'.bak' -e 's/${HOST_PREFIX}/'${host_prefix}'/g' .kustomize/"${cluster_name}"/grafana/config.properties
+  sed -i'.bak' -e 's/${HOST_PREFIX}/'${host_prefix}'/g' .kustomize/"${cluster_name}"/alertmanager/alertmanager-ingress_patch.yaml
+  sed -i'.bak' -e 's/${HOST_PREFIX}/'${host_prefix}'/g' .kustomize/"${cluster_name}"/grafana/grafana-ingress_patch.yaml
+  sed -i'.bak' -e 's/${HOST_PREFIX}/'${host_prefix}'/g' .kustomize/"${cluster_name}"/prometheus/prometheus-ingress_patch.yaml
+  if [ "${provider}" = "iks" ]; then
+    echo "Please check the ALB ID \"${alb_id}\""
+    read -rp "If it is correct, please press ENTER key, otherwise please enter the correct ALB ID: " input_alb_id
+    if [ "${input_alb_id}" != "" ]; then
+      alb_id=${input_alb_id}
+    fi
+    sed -i'.bak' -e 's/${ALB_ID}/'${alb_id}'/g' .kustomize/"${cluster_name}"/ingress_annotations_patch.yaml
+  elif [ "${provider}" = "eks" ] || [ "${provider}" = "aks" ]; then
+    echo "Please check the ingress class \"${INGRESS_CLASS}\""
+    read -rp "If it is correct, please press ENTER key, otherwise please enter the correct ingress class: " input_ingress_class
+    if [ "${input_ingress_class}" != "" ]; then
+      INGRESS_CLASS=${input_ingress_class}
+    fi
+    sed -i'.bak' -e 's/${INGRESS_CLASS}/'${ingress_class}'/g' .kustomize/"${cluster_name}"/ingress_annotations_patch.yaml
+  fi
+  read -rp "Please enter the password for alertmanager webhook config: " api_password
+  sed -i'.bak' -e 's/${API_PASSWORD}/'${api_password}'/g' .kustomize/"${cluster_name}"/alertmanager/secret.properties
 
   # Apply kustomize resources
-  kubectl kustomize .kustomize/${cluster_name}
+  kubectl kustomize .kustomize/"${cluster_name}"
   while true; do
-      read -p "## Check the above resources before applying. Is it right? (y/n): " yn
+      read -rp "## Check the above resources before applying. Correct? (y/n): " yn
       case $yn in
           [Yy]* ) echo "It will be applying this resources to your cluster" && break;;
           [Nn]* ) echo "Bye!" && exit;;
       esac
   done
   if ${upgrade}; then
-    kubectl apply -k .kustomize/${cluster_name} -l'resource-policy!=skip'
+    kubectl apply -k .kustomize/"${cluster_name}" -l'resource-policy!=skip'
     sleep 60
     kubectl exec -it $(kubectl get pod -lcomponent=zcp-alertmanager --no-headers=true -o=custom-columns=NAME:.metadata.name) -- curl -X POST http://alertmanager-service:9093/-/reload
     kubectl exec -it $(kubectl get pod -lcomponent=zcp-alertmanager --no-headers=true -o=custom-columns=NAME:.metadata.name) -- curl -X POST http://prometheus-service:9090/-/reload
   else
-    kubectl create -k .kustomize/${cluster_name}
+    kubectl create -k .kustomize/"${cluster_name}"
   fi
 }
 
