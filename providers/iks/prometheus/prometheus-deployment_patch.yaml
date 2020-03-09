@@ -1,0 +1,12 @@
+- op: add
+  path: /spec/template/spec/containers/0/volumeMounts/-
+  value:
+    name: etcd-secrets-volume
+    mountPath: /etc/config
+    readOnly: true
+- op: add
+  path: /spec/template/spec/volumes/-
+  value:
+    name: etcd-secrets-volume
+    secret:
+      secretName: etcd-secrets
