@@ -4,6 +4,9 @@ metadata:
   name: prometheus-deployment
   namespace: zcp-system
 spec:
+  selector:
+    matchLabels:
+      component: prometheus
   replicas: 1
   template:
     metadata:
@@ -30,7 +33,7 @@ spec:
                 operator: Exists
       containers:
         - name: prometheus
-          image: registry.au-syd.bluemix.net/cloudzcp/prometheus:v2.2.1
+          image: au.icr.io/cloudzcp/prometheus:v2.16.0
           imagePullPolicy: IfNotPresent
           resources:
             requests:
@@ -40,9 +43,11 @@ spec:
               cpu: 2000m
               memory: 4Gi
           args:
-            - "--config.file=/etc/prometheus/prometheus.yml"
-            - "--storage.tsdb.path=/prometheus/"
-            - "--storage.tsdb.retention=37d"
+            - "--config.file=/etc/config/prometheus.yml"
+            - "--storage.tsdb.path=/data"
+            - "--storage.tsdb.retention.time=37d"
+            - "--web.console.libraries=/etc/prometheus/console_libraries"
+            - "--web.console.templates=/etc/prometheus/consoles"
             - "--web.enable-lifecycle"
             - "--web.enable-admin-api"
           ports:
@@ -71,25 +76,25 @@ spec:
           securityContext:
             runAsUser: 0
           volumeMounts:
-            - name: prometheus-config-volume
-              mountPath: /etc/prometheus/
-            - name: prometheus-storage-volume
-              mountPath: /prometheus/
+            - name: config-volume
+              mountPath: /etc/config
+            - name: storage-volume
+              mountPath: /data
             - name: rules-volume
-              mountPath: /etc/prometheus-rules/
+              mountPath: /etc/prometheus-rules
             - name: zdb-rules-volume
-              mountPath: /etc/prometheus-zdb-rules/
+              mountPath: /etc/prometheus-zdb-rules
             - name: user-rules-volume
-              mountPath: /etc/prometheus-user-rules/
+              mountPath: /etc/prometheus-user-rules
 #            - name: etcd-secrets-volume
-#              mountPath: /etc/config
+#              mountPath: /etc/etcd-secrets
 #              readOnly: true
       volumes:
-        - name: prometheus-config-volume
+        - name: config-volume
           configMap:
             defaultMode: 420
             name: prometheus-config
-        - name: prometheus-storage-volume
+        - name: storage-volume
           persistentVolumeClaim:
             claimName: prometheus-data
         - name: rules-volume
