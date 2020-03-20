@@ -9,7 +9,7 @@ resources:
 - alertmanager-ingress.yaml
 configMapGenerator:
 - files:
-  - config/config.yml
+  - config/alertmanager.yml
   name: alertmanager
 generatorOptions:
   disableNameSuffixHash: true
