@@ -2,14 +2,20 @@ apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
   name: grafana-deployment
-  namespace: zcp-system 
+  namespace: zcp-system
 spec:
   replicas: 1
+  selector:
+    matchLabels:
+      component: grafana
   template:
     metadata:
       labels:
         component: grafana
     spec:
+      securityContext:
+        runAsUser: 472
+        fsGroup: 472
       tolerations:
       - key: "management"
         operator: "Equal"
@@ -28,7 +34,7 @@ spec:
               - key: node-role.kubernetes.io/management
                 operator: Exists
       containers:
-      - image: registry.au-syd.bluemix.net/cloudzcp/grafana:5.0.4
+      - image: au.icr.io/cloudzcp/grafana:6.7.0
         name: grafana
         resources:
           limits:
@@ -36,7 +42,7 @@ spec:
             memory: 100Mi
           requests:
             cpu: 100m
-            memory: 100Mi        
+            memory: 100Mi
         env:
         - name: GF_SECURITY_ADMIN_USER
           value: admin
@@ -80,9 +86,9 @@ spec:
           timeoutSeconds: 30
         volumeMounts:
         - mountPath: /var/lib/grafana
-          name: grafana-storage
+          name: storage
         - mountPath: /etc/grafana
-          name: config-volume
+          name: config
         - mountPath: /var/lib/grafana/dashboards/system
           name: dashboard-system-volume
         - mountPath: /var/lib/grafana/dashboards/cluster
@@ -91,12 +97,16 @@ spec:
           name: dashboard-container-volume
         - mountPath: /var/lib/grafana/dashboards/addon
           name: dashboard-addon-volume
-        - mountPath: /etc/provisioning/dashboards
+        - mountPath: /etc/grafana/provisioning/dashboards
           name: config-volume-provisioning
-        - mountPath: /etc/provisioning/datasources
+        - mountPath: /etc/grafana/provisioning/datasources
           name: config-volume-provisioning-prometheus 
       volumes:
-      - name: grafana-storage
+      - name: config
+        configMap:
+          defaultMode: 420
+          name: monitoring-grafana-config
+      - name: storage
         persistentVolumeClaim:
           claimName: grafana-data
       - name: dashboard-system-volume
@@ -115,10 +125,6 @@ spec:
         configMap:
           defaultMode: 420
           name: monitoring-grafana-dashboard-addon
-      - name: config-volume
-        configMap:
-          defaultMode: 420
-          name: monitoring-grafana-config
       - name: config-volume-provisioning
         configMap:
           defaultMode: 420
