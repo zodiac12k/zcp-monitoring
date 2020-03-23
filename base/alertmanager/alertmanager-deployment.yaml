@@ -14,6 +14,7 @@ spec:
       labels:
         component: alertmanager
     spec:
+      serviceAccountName: zcp-system-admin
       tolerations:
       - key: "management"
         operator: "Equal"
@@ -33,7 +34,7 @@ spec:
                 operator: Exists
       containers:
       - name: alertmanager
-        image: registry.au-syd.bluemix.net/cloudzcp/alertmanager:v0.15.0
+        image: au.icr.io/cloudzcp/alertmanager:v0.20.0
         resources:
           requests:
             cpu: 10m
@@ -42,8 +43,8 @@ spec:
             cpu: 10m
             memory: 50Mi
         args:
-          - '--config.file=/etc/alertmanager/config.yml'
-          - '--storage.path=/alertmanager'
+          - '--config.file=/etc/config/alertmanager.yml'
+          - '--storage.path=/data'
         ports:
         - name: alertmanager
           containerPort: 9093
@@ -51,7 +52,7 @@ spec:
         livenessProbe:
           failureThreshold: 3
           httpGet:
-            path: /api/v1/status
+            path: /-/healthy
             port: 9093
             scheme: HTTP
           initialDelaySeconds: 30
@@ -61,7 +62,7 @@ spec:
         readinessProbe:
           failureThreshold: 3
           httpGet:
-            path: /api/v1/status
+            path: /-/ready
             port: 9093
             scheme: HTTP
           initialDelaySeconds: 30
@@ -70,24 +71,24 @@ spec:
           timeoutSeconds: 30
         volumeMounts:
         - name: config-volume
-          mountPath: /etc/alertmanager
-        - name: alertmanager
-          mountPath: /alertmanager
-        - name: alertmanager-templates-volume
-          mountPath: /etc/alertmanager-templates
-        - name: alertmanager-secrets-volume
-          mountPath: /etc/alertmanager-secrets
+          mountPath: /etc/config
+        - name: storage-volume
+          mountPath: /data
+        - name: templates-volume
+          mountPath: /etc/templates
+        - name: secrets-volume
+          mountPath: /etc/secrets
           subPath: ""
           readOnly: true
       volumes:
       - name: config-volume
         configMap:
           name: alertmanager
-      - name: alertmanager-templates-volume
+      - name: storage-volume
+        emptyDir: {}
+      - name: templates-volume
         configMap:
           name: alertmanager-templates
-      - name: alertmanager
-        emptyDir: {}
-      - name: alertmanager-secrets-volume
+      - name: secrets-volume
         secret:
           secretName: alertmanager-secret

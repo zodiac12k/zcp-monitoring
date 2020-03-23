@@ -17,7 +17,7 @@ global:
 
 # The directory from which notification templates are read.
 templates:
-- '/etc/alertmanager-templates/*.tmpl'
+- '/etc/templates/*.tmpl'
 
 # The root route on which each incoming alert enters.
 route:
@@ -74,4 +74,4 @@ receivers:
     http_config:
       basic_auth:
         username: alertmanager
-        password_file: /etc/alertmanager-secrets/API_PASSWORD
+        password_file: /etc/secrets/API_PASSWORD
