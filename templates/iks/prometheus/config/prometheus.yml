@@ -322,8 +322,8 @@ scrape_configs:
   - targets:
     - "172.20.0.1:2041"
   tls_config:
-    ca_file: /etc/config/etcd-ca
-    cert_file: /etc/config/etcd-cert
-    key_file: /etc/config/etcd-key
+    ca_file: /etc/etcd-secrets/etcd-ca
+    cert_file: /etc/etcd-secrets/etcd-cert
+    key_file: /etc/etcd-secrets/etcd-key
     insecure_skip_verify: true
   scheme: https
