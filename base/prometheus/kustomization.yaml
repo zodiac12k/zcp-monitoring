@@ -13,6 +13,7 @@ resources:
 - prometheus-ingress.yaml
 configMapGenerator:
 - files:
+  - rules/16-compatibility.rules
   - rules/alertmanager.rules
   - rules/component-up-monitoring.rules
   - rules/elasticsearch.rules

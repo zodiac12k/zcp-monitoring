@@ -7,6 +7,9 @@ metadata:
     component: kube-state-metrics 
 spec:
   replicas: 1
+  selector:
+    matchLabels:
+      component: kube-state-metrics
   template:
     metadata:
       name: kube-state-metrics
@@ -33,7 +36,36 @@ spec:
       serviceAccountName: zcp-system-admin
       containers:
         - name: kube-state-metrics
-          image: registry.au-syd.bluemix.net/cloudzcp/kube-state-metrics:v1.6.0
+          image: au.icr.io/cloudzcp/kube-state-metrics:v1.9.5
+          args:
+          - --collectors=certificatesigningrequests
+          - --collectors=configmaps
+          - --collectors=cronjobs
+          - --collectors=daemonsets
+          - --collectors=deployments
+          - --collectors=endpoints
+          - --collectors=horizontalpodautoscalers
+          - --collectors=ingresses
+          - --collectors=jobs
+          - --collectors=limitranges
+          - --collectors=mutatingwebhookconfigurations
+          - --collectors=namespaces
+          - --collectors=networkpolicies
+          - --collectors=nodes
+          - --collectors=persistentvolumeclaims
+          - --collectors=persistentvolumes
+          - --collectors=poddisruptionbudgets
+          - --collectors=pods
+          - --collectors=replicasets
+          - --collectors=replicationcontrollers
+          - --collectors=resourcequotas
+          - --collectors=secrets
+          - --collectors=services
+          - --collectors=statefulsets
+          - --collectors=storageclasses
+#          - --collectors=validatingwebhookconfigurations
+#          - --collectors=verticalpodautoscalers
+          - --collectors=volumeattachments
           resources:
             requests:
               cpu: 10m
