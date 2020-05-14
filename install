@@ -27,6 +27,13 @@ install() {
   elif [ "${provider}" = "aks" ]; then
     cluster_name=${current_context}
   fi
+  echo "Please check the cluster name, \"${cluster_name}\""
+  read -rp "If it is correct, please press ENTER key, otherwise enter the correct cluster name: " input_cluster_name
+  if [ "${input_cluster_name}" != "" ]; then
+    cluster_name=${input_cluster_name}
+  fi
+  CLUSTER_NAME=$(echo "${cluster_name}" | tr '[:lower:]' '[:upper:]')
+
   host_prefix=$(if [ "${cluster_name##*-}" = "dev" ]; then echo "${cluster_name#*-}"; else remainder=${cluster_name#*-}; echo "${remainder%-*}"; fi)
 
   if [ "${provider}" = "iks" ]; then
@@ -58,12 +65,6 @@ install() {
   cp -r templates/"${provider}"/* .kustomize/"${cluster_name}"
 
   # Patch ingress and config files
-  echo "Please check the cluster name, \"${cluster_name}\""
-  read -rp "If it is correct, please press ENTER key, otherwise enter the correct cluster name: " input_cluster_name
-  if [ "${input_cluster_name}" != "" ]; then
-    cluster_name=${input_cluster_name}
-  fi
-  CLUSTER_NAME=$(echo "${cluster_name}" | tr '[:lower:]' '[:upper:]')
   sed -i'.bak' -e 's/${CLUSTER_NAME}/'${CLUSTER_NAME}'/g' .kustomize/"${cluster_name}"/prometheus/config/prometheus.yml
 
   echo "Please check the subdomain prefix, \"${host_prefix}\""
@@ -83,10 +84,10 @@ install() {
     fi
     sed -i'.bak' -e 's/${ALB_ID}/'${alb_id}'/g' .kustomize/"${cluster_name}"/ingress_annotations_patch.yaml
   elif [ "${provider}" = "eks" ] || [ "${provider}" = "aks" ]; then
-    echo "Please check the ingress class \"${INGRESS_CLASS}\""
+    echo "Please check the ingress class \"${ingress_class}\""
     read -rp "If it is correct, please press ENTER key, otherwise please enter the correct ingress class: " input_ingress_class
     if [ "${input_ingress_class}" != "" ]; then
-      INGRESS_CLASS=${input_ingress_class}
+      ingress_class=${input_ingress_class}
     fi
     sed -i'.bak' -e 's/${INGRESS_CLASS}/'${ingress_class}'/g' .kustomize/"${cluster_name}"/ingress_annotations_patch.yaml
   fi

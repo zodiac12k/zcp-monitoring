@@ -4,4 +4,4 @@ metadata:
   name: prometheus-data
   namespace: zcp-system
 spec:
-  storageClassName: zcp-efs
+  storageClassName: efs-zcp-retain
