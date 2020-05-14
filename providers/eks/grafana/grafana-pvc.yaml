@@ -4,4 +4,4 @@ metadata:
   name: grafana-data
   namespace: zcp-system
 spec:
-  storageClassName: zcp-efs
+  storageClassName: efs-zcp-retain
