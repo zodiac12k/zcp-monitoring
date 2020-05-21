@@ -133,9 +133,8 @@
         {
           "expr": "sum(kube_pod_info{namespace=~\"$namespace\"})",
           "format": "time_series",
-          "intervalFactor": 2,
-          "refId": "A",
-          "step": 20
+          "intervalFactor": 1,
+          "refId": "A"
         }
       ],
       "thresholds": "",
@@ -195,10 +194,10 @@
         {
           "expr": "sum(avg(kube_pod_status_phase{namespace=~\"$namespace\",pod=~\"$pod\"}) by(namespace, pod, phase)) by(phase)",
           "format": "time_series",
-          "intervalFactor": 2,
+          "interval": "",
+          "intervalFactor": 1,
           "legendFormat": "{{ phase }}",
-          "refId": "A",
-          "step": 2
+          "refId": "A"
         }
       ],
       "thresholds": [],
@@ -281,11 +280,10 @@
         {
           "expr": "kube_pod_container_status_restarts{namespace=~\"$namespace\", pod=~\"$pod\"} or kube_pod_container_status_restarts_total{namespace=~\"$namespace\", pod=~\"$pod\"}",
           "format": "time_series",
-          "hide": false,
-          "intervalFactor": 2,
+          "interval": "",
+          "intervalFactor": 1,
           "legendFormat": "{{ pod }}",
-          "refId": "A",
-          "step": 2
+          "refId": "A"
         }
       ],
       "thresholds": [],
@@ -400,11 +398,11 @@
       "tableColumn": "",
       "targets": [
         {
-          "expr": "sum(rate(container_cpu_usage_seconds_total{namespace=\"$namespace\",pod_name=\"$pod\",container_name!=\"POD\",container_name!=\"\"}[2m])) ",
+          "expr": "sum(rate(container_cpu_usage_seconds_total{namespace=\"$namespace\",pod=\"$pod\",container!=\"\"}[2m])) ",
           "format": "time_series",
-          "intervalFactor": 2,
-          "refId": "A",
-          "step": 20
+          "interval": "",
+          "intervalFactor": 1,
+          "refId": "A"
         }
       ],
       "thresholds": "",
@@ -462,28 +460,28 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum by (container_name) (rate(container_cpu_usage_seconds_total{container_name!=\"\",container_name=~\"$container\",container_name!=\"POD\",pod_name=~\"$pod\"}[2m]))",
+          "expr": "sum by (container) (rate(container_cpu_usage_seconds_total{container!=\"\",container=~\"$container\",pod=~\"$pod\"}[2m]))",
           "format": "time_series",
-          "intervalFactor": 2,
-          "legendFormat": "Current: {{ container_name }}",
-          "refId": "A",
-          "step": 2
+          "interval": "",
+          "intervalFactor": 1,
+          "legendFormat": "Current: {{ container }}",
+          "refId": "A"
         },
         {
-          "expr": "kube_pod_container_resource_requests_cpu_cores{pod=~\"$pod\",container!=\"POD\"}",
+          "expr": "kube_pod_container_resource_requests_cpu_cores{pod=~\"$pod\"}",
           "format": "time_series",
-          "intervalFactor": 2,
+          "intervalFactor": 1,
           "legendFormat": "Requested: {{ container }}",
           "refId": "B",
           "step": 2
         },
         {
-          "expr": "kube_pod_container_resource_limits_cpu_cores{pod=~\"$pod\",container!=\"POD\"}",
+          "expr": "kube_pod_container_resource_limits_cpu_cores{pod=~\"$pod\"}",
           "format": "time_series",
-          "intervalFactor": 2,
+          "interval": "",
+          "intervalFactor": 1,
           "legendFormat": "Limit: {{ container }}",
-          "refId": "C",
-          "step": 2
+          "refId": "C"
         }
       ],
       "thresholds": [],
@@ -584,12 +582,12 @@
       "tableColumn": "",
       "targets": [
         {
-          "expr": "sum(container_memory_working_set_bytes{namespace=\"$namespace\",pod_name=\"$pod\",container_name!=\"POD\",container_name!=\"\"})",
+          "expr": "sum(container_memory_working_set_bytes{namespace=\"$namespace\",pod=\"$pod\",container!=\"\"})",
           "format": "time_series",
           "hide": false,
-          "intervalFactor": 2,
-          "refId": "A",
-          "step": 20
+          "interval": "",
+          "intervalFactor": 1,
+          "refId": "A"
         }
       ],
       "thresholds": "",
@@ -647,34 +645,28 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "avg by(container_name) (container_memory_working_set_bytes{pod_name=\"$pod\",container_name=~\"$container\",container_name!=\"POD\",container_name!=\"\"})",
+          "expr": "avg by(container) (container_memory_working_set_bytes{pod=\"$pod\",container=~\"$container\",container!=\"\"})",
           "format": "time_series",
-          "interval": "10s",
+          "interval": "",
           "intervalFactor": 1,
-          "legendFormat": "Current: {{ container_name }}",
-          "metric": "container_memory_usage_bytes",
-          "refId": "A",
-          "step": 10
+          "legendFormat": "Current: {{ container }}",
+          "refId": "A"
         },
         {
           "expr": "kube_pod_container_resource_requests_memory_bytes{pod=\"$pod\",container=~\"$container\"}",
           "format": "time_series",
-          "interval": "10s",
-          "intervalFactor": 2,
+          "interval": "",
+          "intervalFactor": 1,
           "legendFormat": "Requested: {{ container }}",
-          "metric": "kube_pod_container_resource_requests_memory_bytes",
-          "refId": "B",
-          "step": 20
+          "refId": "B"
         },
         {
           "expr": "kube_pod_container_resource_limits_memory_bytes{pod=\"$pod\",container=~\"$container\"}",
           "format": "time_series",
-          "interval": "10s",
-          "intervalFactor": 2,
+          "interval": "",
+          "intervalFactor": 1,
           "legendFormat": "Limit: {{ container }}",
-          "metric": "kube_pod_container_resource_limits_memory_bytes",
-          "refId": "C",
-          "step": 20
+          "refId": "C"
         }
       ],
       "thresholds": [],
@@ -778,9 +770,9 @@
         {
           "expr": "sum(kubelet_volume_stats_used_bytes and on (persistentvolumeclaim) kube_pod_spec_volumes_persistentvolumeclaims_info{pod=\"$pod\"})",
           "format": "time_series",
-          "intervalFactor": 2,
-          "refId": "A",
-          "step": 20
+          "interval": "",
+          "intervalFactor": 1,
+          "refId": "A"
         }
       ],
       "thresholds": "",
@@ -840,18 +832,18 @@
         {
           "expr": "kubelet_volume_stats_capacity_bytes and on (persistentvolumeclaim) kube_pod_spec_volumes_persistentvolumeclaims_info{pod=\"$pod\"}",
           "format": "time_series",
-          "intervalFactor": 2,
+          "interval": "",
+          "intervalFactor": 1,
           "legendFormat": "Capacity : {{ persistentvolumeclaim }}",
-          "refId": "A",
-          "step": 2
+          "refId": "A"
         },
         {
           "expr": "kubelet_volume_stats_used_bytes and on (persistentvolumeclaim) kube_pod_spec_volumes_persistentvolumeclaims_info{pod=\"$pod\"}",
           "format": "time_series",
-          "intervalFactor": 2,
+          "interval": "",
+          "intervalFactor": 1,
           "legendFormat": "Used : {{ persistentvolumeclaim }}",
-          "refId": "B",
-          "step": 2
+          "refId": "B"
         }
       ],
       "thresholds": [],
@@ -954,11 +946,11 @@
       "tableColumn": "",
       "targets": [
         {
-          "expr": "sum(rate(container_fs_reads_bytes_total{namespace=\"$namespace\",pod_name=~\"$pod\",container_name!=\"POD\",container_name!=\"\"}[2m])) + sum(rate(container_fs_writes_bytes_total{namespace=\"$namespace\",pod_name=~\"$pod\",container_name!=\"POD\",container_name!=\"\"}[2m]))",
+          "expr": "sum(rate(container_fs_reads_bytes_total{namespace=\"$namespace\",pod=~\"$pod\",container!=\"\"}[2m])) + sum(rate(container_fs_writes_bytes_total{namespace=\"$namespace\",pod=~\"$pod\",container!=\"\"}[2m]))",
           "format": "time_series",
-          "intervalFactor": 2,
-          "refId": "A",
-          "step": 20
+          "interval": "",
+          "intervalFactor": 1,
+          "refId": "A"
         }
       ],
       "thresholds": "",
@@ -1016,20 +1008,20 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum by (container_name) (rate(container_fs_reads_bytes_total{namespace=\"$namespace\",pod_name=\"$pod\",container_name=~\"$container\",container_name!=\"POD\",container_name!=\"\"}[2m]))",
+          "expr": "sum by (container) (rate(container_fs_reads_bytes_total{namespace=\"$namespace\",pod=\"$pod\",container=~\"$container\",container!=\"\"}[2m]))",
           "format": "time_series",
-          "intervalFactor": 2,
-          "legendFormat": "Reads : {{ container_name }}",
-          "refId": "A",
-          "step": 2
+          "interval": "",
+          "intervalFactor": 1,
+          "legendFormat": "Reads : {{ container }}",
+          "refId": "A"
         },
         {
-          "expr": "sum by (container_name) (rate(container_fs_writes_bytes_total{namespace=\"$namespace\",pod_name=\"$pod\",container_name=~\"$container\",container_name!=\"POD\",container_name!=\"\"}[2m]))",
+          "expr": "sum by (container) (rate(container_fs_writes_bytes_total{namespace=\"$namespace\",pod=\"$pod\",container=~\"$container\",container!=\"\"}[2m]))",
           "format": "time_series",
-          "intervalFactor": 2,
-          "legendFormat": "Writes : {{ container_name }}",
-          "refId": "B",
-          "step": 2
+          "interval": "",
+          "intervalFactor": 1,
+          "legendFormat": "Writes : {{ container }}",
+          "refId": "B"
         }
       ],
       "thresholds": [],
@@ -1132,11 +1124,11 @@
       "tableColumn": "",
       "targets": [
         {
-          "expr": "sum(rate(container_network_transmit_bytes_total{namespace=\"$namespace\",pod_name=\"$pod\"}[2m])) + sum(rate(container_network_receive_bytes_total{namespace=\"$namespace\",pod_name=\"$pod\"}[2m])) ",
+          "expr": "sum(rate(container_network_transmit_bytes_total{namespace=\"$namespace\",pod=\"$pod\"}[2m])) + sum(rate(container_network_receive_bytes_total{namespace=\"$namespace\",pod=\"$pod\"}[2m])) ",
           "format": "time_series",
-          "intervalFactor": 2,
-          "refId": "A",
-          "step": 20
+          "interval": "",
+          "intervalFactor": 1,
+          "refId": "A"
         }
       ],
       "thresholds": "",
@@ -1194,20 +1186,20 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "rate(container_network_transmit_bytes_total{pod_name=\"$pod\",interface=\"eth0\"}[2m])",
+          "expr": "rate(container_network_transmit_bytes_total{pod=\"$pod\",interface=\"eth0\"}[2m])",
           "format": "time_series",
-          "intervalFactor": 2,
-          "legendFormat": "TX : {{ pod_name }}",
-          "refId": "A",
-          "step": 2
+          "interval": "",
+          "intervalFactor": 1,
+          "legendFormat": "TX : {{ pod }}",
+          "refId": "A"
         },
         {
-          "expr": "rate(container_network_receive_bytes_total{pod_name=\"$pod\",interface=\"eth0\"}[2m])",
+          "expr": "rate(container_network_receive_bytes_total{pod=\"$pod\",interface=\"eth0\"}[2m])",
           "format": "time_series",
-          "intervalFactor": 2,
-          "legendFormat": "RX : {{ pod_name }}",
-          "refId": "B",
-          "step": 2
+          "interval": "",
+          "intervalFactor": 1,
+          "legendFormat": "RX : {{ pod }}",
+          "refId": "B"
         }
       ],
       "thresholds": [],
@@ -1352,5 +1344,5 @@
   "timezone": "browser",
   "title": "Kubernetes: POD Overview",
   "uid": "GlXkUBGiz",
-  "version": 4
+  "version": 5
 }

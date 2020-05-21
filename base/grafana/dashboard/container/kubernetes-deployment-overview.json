@@ -118,13 +118,13 @@
       "tableColumn": "",
       "targets": [
         {
-          "expr": "kube_deployment_spec_replicas{namespace=\"$deployment_namespace\",deployment=\"$deployment_name\"}",
+          "expr": "kube_deployment_spec_replicas{namespace=\"$namespace\",deployment=\"$deployment\"}",
           "format": "time_series",
           "instant": true,
-          "intervalFactor": 2,
+          "interval": "",
+          "intervalFactor": 1,
           "metric": "kube_deployment_spec_replicas",
-          "refId": "A",
-          "step": 600
+          "refId": "A"
         }
       ],
       "thresholds": "",
@@ -202,12 +202,12 @@
       "tableColumn": "",
       "targets": [
         {
-          "expr": "kube_deployment_status_replicas_available{namespace=\"$deployment_namespace\",deployment=\"$deployment_name\"}",
+          "expr": "kube_deployment_status_replicas_available{namespace=\"$namespace\",deployment=\"$deployment\"}",
           "format": "time_series",
           "instant": true,
-          "intervalFactor": 2,
-          "refId": "A",
-          "step": 600
+          "interval": "",
+          "intervalFactor": 1,
+          "refId": "A"
         }
       ],
       "thresholds": "",
@@ -285,12 +285,12 @@
       "tableColumn": "",
       "targets": [
         {
-          "expr": "kube_deployment_status_observed_generation{deployment=\"$deployment_name\",namespace=\"$deployment_namespace\"}",
+          "expr": "kube_deployment_status_observed_generation{deployment=\"$deployment\",namespace=\"$namespace\"}",
           "format": "time_series",
           "instant": true,
-          "intervalFactor": 2,
-          "refId": "A",
-          "step": 600
+          "interval": "",
+          "intervalFactor": 1,
+          "refId": "A"
         }
       ],
       "thresholds": "",
@@ -368,12 +368,12 @@
       "tableColumn": "__name__",
       "targets": [
         {
-          "expr": "kube_deployment_metadata_generation{deployment=\"$deployment_name\",namespace=\"$deployment_namespace\"}",
+          "expr": "kube_deployment_metadata_generation{deployment=\"$deployment\",namespace=\"$namespace\"}",
           "format": "time_series",
           "instant": true,
-          "intervalFactor": 2,
-          "refId": "A",
-          "step": 600
+          "interval": "",
+          "intervalFactor": 1,
+          "refId": "A"
         }
       ],
       "thresholds": "",
@@ -451,9 +451,10 @@
       "tableColumn": "",
       "targets": [
         {
-          "expr": "time() - kube_deployment_created{namespace=\"$deployment_namespace\",deployment=\"$deployment_name\"}",
+          "expr": "time() - kube_deployment_created{namespace=\"$namespace\",deployment=\"$deployment\"}",
           "format": "time_series",
           "instant": true,
+          "interval": "",
           "intervalFactor": 1,
           "refId": "A"
         }
@@ -534,11 +535,11 @@
       "tableColumn": "",
       "targets": [
         {
-          "expr": "sum(rate(container_cpu_usage_seconds_total{namespace=\"$deployment_namespace\",pod_name=~\"$pod_name\",container_name!=\"POD\",container_name!=\"\"}[2m]))",
+          "expr": "sum(rate(container_cpu_usage_seconds_total{namespace=\"$namespace\",pod=~\"$pod\",container!=\"\"}[2m]))",
           "format": "time_series",
-          "intervalFactor": 2,
-          "refId": "A",
-          "step": 600
+          "interval": "",
+          "intervalFactor": 1,
+          "refId": "A"
         }
       ],
       "thresholds": "",
@@ -617,11 +618,11 @@
       "tableColumn": "",
       "targets": [
         {
-          "expr": "sum(container_memory_working_set_bytes{namespace=\"$deployment_namespace\",pod_name=~\"$pod_name\",container_name!=\"POD\",container_name!=\"\"}) ",
+          "expr": "sum(container_memory_working_set_bytes{namespace=\"$namespace\",pod=~\"$pod\",container!=\"\"}) ",
           "format": "time_series",
-          "intervalFactor": 2,
-          "refId": "A",
-          "step": 600
+          "interval": "",
+          "intervalFactor": 1,
+          "refId": "A"
         }
       ],
       "thresholds": "",
@@ -699,11 +700,11 @@
       "tableColumn": "",
       "targets": [
         {
-          "expr": "sum(rate(container_network_transmit_bytes_total{namespace=\"$deployment_namespace\",pod_name=~\"$pod_name\"}[5m])) + sum(rate(container_network_receive_bytes_total{namespace=\"$deployment_namespace\",pod_name=~\"$deployment_name.*\"}[5m]))",
+          "expr": "sum(rate(container_network_transmit_bytes_total{namespace=\"$namespace\",pod=~\"$pod\"}[5m])) + sum(rate(container_network_receive_bytes_total{namespace=\"$namespace\",pod=~\"$pod\"}[5m]))",
           "format": "time_series",
-          "intervalFactor": 2,
-          "refId": "A",
-          "step": 600
+          "interval": "",
+          "intervalFactor": 1,
+          "refId": "A"
         }
       ],
       "thresholds": "",
@@ -767,12 +768,12 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum by (pod_name) (rate(container_cpu_usage_seconds_total{namespace=\"$deployment_namespace\",pod_name=~\"$pod_name\",container_name!=\"POD\",container_name!=\"\"}[2m]))",
+          "expr": "sum by (pod) (rate(container_cpu_usage_seconds_total{namespace=\"$namespace\",pod=~\"$pod\",container!=\"\"}[2m]))",
           "format": "time_series",
-          "intervalFactor": 2,
+          "interval": "",
+          "intervalFactor": 1,
           "legendFormat": "",
-          "refId": "A",
-          "step": 30
+          "refId": "A"
         }
       ],
       "thresholds": [],
@@ -857,14 +858,13 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum by (pod_name) (container_memory_working_set_bytes{namespace=\"$deployment_namespace\",pod_name=~\"$pod_name\",container_name!=\"POD\",container_name!=\"\"})",
+          "expr": "sum by (pod) (container_memory_working_set_bytes{namespace=\"$namespace\",pod=~\"$pod\",container!=\"\"})",
           "format": "time_series",
-          "interval": "10s",
+          "interval": "",
           "intervalFactor": 1,
-          "legendFormat": "Current : {{ pod_name }} ",
+          "legendFormat": "Current : {{ pod }} ",
           "metric": "container_memory_usage_bytes",
-          "refId": "A",
-          "step": 15
+          "refId": "A"
         }
       ],
       "thresholds": [],
@@ -948,18 +948,19 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum by (pod_name) (rate(container_fs_reads_bytes_total{namespace=\"$deployment_namespace\",pod_name=~\"$pod_name\",container_name!=\"POD\",container_name!=\"\"}[2m]))",
+          "expr": "sum by (pod) (rate(container_fs_reads_bytes_total{namespace=\"$namespace\",pod=~\"$pod\",container!=\"\"}[2m]))",
           "format": "time_series",
-          "intervalFactor": 2,
-          "legendFormat": "Reads: {{ pod_name }}",
-          "refId": "A",
-          "step": 30
+          "interval": "",
+          "intervalFactor": 1,
+          "legendFormat": "Reads: {{ pod }}",
+          "refId": "A"
         },
         {
-          "expr": "sum by (pod_name) (rate(container_fs_writes_bytes_total{namespace=\"$deployment_namespace\",pod_name=~\"$pod_name\",container_name!=\"POD\",container_name!=\"\"}[2m]))",
+          "expr": "sum by (pod) (rate(container_fs_writes_bytes_total{namespace=\"$namespace\",pod=~\"$pod\",container!=\"\"}[2m]))",
           "format": "time_series",
+          "interval": "",
           "intervalFactor": 1,
-          "legendFormat": "Writes: {{ pod_name }}",
+          "legendFormat": "Writes: {{ pod }}",
           "refId": "B"
         }
       ],
@@ -1045,20 +1046,19 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum by (pod_name) (rate(container_network_transmit_bytes_total{namespace=\"$deployment_namespace\",pod_name=~\"$pod_name\"}[2m]))",
+          "expr": "sum by (pod) (rate(container_network_transmit_bytes_total{namespace=\"$namespace\",pod=~\"$pod\"}[2m]))",
           "format": "time_series",
-          "interval": "10s",
+          "interval": "",
           "intervalFactor": 1,
-          "legendFormat": "TX: {{ pod_name }}",
-          "metric": "container_memory_usage_bytes",
-          "refId": "A",
-          "step": 15
+          "legendFormat": "TX: {{ pod }}",
+          "refId": "A"
         },
         {
-          "expr": "sum by (pod_name)(rate(container_network_receive_bytes_total{namespace=\"$daemonset_namespace\",pod_name=~\"$pod_name\"}[2m]))",
+          "expr": "sum by (pod)(rate(container_network_receive_bytes_total{namespace=\"$daemonset_namespace\",pod=~\"$pod\"}[2m]))",
           "format": "time_series",
+          "interval": "",
           "intervalFactor": 1,
-          "legendFormat": "RX: {{ pod_name }}",
+          "legendFormat": "RX: {{ pod }}",
           "refId": "B"
         }
       ],
@@ -1137,28 +1137,28 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "avg(kube_deployment_status_replicas_available{namespace=~\"$deployment_namespace\",deployment=~\"$deployment_name\"}) by(namespace, deployment)",
+          "expr": "avg(kube_deployment_status_replicas_available{namespace=~\"$namespace\",deployment=~\"$deployment\"}) by(namespace, deployment)",
           "format": "time_series",
-          "intervalFactor": 2,
+          "interval": "",
+          "intervalFactor": 1,
           "legendFormat": "Available",
-          "refId": "A",
-          "step": 4
+          "refId": "A"
         },
         {
-          "expr": "avg(kube_deployment_status_replicas_unavailable{namespace=~\"$deployment_namespace\",deployment=~\"$deployment_name\"}) by(namespace, deployment)",
+          "expr": "avg(kube_deployment_status_replicas_unavailable{namespace=~\"$namespace\",deployment=~\"$deployment\"}) by(namespace, deployment)",
           "format": "time_series",
-          "intervalFactor": 2,
+          "interval": "",
+          "intervalFactor": 1,
           "legendFormat": "Unavailable",
-          "refId": "B",
-          "step": 4
+          "refId": "B"
         },
         {
-          "expr": "avg(kube_deployment_status_replicas_updated{namespace=~\"$deployment_namespace\",deployment=~\"$deployment_name\"}) by(namespace, deployment)",
+          "expr": "avg(kube_deployment_status_replicas_updated{namespace=~\"$namespace\",deployment=~\"$deployment\"}) by(namespace, deployment)",
           "format": "time_series",
-          "intervalFactor": 2,
+          "interval": "",
+          "intervalFactor": 1,
           "legendFormat": "Updated",
-          "refId": "C",
-          "step": 4
+          "refId": "C"
         }
       ],
       "thresholds": [],
@@ -1241,20 +1241,20 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "avg(kube_deployment_spec_replicas{namespace=~\"$deployment_namespace\",deployment=~\"$deployment_name\"}) by(namespace, deployment)",
+          "expr": "avg(kube_deployment_spec_replicas{namespace=~\"$namespace\",deployment=~\"$deployment\"}) by(namespace, deployment)",
           "format": "time_series",
-          "intervalFactor": 2,
+          "interval": "",
+          "intervalFactor": 1,
           "legendFormat": "Replicas",
-          "refId": "A",
-          "step": 4
+          "refId": "A"
         },
         {
-          "expr": "avg(kube_deployment_spec_paused{namespace=~\"$deployment_namespace\",deployment=~\"$deployment_name\"}) by(namespace, deployment)",
+          "expr": "avg(kube_deployment_spec_paused{namespace=~\"$namespace\",deployment=~\"$deployment\"}) by(namespace, deployment)",
           "format": "time_series",
-          "intervalFactor": 2,
+          "interval": "",
+          "intervalFactor": 1,
           "legendFormat": "Paused",
-          "refId": "B",
-          "step": 4
+          "refId": "B"
         }
       ],
       "thresholds": [],
@@ -1313,7 +1313,7 @@
         "includeAll": false,
         "label": "Namespace",
         "multi": false,
-        "name": "deployment_namespace",
+        "name": "namespace",
         "options": [],
         "query": "label_values(kube_deployment_metadata_generation, namespace)",
         "refresh": 1,
@@ -1333,9 +1333,9 @@
         "includeAll": false,
         "label": "Deployment",
         "multi": false,
-        "name": "deployment_name",
+        "name": "deployment",
         "options": [],
-        "query": "label_values(kube_deployment_metadata_generation{namespace=\"$deployment_namespace\"}, deployment)",
+        "query": "label_values(kube_deployment_metadata_generation{namespace=\"$namespace\"}, deployment)",
         "refresh": 1,
         "regex": "",
         "sort": 0,
@@ -1353,9 +1353,9 @@
         "includeAll": true,
         "label": "Pod",
         "multi": false,
-        "name": "pod_name",
+        "name": "pod",
         "options": [],
-        "query": "label_values(kube_pod_info{namespace=\"$deployment_namespace\",created_by_kind=\"ReplicaSet\",created_by_name=~\"$deployment_name-[-a-z0-9]{7,10}\"}, pod)",
+        "query": "label_values(kube_pod_info{namespace=\"$namespace\",created_by_kind=\"ReplicaSet\",created_by_name=~\"$deployment-[-a-z0-9]{7,10}\"}, pod)",
         "refresh": 2,
         "regex": "",
         "sort": 0,
@@ -1399,5 +1399,5 @@
   "timezone": "browser",
   "title": "Kubernetes: Deployment Overview",
   "uid": "ORYiYUzmk",
-  "version": 5
+  "version": 6
 }
