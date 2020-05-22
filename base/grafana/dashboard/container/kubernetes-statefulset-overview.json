@@ -118,12 +118,12 @@
       "tableColumn": "",
       "targets": [
         {
-          "expr": "kube_statefulset_replicas{namespace=\"$statefulset_namespace\",statefulset=\"$statefulset_name\"}",
+          "expr": "kube_statefulset_replicas{namespace=\"$namespace\",statefulset=\"$statefulset\"}",
           "format": "time_series",
           "instant": true,
-          "intervalFactor": 2,
-          "refId": "A",
-          "step": 600
+          "interval": "",
+          "intervalFactor": 1,
+          "refId": "A"
         }
       ],
       "thresholds": "",
@@ -201,12 +201,12 @@
       "tableColumn": "",
       "targets": [
         {
-          "expr": "kube_statefulset_status_replicas{namespace=\"$statefulset_namespace\",statefulset=\"$statefulset_name\"}",
+          "expr": "kube_statefulset_status_replicas{namespace=\"$namespace\",statefulset=\"$statefulset\"}",
           "format": "time_series",
           "instant": true,
-          "intervalFactor": 2,
-          "refId": "A",
-          "step": 600
+          "interval": "",
+          "intervalFactor": 1,
+          "refId": "A"
         }
       ],
       "thresholds": "",
@@ -284,12 +284,12 @@
       "tableColumn": "",
       "targets": [
         {
-          "expr": "kube_statefulset_status_observed_generation{namespace=\"$statefulset_namespace\",statefulset=\"$statefulset_name\"}",
+          "expr": "kube_statefulset_status_observed_generation{namespace=\"$namespace\",statefulset=\"$statefulset\"}",
           "format": "time_series",
           "instant": true,
-          "intervalFactor": 2,
-          "refId": "A",
-          "step": 600
+          "interval": "",
+          "intervalFactor": 1,
+          "refId": "A"
         }
       ],
       "thresholds": "",
@@ -367,12 +367,12 @@
       "tableColumn": "",
       "targets": [
         {
-          "expr": "kube_statefulset_metadata_generation{namespace=\"$statefulset_namespace\",statefulset=\"$statefulset_name\"}",
+          "expr": "kube_statefulset_metadata_generation{namespace=\"$namespace\",statefulset=\"$statefulset\"}",
           "format": "time_series",
           "instant": true,
-          "intervalFactor": 2,
-          "refId": "A",
-          "step": 600
+          "interval": "",
+          "intervalFactor": 1,
+          "refId": "A"
         }
       ],
       "thresholds": "",
@@ -450,9 +450,10 @@
       "tableColumn": "",
       "targets": [
         {
-          "expr": "time() - kube_statefulset_created{namespace=\"$statefulset_namespace\",statefulset=\"$statefulset_name\"}",
+          "expr": "time() - kube_statefulset_created{namespace=\"$namespace\",statefulset=\"$statefulset\"}",
           "format": "time_series",
           "instant": true,
+          "interval": "",
           "intervalFactor": 1,
           "refId": "A"
         }
@@ -533,11 +534,11 @@
       "tableColumn": "",
       "targets": [
         {
-          "expr": "sum(rate(container_cpu_usage_seconds_total{namespace=\"$statefulset_namespace\",pod_name=~\"$pod_name\",container_name!=\"POD\",container_name!=\"\"}[2m]))",
+          "expr": "sum(rate(container_cpu_usage_seconds_total{namespace=\"$namespace\",pod=~\"$pod\",container!=\"\"}[2m]))",
           "format": "time_series",
-          "intervalFactor": 2,
-          "refId": "A",
-          "step": 600
+          "interval": "",
+          "intervalFactor": 1,
+          "refId": "A"
         }
       ],
       "thresholds": "",
@@ -615,11 +616,11 @@
       "tableColumn": "",
       "targets": [
         {
-          "expr": "sum(container_memory_working_set_bytes{namespace=\"$statefulset_namespace\",pod_name=~\"$pod_name\",container_name!=\"POD\",container_name!=\"\"})",
+          "expr": "sum(container_memory_working_set_bytes{namespace=\"$namespace\",pod=~\"$pod\",container!=\"\"})",
           "format": "time_series",
-          "intervalFactor": 2,
-          "refId": "A",
-          "step": 600
+          "interval": "",
+          "intervalFactor": 1,
+          "refId": "A"
         }
       ],
       "thresholds": "",
@@ -697,11 +698,11 @@
       "tableColumn": "",
       "targets": [
         {
-          "expr": "sum(rate(container_network_transmit_bytes_total{namespace=\"$statefulset_namespace\",pod_name=~\"$statefulset_name.*\",pod_name!=\"\"}[2m])) + sum(rate(container_network_receive_bytes_total{namespace=\"$statefulset_namespace\",pod_name=~\"$statefulset_name.*\", pod_name!=\"\"}[2m]))",
+          "expr": "sum(rate(container_network_transmit_bytes_total{namespace=\"$namespace\",pod=~\"$pod\",pod!=\"\"}[2m])) + sum(rate(container_network_receive_bytes_total{namespace=\"$namespace\",pod=~\"$pod\", pod!=\"\"}[2m]))",
           "format": "time_series",
-          "intervalFactor": 2,
-          "refId": "A",
-          "step": 600
+          "interval": "",
+          "intervalFactor": 1,
+          "refId": "A"
         }
       ],
       "thresholds": "",
@@ -765,12 +766,12 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum by (pod_name) (rate(container_cpu_usage_seconds_total{namespace=\"$statefulset_namespace\",pod_name=~\"$pod_name\",container_name!=\"POD\",container_name!=\"\"}[2m]))",
+          "expr": "sum by (pod) (rate(container_cpu_usage_seconds_total{namespace=\"$namespace\",pod=~\"$pod\",container!=\"\"}[2m]))",
           "format": "time_series",
-          "intervalFactor": 2,
-          "legendFormat": "{{ pod_name }}",
-          "refId": "A",
-          "step": 30
+          "interval": "",
+          "intervalFactor": 1,
+          "legendFormat": "{{ pod }}",
+          "refId": "A"
         }
       ],
       "thresholds": [],
@@ -855,13 +856,12 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum by (pod_name) (container_memory_working_set_bytes{namespace=\"$statefulset_namespace\",pod_name=~\"$pod_name\",container_name!=\"\",container_name!=\"POD\"})",
+          "expr": "sum by (pod) (container_memory_working_set_bytes{namespace=\"$namespace\",pod=~\"$pod\",container!=\"\"})",
           "format": "time_series",
-          "interval": "10s",
+          "interval": "",
           "intervalFactor": 1,
-          "legendFormat": "{{ pod_name }}",
-          "refId": "A",
-          "step": 15
+          "legendFormat": "{{ pod }}",
+          "refId": "A"
         }
       ],
       "thresholds": [],
@@ -945,19 +945,19 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum by (pod_name) (rate(container_fs_reads_bytes_total{namespace=\"$statefulset_namespace\",pod_name=~\"$pod_name\",container_name!=\"POD\",container_name!=\"\"}[2m]))",
+          "expr": "sum by (pod) (rate(container_fs_reads_bytes_total{namespace=\"$namespace\",pod=~\"$pod\",container!=\"\"}[2m]))",
           "format": "time_series",
-          "interval": "10s",
+          "interval": "",
           "intervalFactor": 1,
-          "legendFormat": "Reads: {{ pod_name }}",
-          "refId": "A",
-          "step": 15
+          "legendFormat": "Reads: {{ pod }}",
+          "refId": "A"
         },
         {
-          "expr": "sum by (pod_name) (rate(container_fs_writes_bytes_total{namespace=\"$statefulset_namespace\",pod_name=~\"$pod_name\",container_name!=\"POD\",container_name!=\"\"}[2m]))",
+          "expr": "sum by (pod) (rate(container_fs_writes_bytes_total{namespace=\"$namespace\",pod=~\"$pod\",container!=\"\"}[2m]))",
           "format": "time_series",
+          "interval": "",
           "intervalFactor": 1,
-          "legendFormat": "Writes: {{ pod_name }}",
+          "legendFormat": "Writes: {{ pod }}",
           "refId": "B"
         }
       ],
@@ -1042,19 +1042,19 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum by (pod_name) (rate(container_network_transmit_bytes_total{namespace=\"$statefulset_namespace\",pod_name=~\"$pod_name\"}[2m]))",
+          "expr": "sum by (pod) (rate(container_network_transmit_bytes_total{namespace=\"$namespace\",pod=~\"$pod\"}[2m]))",
           "format": "time_series",
-          "interval": "10s",
+          "interval": "",
           "intervalFactor": 1,
-          "legendFormat": "TX: {{ pod_name }}",
-          "refId": "A",
-          "step": 15
+          "legendFormat": "TX: {{ pod }}",
+          "refId": "A"
         },
         {
-          "expr": "sum by (pod_name) (rate(container_network_receive_bytes_total{namespace=\"$statefulset_namespace\",pod_name=~\"$pod_name\"}[2m]))",
+          "expr": "sum by (pod) (rate(container_network_receive_bytes_total{namespace=\"$namespace\",pod=~\"$pod\"}[2m]))",
           "format": "time_series",
+          "interval": "",
           "intervalFactor": 1,
-          "legendFormat": "RX: {{ pod_name }}",
+          "legendFormat": "RX: {{ pod }}",
           "refId": "B"
         }
       ],
@@ -1140,18 +1140,20 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "avg(kube_statefulset_status_replicas_current{namespace=\"$statefulset_namespace\",statefulset=\"$statefulset_name\"}) without (instance, pod)",
+          "expr": "avg(kube_statefulset_status_replicas_current{namespace=\"$namespace\",statefulset=\"$statefulset\"}) without (instance, pod)",
           "format": "time_series",
+          "interval": "",
           "intervalFactor": 1,
           "legendFormat": "Current",
           "refId": "A"
         },
         {
-          "expr": "avg(kube_statefulset_status_replicas{namespace=\"$statefulset_namespace\",statefulset=\"$statefulset_name\"}) without (instance, pod)",
+          "expr": "avg(kube_statefulset_status_replicas{namespace=\"$namespace\",statefulset=\"$statefulset\"}) without (instance, pod)",
           "format": "time_series",
+          "interval": "",
           "intervalFactor": 1,
           "legendFormat": "Available",
-          "refId": "C"
+          "refId": "B"
         }
       ],
       "thresholds": [],
@@ -1206,7 +1208,7 @@
         "includeAll": false,
         "label": "Namespace",
         "multi": false,
-        "name": "statefulset_namespace",
+        "name": "namespace",
         "options": [],
         "query": "label_values(kube_statefulset_metadata_generation, namespace)",
         "refresh": 1,
@@ -1226,9 +1228,9 @@
         "includeAll": false,
         "label": "StatefulSet",
         "multi": false,
-        "name": "statefulset_name",
+        "name": "statefulset",
         "options": [],
-        "query": "label_values(kube_statefulset_metadata_generation{namespace=\"$statefulset_namespace\"}, statefulset)",
+        "query": "label_values(kube_statefulset_metadata_generation{namespace=\"$namespace\"}, statefulset)",
         "refresh": 1,
         "regex": "",
         "sort": 0,
@@ -1246,9 +1248,9 @@
         "includeAll": true,
         "label": "Pod",
         "multi": false,
-        "name": "pod_name",
+        "name": "pod",
         "options": [],
-        "query": "label_values(kube_pod_info{namespace=\"$statefulset_namespace\",created_by_kind=\"StatefulSet\",created_by_name=\"$statefulset_name\"}, pod)",
+        "query": "label_values(kube_pod_info{namespace=\"$namespace\",created_by_kind=\"StatefulSet\",created_by_name=\"$statefulset\"}, pod)",
         "refresh": 2,
         "regex": "",
         "sort": 0,
@@ -1292,5 +1294,5 @@
   "timezone": "browser",
   "title": "Kubernetes: StatefulSet Overview",
   "uid": "XYPiY8kik",
-  "version": 7
+  "version": 8
 }

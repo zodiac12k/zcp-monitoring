@@ -49,10 +49,10 @@ patchesJson6902:
     version: v1beta1
 - path: prometheus/prometheus-deployment_patch.yaml
   target:
-    group: extensions
+    group: apps
     kind: Deployment
     name: prometheus-deployment
-    version: v1beta1
+    version: v1
 configMapGenerator:
 - name: prometheus-config
   namespace: zcp-system
