@@ -391,17 +391,56 @@ configmapReload:
 kubeStateMetrics:
   ## If false, kube-state-metrics sub-chart will not be installed
   ##
-  enabled: false
+  enabled: true
 
 ## kube-state-metrics sub-chart configurable values
 ## Please see https://github.com/helm/charts/tree/master/stable/kube-state-metrics
 ##
-# kube-state-metrics:
+kube-state-metrics:
+  collectors:
+    certificatesigningrequests: true
+    configmaps: true
+    cronjobs: true
+    daemonsets: true
+    deployments: true
+    endpoints: true
+    horizontalpodautoscalers: true
+    ingresses: true
+    jobs: true
+    limitranges: true
+    mutatingwebhookconfigurations: false
+    namespaces: true
+    networkpolicies: true
+    nodes: true
+    persistentvolumeclaims: true
+    persistentvolumes: true
+    poddisruptionbudgets: true
+    pods: true
+    replicasets: true
+    replicationcontrollers: true
+    resourcequotas: true
+    secrets: true
+    services: true
+    statefulsets: true
+    storageclasses: true
+    validatingwebhookconfigurations: false
+    verticalpodautoscalers: false
+    volumeattachments: true
+  # Namespace to be enabled for collecting resources. By default all namespaces are collected.
+  namespace: "default,kube-node-lease,kube-public,kube-system,zcp-system,ibm-system"
+
+  resources:
+    limits:
+      cpu: 50m
+      memory: 100Mi
+    requests:
+      cpu: 10m
+      memory: 50Mi
 
 nodeExporter:
   ## If false, node-exporter will not be installed
   ##
-  enabled: false
+  enabled: true
 
   ## If true, node-exporter pods share the host network namespace
   ##
@@ -471,11 +510,8 @@ nodeExporter:
   ## Node tolerations for node-exporter scheduling to nodes with taints
   ## Ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/
   ##
-  tolerations: []
-    # - key: "key"
-    #   operator: "Equal|Exists"
-    #   value: "value"
-    #   effect: "NoSchedule|PreferNoSchedule|NoExecute(1.6 only)"
+  tolerations:
+  - operator: Exists
 
   ## Node labels for node-exporter pod assignment
   ## Ref: https://kubernetes.io/docs/user-guide/node-selection/
@@ -665,13 +701,14 @@ server:
   ingress:
     ## If true, Prometheus server Ingress will be created
     ##
-    enabled: false
+    enabled: true
 
     ## Prometheus server Ingress annotations
     ##
-    annotations: {}
-    #   kubernetes.io/ingress.class: nginx
-    #   kubernetes.io/tls-acme: 'true'
+    annotations:
+      kubernetes.io/ingress.class: nginx
+      kubernetes.io/tls-acme: 'true'
+      nginx.ingress.kubernetes.io/ssl-redirect: 'true'
 
     ## Prometheus server Ingress additional labels
     ##
@@ -680,8 +717,8 @@ server:
     ## Prometheus server Ingress hostnames with optional path
     ## Must be provided if Ingress is enabled
     ##
-    hosts: []
-    #   - prometheus.domain.com
+    hosts:
+    - prometheus.domain.com
     #   - domain.com/prometheus
 
     ## Extra paths to prepend to every host configuration. This is useful when working with annotation based services.
@@ -694,10 +731,10 @@ server:
     ## Prometheus server Ingress TLS configuration
     ## Secrets must be manually created in the namespace
     ##
-    tls: []
-    #   - secretName: prometheus-server-tls
-    #     hosts:
-    #       - prometheus.domain.com
+    tls:
+    - secretName: prometheus-server-tls
+      hosts:
+      - prometheus.domain.com
 
   ## Server Deployment Strategy type
   # strategy:
@@ -1194,75 +1231,81 @@ serverFiles:
     # the endpoints associated with the default/kubernetes service using the
     # default named port `https`. This works for single API server deployments as
     # well as HA API server deployments.
-#    - job_name: 'kubernetes-apiservers'
-#
-#      kubernetes_sd_configs:
-#      - role: endpoints
-#
-#      # Default to scraping over https. If required, just disable this or change to
-#      # `http`.
-#      scheme: https
-#
-#      # This TLS & bearer token file config is used to connect to the actual scrape
-#      # endpoints for cluster components. This is separate to discovery auth
-#      # configuration because discovery & scraping are two separate concerns in
-#      # Prometheus. The discovery auth config is automatic if Prometheus runs inside
-#      # the cluster. Otherwise, more config options have to be provided within the
-#      # <kubernetes_sd_config>.
-#      tls_config:
-#        ca_file: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
-#        # If your node certificates are self-signed or use a different CA to the
-#        # master CA, then disable certificate verification below. Note that
-#        # certificate verification is an integral part of a secure infrastructure
-#        # so this should only be disabled in a controlled environment. You can
-#        # disable certificate verification by uncommenting the line below.
-#        #
-#        insecure_skip_verify: true
-#      bearer_token_file: /var/run/secrets/kubernetes.io/serviceaccount/token
-#
-#      # Keep only the default/kubernetes service endpoints for the https port. This
-#      # will add targets for each API server which Kubernetes adds an endpoint to
-#      # the default/kubernetes service.
-#      relabel_configs:
-#      - source_labels: [__meta_kubernetes_namespace, __meta_kubernetes_service_name, __meta_kubernetes_endpoint_port_name]
-#        action: keep
-#        regex: default;kubernetes;https
+    - job_name: 'kubernetes-apiservers'
 
-#    - job_name: 'kubernetes-nodes'
-#
-#      # Default to scraping over https. If required, just disable this or change to
-#      # `http`.
-#      scheme: https
-#
-#      # This TLS & bearer token file config is used to connect to the actual scrape
-#      # endpoints for cluster components. This is separate to discovery auth
-#      # configuration because discovery & scraping are two separate concerns in
-#      # Prometheus. The discovery auth config is automatic if Prometheus runs inside
-#      # the cluster. Otherwise, more config options have to be provided within the
-#      # <kubernetes_sd_config>.
-#      tls_config:
-#        ca_file: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
-#        # If your node certificates are self-signed or use a different CA to the
-#        # master CA, then disable certificate verification below. Note that
-#        # certificate verification is an integral part of a secure infrastructure
-#        # so this should only be disabled in a controlled environment. You can
-#        # disable certificate verification by uncommenting the line below.
-#        #
-#        insecure_skip_verify: true
-#      bearer_token_file: /var/run/secrets/kubernetes.io/serviceaccount/token
-#
-#      kubernetes_sd_configs:
-#      - role: node
-#
-#      relabel_configs:
-#      - action: labelmap
-#        regex: __meta_kubernetes_node_label_(.+)
+      kubernetes_sd_configs:
+      - role: endpoints
+
+      # Default to scraping over https. If required, just disable this or change to
+      # `http`.
+      scheme: https
+
+      # This TLS & bearer token file config is used to connect to the actual scrape
+      # endpoints for cluster components. This is separate to discovery auth
+      # configuration because discovery & scraping are two separate concerns in
+      # Prometheus. The discovery auth config is automatic if Prometheus runs inside
+      # the cluster. Otherwise, more config options have to be provided within the
+      # <kubernetes_sd_config>.
+      tls_config:
+        ca_file: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+        # If your node certificates are self-signed or use a different CA to the
+        # master CA, then disable certificate verification below. Note that
+        # certificate verification is an integral part of a secure infrastructure
+        # so this should only be disabled in a controlled environment. You can
+        # disable certificate verification by uncommenting the line below.
+        #
+        insecure_skip_verify: true
+      bearer_token_file: /var/run/secrets/kubernetes.io/serviceaccount/token
+
+      # Keep only the default/kubernetes service endpoints for the https port. This
+      # will add targets for each API server which Kubernetes adds an endpoint to
+      # the default/kubernetes service.
+      relabel_configs:
+      - source_labels: [__meta_kubernetes_namespace, __meta_kubernetes_service_name, __meta_kubernetes_endpoint_port_name]
+        action: keep
+        regex: default;kubernetes;https
+
+    - job_name: 'kubernetes-nodes'
+
+      # Default to scraping over https. If required, just disable this or change to
+      # `http`.
+      scheme: https
+
+      # This TLS & bearer token file config is used to connect to the actual scrape
+      # endpoints for cluster components. This is separate to discovery auth
+      # configuration because discovery & scraping are two separate concerns in
+      # Prometheus. The discovery auth config is automatic if Prometheus runs inside
+      # the cluster. Otherwise, more config options have to be provided within the
+      # <kubernetes_sd_config>.
+      tls_config:
+        ca_file: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+        # If your node certificates are self-signed or use a different CA to the
+        # master CA, then disable certificate verification below. Note that
+        # certificate verification is an integral part of a secure infrastructure
+        # so this should only be disabled in a controlled environment. You can
+        # disable certificate verification by uncommenting the line below.
+        #
+        insecure_skip_verify: true
+      bearer_token_file: /var/run/secrets/kubernetes.io/serviceaccount/token
+
+      kubernetes_sd_configs:
+      - role: node
+
+      relabel_configs:
+      - action: labelmap
+        regex: __meta_kubernetes_node_label_(.+)
+      - action: labelmap
+        regex: __meta_kubernetes_node_label_node_role_kubernetes_io_(.+)
+        replacement: dedicated
 #      - target_label: __address__
 #        replacement: kubernetes.default.svc:443
 #      - source_labels: [__meta_kubernetes_node_name]
 #        regex: (.+)
 #        target_label: __metrics_path__
 #        replacement: /api/v1/nodes/$1/proxy/metrics
+      - source_labels: [__meta_kubernetes_node_name]
+        action: replace
+        target_label: node
 
 
     - job_name: 'kubernetes-nodes-cadvisor'
@@ -1329,16 +1372,14 @@ serverFiles:
 
       kubernetes_sd_configs:
       - role: endpoints
-        namespaces:
-          names: [ns-a, cicd-1]
 
       relabel_configs:
       - source_labels: [__meta_kubernetes_service_annotation_prometheus_io_scrape]
         action: keep
         regex: true
-#      - source_labels: [__meta_kubernetes_namespace]
-#        action: keep
-#        regex: zcp-system
+      - source_labels: [__meta_kubernetes_pod_label_component]
+        action: drop
+        regex: node-exporter
       - source_labels: [__meta_kubernetes_service_annotation_prometheus_io_scheme]
         action: replace
         target_label: __scheme__
@@ -1383,16 +1424,11 @@ serverFiles:
 
       kubernetes_sd_configs:
       - role: endpoints
-        namespaces:
-          names: [ns-a, cicd-1]
 
       relabel_configs:
       - source_labels: [__meta_kubernetes_service_annotation_prometheus_io_scrape_slow]
         action: keep
         regex: true
-#      - source_labels: [__meta_kubernetes_namespace]
-#        action: keep
-#        regex: zcp-system
       - source_labels: [__meta_kubernetes_service_annotation_prometheus_io_scheme]
         action: replace
         target_label: __scheme__
@@ -1443,16 +1479,11 @@ serverFiles:
 
       kubernetes_sd_configs:
       - role: service
-        namespaces:
-          names: [ns-a, cicd-1]
 
       relabel_configs:
       - source_labels: [__meta_kubernetes_service_annotation_prometheus_io_probe]
         action: keep
         regex: true
-#      - source_labels: [__meta_kubernetes_namespace]
-#        action: keep
-#        regex: zcp-system
       - source_labels: [__address__]
         target_label: __param_target
       - target_label: __address__
@@ -1478,16 +1509,11 @@ serverFiles:
 
       kubernetes_sd_configs:
       - role: pod
-        namespaces:
-          names: [ns-a, cicd-1]
 
       relabel_configs:
       - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_scrape]
         action: keep
         regex: true
-#      - source_labels: [__meta_kubernetes_namespace]
-#        action: keep
-#        regex: zcp-system
       - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_path]
         action: replace
         target_label: __metrics_path__
@@ -1522,16 +1548,11 @@ serverFiles:
 
       kubernetes_sd_configs:
       - role: pod
-        namespaces:
-          names: [ns-a, cicd-1]
 
       relabel_configs:
       - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_scrape_slow]
         action: keep
         regex: true
-#      - source_labels: [__meta_kubernetes_namespace]
-#        action: keep
-#        regex: zcp-system
       - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_path]
         action: replace
         target_label: __metrics_path__
@@ -1549,6 +1570,95 @@ serverFiles:
       - source_labels: [__meta_kubernetes_pod_name]
         action: replace
         target_label: kubernetes_pod_name
+
+    - job_name: 'kubernetes-nodes-exporter'
+
+      kubernetes_sd_configs:
+      - role: node
+
+      relabel_configs:
+      - action: labelmap
+        regex: __meta_kubernetes_node_label_(.+)
+      - action: labelmap
+        regex: __meta_kubernetes_node_label_node_role_kubernetes_io_(.+)
+        replacement: dedicated
+      - source_labels: [__meta_kubernetes_node_name]
+        regex: (.+)
+        target_label: __address__
+        replacement: ${1}:9100
+
+    - job_name: 'kube-dns'
+
+      kubernetes_sd_configs:
+      - role: endpoints
+        namespaces:
+          names: [kube-system]
+
+      relabel_configs:
+      - source_labels: [__meta_kubernetes_service_annotation_prometheus_io_scrape]
+        action: keep
+        regex: true
+      - source_labels: [__meta_kubernetes_namespace]
+        action: keep
+        regex: kube-system
+      - source_labels: [__meta_kubernetes_service_annotation_prometheus_io_scheme]
+        action: replace
+        target_label: __scheme__
+        regex: (https?)
+      - source_labels: [__meta_kubernetes_service_annotation_prometheus_io_path]
+        action: replace
+        target_label: __metrics_path__
+        regex: (.+)
+      - source_labels: [__meta_kubernetes_pod_container_port_number]
+        action: drop
+        regex: 53
+      - source_labels: [__meta_kubernetes_pod_container_port_number]
+        action: drop
+        regex: 10053
+      - source_labels: [__address__, __meta_kubernetes_service_annotation_prometheus_io_port]
+        action: replace
+        target_label: __address__
+        regex: ([^:]+)(?::\d+)?;(\d+)
+        replacement: $1:$2
+      - action: labelmap
+        regex: __meta_kubernetes_service_label_(.+)
+      - source_labels: [__meta_kubernetes_namespace]
+        action: replace
+        target_label: kubernetes_namespace
+      - source_labels: [__meta_kubernetes_service_name]
+        action: replace
+        target_label: kubernetes_name
+
+    - job_name: 'kubernetes-ingress'
+
+      metrics_path: /probe
+      params:
+        module: [http_2xx]
+
+      kubernetes_sd_configs:
+      - role: ingress
+
+      relabel_configs:
+      - source_labels: [__meta_kubernetes_ingress_annotation_prometheus_io_probe]
+        action: keep
+        regex: true
+      - source_labels: [__meta_kubernetes_ingress_scheme, __address__, __meta_kubernetes_ingress_path]
+        regex: (.+);(.+);(.+)
+        replacement: ${1}://${2}${3}
+        target_label: __param_target
+      - target_label: __address__
+        replacement: blackbox:9115
+      - source_labels: [__param_target]
+        target_label: instance
+      - action: labelmap
+        regex: __meta_kubernetes_ingress_(.+)
+      - source_labels: [__meta_kubernetes_namespace]
+        target_label: namespace
+      - source_labels: [__meta_kubernetes_ingress_path]
+        target_label: pod
+      - source_labels: [__meta_kubernetes_ingress_name]
+        target_label: kubernetes_name
+
 
 # adds additional scrape configs to prometheus.yml
 # must be a string so you have to add a | after extraScrapeConfigs:
