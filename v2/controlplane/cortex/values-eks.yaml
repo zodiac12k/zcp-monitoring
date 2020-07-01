@@ -203,19 +203,19 @@ config:
     s3:
       # S3 endpoint without schema
       # CLI flag: -experimental.tsdb.s3.endpoint
-      endpoint: "s3.ap-northeast-2.amazonaws.com"
+      endpoint: ""
 
       # S3 bucket name
       # CLI flag: -experimental.tsdb.s3.bucket-name
-      bucket_name: "cloudzcp-mcm-dev-cortex-tsdb"
+      bucket_name: ""
 
       # S3 secret access key
       # CLI flag: -experimental.tsdb.s3.secret-access-key
-      secret_access_key: "O7Q5284Ky/3uptjiH3aP9CxZncAO5W1AbkPN023v"
+      secret_access_key: ""
 
       # S3 access key ID
       # CLI flag: -experimental.tsdb.s3.access-key-id
-      access_key_id: "AKIAQUADDOZVPRHZER46"
+      access_key_id: ""
 #  purger:
 #    # Enable purger to allow deletion of series. Be aware that Delete series feature
 #    # is still experimental

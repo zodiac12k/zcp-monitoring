@@ -57,7 +57,11 @@ helm install cortex . -f cortex/values-eks.yaml \
 --set ingress.annotations."kubernetes\.io/ingress\.class"=nginx \
 --set ingress.hosts[0].host=cortex.mcm-dev.cloudzcp.com \
 --set ingress.tls[0].secretName=cloudzcp-com-cert \
---set ingress.tls[0].hosts[0]=cortex.mcm-dev.cloudzcp.com
+--set ingress.tls[0].hosts[0]=cortex.mcm-dev.cloudzcp.com \
+--set config.tsdb.s3.endpoint=s3.ap-northeast-2.amazonaws.com \
+--set config.tsdb.s3.bucket_name=cloudzcp-mcm-dev-cortex-tsdb \
+--set config.tsdb.s3.secret_access_key=xxx \
+--set config.tsdb.s3.access_key_id=xxx
 ```
 
 #### Deploy cortex gateway
