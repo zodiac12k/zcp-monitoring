@@ -386,7 +386,23 @@ dashboardProviders:
 ## dashboards per provider, use provider name as key.
 ##
 dashboards:
+  system:
+    kubernetes-system-overview:
+      url: https://raw.githubusercontent.com/cloudz-cp/zcp-monitoring/master/base/grafana/dashboard/system/kubernetes-system-overview.json
+    kubernetes-system-node-overview:
+      url: https://raw.githubusercontent.com/cloudz-cp/zcp-monitoring/master/base/grafana/dashboard/system/kubernetes-system-node-overview.json
+  cluster:
+    kubernetes-clusters-overview:
+      url: https://raw.githubusercontent.com/cloudz-cp/zcp-monitoring/master/base/grafana/dashboard/cluster/kubernetes-clusters-overview.json
+    kubernetes-cluster-nodes-overview:
+      url: https://raw.githubusercontent.com/cloudz-cp/zcp-monitoring/master/base/grafana/dashboard/cluster/kubernetes-cluster-nodes-overview.json
+    kubernetes-cluster-namespaces-overview:
+      url: https://raw.githubusercontent.com/cloudz-cp/zcp-monitoring/master/base/grafana/dashboard/cluster/kubernetes-cluster-namespaces-overview.json
+    kubernetes-node-overview:
+      url: https://raw.githubusercontent.com/cloudz-cp/zcp-monitoring/master/base/grafana/dashboard/cluster/kubernetes-node-overview.json
   container:
+    kubernetes-namespace-overview:
+      url: https://raw.githubusercontent.com/cloudz-cp/zcp-monitoring/master/base/grafana/dashboard/container/kubernetes-namespace-overview.json
     kubernetes-daemonset-overview:
       url: https://raw.githubusercontent.com/cloudz-cp/zcp-monitoring/master/base/grafana/dashboard/container/kubernetes-daemonset-overview.json
     kubernetes-deployment-overview:
