@@ -34,7 +34,7 @@ spec:
                 operator: Exists
       containers:
       - name: alertmanager
-        image: au.icr.io/cloudzcp/alertmanager:v0.20.0
+        image: registry.au-syd.bluemix.net/cloudzcp/alertmanager:v0.20.0
         resources:
           requests:
             cpu: 10m

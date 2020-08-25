@@ -31,7 +31,7 @@ spec:
               - key: node-role.kubernetes.io/management
                 operator: Exists
       containers:
-        - image: au.icr.io/cloudzcp/blackbox-exporter:v0.16.0
+        - image: registry.au-syd.bluemix.net/cloudzcp/blackbox-exporter:v0.16.0
           resources:
             requests:
               cpu: 5m
