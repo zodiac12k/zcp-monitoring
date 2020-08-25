@@ -22,7 +22,7 @@ spec:
       tolerations:
       - operator: Exists
       containers:
-      - image: au.icr.io/cloudzcp/node-exporter:v0.18.1
+      - image: registry.au-syd.bluemix.net/cloudzcp/node-exporter:v0.18.1
         name: node-exporter
         args:
           - --path.procfs=/host/proc

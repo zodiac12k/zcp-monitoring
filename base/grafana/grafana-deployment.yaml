@@ -34,7 +34,7 @@ spec:
               - key: node-role.kubernetes.io/management
                 operator: Exists
       containers:
-      - image: au.icr.io/cloudzcp/grafana:6.7.0
+      - image: registry.au-syd.bluemix.net/cloudzcp/grafana:6.7.0
         name: grafana
         resources:
           limits:

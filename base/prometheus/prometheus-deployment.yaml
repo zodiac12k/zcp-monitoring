@@ -33,7 +33,7 @@ spec:
                 operator: Exists
       containers:
         - name: prometheus
-          image: au.icr.io/cloudzcp/prometheus:v2.16.0
+          image: registry.au-syd.bluemix.net/cloudzcp/prometheus:v2.16.0
           imagePullPolicy: IfNotPresent
           resources:
             requests:
