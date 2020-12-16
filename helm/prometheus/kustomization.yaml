@@ -1,0 +1,24 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+#namespace: monitoring
+#resources:
+#- prometheus-rules.yaml
+#configMapGenerator:
+#- files:
+#  - rules/16-compatibility.rules
+#  - rules/alertmanager.rules
+#  - rules/component-up-monitoring.rules
+#  - rules/elasticsearch.rules
+#    - rules/etcd.rules
+#  - rules/kube-apiserver.rules
+#  - rules/kube-state-metrics.rules
+#  - rules/kubelet.rules
+#  - rules/node.rules
+#  - rules/prometheus.rules
+#  name: zcp-monitoring-prometheus-rules
+secretGenerator:
+- name: alertmanager-secret-files
+  env: secret.properties
+  type: Opaque
+generatorOptions:
+  disableNameSuffixHash: true
